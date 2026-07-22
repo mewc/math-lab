@@ -13,7 +13,12 @@ out of this monorepo as-is. Do not import from `packages/*`.
   own untouched island. Don't create cross-app imports between the two.
 - To tackle a new problem: add notes / promote `stage` in its registry entry;
   when it earns real instruments, graduate it to its own `app/p/<slug>/`
-  directory (which shadows the generic `[slug]` route — that's how Collatz works).
+  directory (which shadows the generic `[slug]` route — that's how Collatz and
+  the 1/3–2/3 dossier work; set `href` on the entry too).
+- Research campaigns live in `research/` (Bun scripts, run with
+  `bun run research/iterationN.ts`; log in `research/RESEARCH.md`). Checked-in
+  datasets for instruments are generated (e.g. `research/emit-data.ts` →
+  `lib/onethird-data.ts`) — regenerate, don't hand-edit.
 - No database, no auth, no server code — client-side computation only
   (Collatz math is BigInt-exact in `lib/collatz.ts`; keep it that way).
 - Charts are hand-rolled inline SVG; don't add a chart library.

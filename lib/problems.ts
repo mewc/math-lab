@@ -207,11 +207,23 @@ export const PROBLEMS: Problem[] = [
     category: "Combinatorics",
     statement:
       "Every finite poset that is not a chain contains two elements x, y such that the fraction of linear extensions with x below y lies between 1/3 and 2/3.",
-    status: "Open. Known for posets of width 2, semiorders, and several other classes; 1/3 is tight for the 3-element V poset.",
+    status:
+      "Open since 1968. Proven constant is (5−√5)/10 ≈ 0.2764 (Brightwell–Felsner–Trotter, after Kahn–Saks' 3/11); known for width-2 posets, semiorders, N-free posets, and all posets with ≤ 11 elements. 1/3 is tight: the disjoint union of a 2-chain and a point achieves it exactly.",
     attack:
-      "Enumerate small posets, compute exact linear-extension statistics, and search for posets whose best balanced pair approaches 1/3 — the extremal landscape is poorly mapped.",
-    tags: ["posets", "linear extensions", "sorting", "balance"],
-    stage: "untouched",
+      "Fully instrumented: exact BigInt linear-extension DP, exhaustive isomorphism-free enumeration (verified against OEIS A000112), live balance lab, and a logged campaign — all posets on ≤ 9 elements machine-verified.",
+    tags: ["posets", "linear extensions", "sorting", "balance", "kahn-saks"],
+    stage: "started",
+    href: "/p/one-third-two-thirds",
+    notes: [
+      {
+        date: "2026-07-22",
+        body: "Iteration 1: exhaustive sweep of all 202,677 posets on 3–9 elements (enumeration census matched OEIS A000112 at every size). Zero balances below 1/3; the minimum is exactly 1/3 at every size, achieved by 1, 2, 3, 5, 8, 12, 18 posets respectively.",
+      },
+      {
+        date: "2026-07-22",
+        body: "Iteration 2: the hook family H(k) — a k-chain with feet x<c₁, y<c₂ — achieves exactly 1/3 at every size computed (k ≤ 12, up to 14 elements), so the bound is tight at every scale. All 49 exactly-1/3 posets on ≤ 9 elements carry an induced 1+2 seed at their extremal pair. 8,000 random posets at n = 10–13: none below 1/3. Runner-up balances decrease toward 1/3: 2/5, 4/11, 5/14, 5/14, 16/45, 6/17 — the spectrum appears to accumulate at 1/3 from above.",
+      },
+    ],
   },
   {
     slug: "superpermutation",
