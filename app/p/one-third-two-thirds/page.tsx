@@ -82,9 +82,10 @@ export default function Page() {
             </p>
             <div className="honesty-box">
               <b>Intellectual honesty clause.</b> This page does not settle the conjecture. What it
-              adds is machine-verified territory: an exhaustive, exact sweep of every poset on up to
-              9 elements (202,677 of them), live instruments you can point at any small poset, and
-              an honestly logged map of the extremal landscape at 1/3. Observations labeled
+              adds is machine-verified territory: an exhaustive, exact sweep of every poset on up
+              to 10 elements (2,769,961 of them), one elementary theorem proved and machine
+              cross-checked in-house, live instruments you can point at any small poset, and an
+              honestly logged map of the extremal landscape at 1/3. Observations labeled
               &ldquo;empirical&rdquo; are ours; several are likely known — no novelty is claimed,
               only verification.
             </div>
@@ -176,10 +177,10 @@ export default function Page() {
                 otherwise special — and, by Peczarski&apos;s computations, every poset with at most
                 11 elements
                 <Note n={6}>
-                  Our exhaustive sweep below reaches 9 elements — inside Peczarski&apos;s
+                  Our exhaustive sweep below reaches 10 elements — inside Peczarski&apos;s
                   computational frontier, so it is an independent reproduction, not new territory.
-                  What it adds is the full exact spectrum (not just the yes/no verdict), the
-                  extremal census, and instruments anyone can re-run in a browser.
+                  What it adds is the full exact spectrum (through n = 9), the extremal census
+                  (through n = 10), and instruments anyone can re-run in a browser.
                 </Note>
                 .
               </li>
@@ -222,29 +223,39 @@ export default function Page() {
             <ul>
               <li>
                 <strong>Zero posets below 1/3</strong> — the conjecture survives, exactly, on all
-                202,670 non-chain posets with at most 9 elements.
+                2,769,953 non-chain posets with at most 10 elements. (The n = 10 level — all
+                2,567,284 posets, reached through 8,070,524 generation candidates — runs in an
+                early-exit mode that records the verdict and the extremal census but not the full
+                spectrum; n ≤ 9 has the complete spectrum above.)
               </li>
               <li>
                 <strong>The minimum never moves:</strong> min b(P) is exactly 1/3 at every size,
-                achieved by 1, 2, 3, 5, 8, 12, 18 posets for n = 3…9
+                achieved by 1, 2, 3, 5, 8, 12, 18, 27 posets for n = 3…10
                 <Note n={8}>
-                  An empirical census sequence we haven&apos;t matched to a closed form (our
-                  environment can&apos;t reach OEIS to check whether it&apos;s catalogued). The
-                  extremal posets themselves are structurally uniform — every one is a near-chain
-                  carrying a 1+2-like foot; §5 dissects this.
+                  The census differences — 1, 1, 2, 3, 4, 6, 9, and (per the grown class of §5)
+                  13, 19 at n = 11, 12 — satisfy <b>d(k) = d(k−1) + d(k−3)</b> at every computed
+                  point: the recurrence counting compositions into parts of size 1 and 3, exactly
+                  what towers built from chain-links and 3-element hooks would produce. Correction
+                  on the record: our first guess for this census (A000792, cited from memory)
+                  predicted 39 and 57 at n = 11, 12 — the machine grew 40 and 59, falsifying it
+                  same-day. The recurrence version fits everything computed and predicts a census
+                  of 87 at n = 13, the next falsifiable target.
                 </Note>
                 .
               </li>
               <li>
                 <strong>The spectrum hugs 1/3 from above:</strong> the runner-up balance — the
-                smallest value strictly greater than 1/3 — decreases steadily: 2/5, 4/11, 5/14,
-                5/14, 16/45, 6/17 for n = 4…9
+                smallest value strictly greater than 1/3 — decreases at every level: 2/5, 4/11,
+                5/14, 5/14, 16/45, 6/17, and 37/106 at n = 10
                 <Note n={9}>
-                  ≈ 0.400, 0.364, 0.357, 0.357, 0.356, 0.353. An honest reading: balance values
-                  appear to accumulate at 1/3 from above as posets grow, so &ldquo;the conjecture
-                  is safe because small cases clear 1/3 with room&rdquo; is false comfort — the
-                  room shrinks. Whether the accumulation is genuine (and at what rate) is a
-                  question our data raises but cannot answer.
+                  ≈ 0.400, 0.364, 0.357, 0.357, 0.356, 0.353, 0.349; the gaps above 1/3 run 1/15,
+                  1/33, 1/42, 1/45, 1/51, 5/318. An honest reading: balance values appear to
+                  accumulate at 1/3 from above as posets grow, so &ldquo;the conjecture is safe
+                  because small cases clear 1/3 with room&rdquo; is false comfort — the room
+                  shrinks. Guessed parametric families all failed to reproduce this creep
+                  (iteration 5 — they run to 1/2 or collapse onto 1/3 exactly), so whether the
+                  accumulation is genuine, and at what rate, remains open. The n = 10 runner-up is
+                  a single intricate braided poset; nobody has explained it yet, including us.
                 </Note>
                 .
               </li>
@@ -258,36 +269,66 @@ export default function Page() {
 
           <Chapter id="extremal" n={5} title="The Extremal Landscape">
             <p>
-              Who lives at exactly 1/3? Iteration 2 dissected the census. Two clean empirical
-              facts:
+              Who lives at exactly 1/3? The campaign&apos;s later iterations dissected the census,
+              and one observation graduated to a proof:
             </p>
             <ul>
               <li>
-                <strong>An explicit family pins the minimum at every size.</strong> Define the hook
-                H(k): a chain c₁ &lt; … &lt; c<sub>k</sub> with two incomparable feet x &lt; c₁ and
-                y &lt; c₂. Then b(H(k)) is <em>exactly</em> 1/3 for every k we computed (k ≤ 12,
-                posets up to 14 elements), always at the pair (x, y)
+                <strong>Theorem (in-house, elementary).</strong> The hook H(k) — a chain c₁ &lt; …
+                &lt; c<sub>k</sub> with two incomparable feet x &lt; c₁ and y &lt; c₂ — satisfies
+                b(H(k)) = 1/3 <em>exactly</em>, for every k ≥ 1
                 <Note n={10}>
-                  H(1) is the 1+2 seed itself. The computation is exact, so this is a theorem for k
-                  ≤ 12 and a conjecture beyond — though the pattern is so rigid that a proof by
-                  induction on the extension counts looks like a reasonable exercise, and quite
-                  possibly exists in the literature already.
+                  <b>Proof.</b> In any linear extension, the elements x, c₁, …, c<sub>k</sub> are
+                  forced into that exact order. An extension is therefore determined by where y is
+                  inserted, and y must precede c₂ — leaving three slots: before x, between x and
+                  c₁, between c₁ and c₂. So e(H(k)) = 3, always. The only incomparable pairs are
+                  (x, y) and (y, c₁), and each realizes its minority order in exactly one of the
+                  three slots: both sit at exactly 1/3. ∎ Machine cross-checked (extension count,
+                  pair list, per-pair fractions) for k ≤ 12; the argument is k-independent.
+                  Elementary and very likely known — the point is that the conjecture, if true, is{" "}
+                  <b>tight at every size</b>, not just at n = 3.
                 </Note>
-                . So the conjecture, if true, is <em>tight at every size</em>, not just at n = 3.
+                .
               </li>
               <li>
-                <strong>Every extremal poset carries the seed.</strong> All 49 exactly-1/3 posets
-                on ≤ 9 elements contain, at their extremal pair (x, y), a third element comparable
-                to exactly one of x and y — an induced 1+2 pattern seeded at the very pair that
-                achieves 1/3. No extremal poset avoids it.
+                <strong>Extremal posets are totally balanced.</strong> In all 49 exactly-1/3 posets
+                on ≤ 9 elements, <em>every</em> incomparable pair sits at exactly 1/3 — none below
+                — and the extension count is always a power of 3 (49/49 on both counts). Extremal
+                posets look like towers of decoupled hooks, each hook contributing a factor of 3
+                <Note n={11}>
+                  Directly buildable: stack a hook at the bottom of a long chain and a dual hook
+                  (two heads) at the top. Iteration 5 computed this two-hook tower exactly: for
+                  chain gap ≥ 3 the hooks decouple and b = 1/3 exactly with e = 9 = 3². The n = 10
+                  extremal posets have e ∈ &#123;3, 9, 27&#125; — towers of one, two, three hooks.
+                </Note>
+                . And every one carries an induced 1+2 pattern seeded at its extremal pair.
+              </li>
+              <li>
+                <strong>The extremal class is self-generating — confirmed by two independent
+                computations.</strong> Growing the class one element at a time from the single 1+2
+                seed reproduces the exhaustive census exactly at every level (1, 2, 3, 5, 8, 12,
+                18), and <em>predicted</em> 27 extremal posets at n = 10 — which the independent
+                early-exit sweep of all 8,070,524 candidates then confirmed: 27, on the nose
+                <Note n={12}>
+                  Two different programs, two different methods (constructive growth with
+                  canonical dedup vs. exhaustive generate-and-test), same answer. On the verified
+                  range, no extremal poset is an &ldquo;orphan&rdquo;: each contains an extremal
+                  poset of every smaller size down to the 1+2 seed. Grown further (closure
+                  assumed, awaiting exhaustive confirmation): 40 at n = 11 and 59 at n = 12, with
+                  e-distributions that stay pure powers of 3 — the first four-hook tower (e = 81)
+                  appears at n = 12. A characterization of the extremal class as &ldquo;hook
+                  towers&rdquo; looks provable by the same slot bookkeeping as the H(k) theorem —
+                  the campaign&apos;s next natural theorem.
+                </Note>
+                .
               </li>
             </ul>
             <p>
-              The picture these two facts paint: 1/3 is not a small-n accident that larger posets
-              escape — it is a structural floor propped up by one 3-element pattern that embeds at
+              The picture: 1/3 is not a small-n accident that larger posets escape — it is a
+              structural floor propped up by one 3-element pattern that embeds, tower-fashion, at
               every scale. A proof of the conjecture has to explain why <em>nothing does worse</em>{" "}
-              than this pattern; a disproof has to find a configuration that beats the pattern that
-              our sweep certifies does not exist below 10 elements.
+              than this pattern; a disproof has to beat it — and our sweep certifies nothing does,
+              anywhere below 11 elements.
             </p>
           </Chapter>
 

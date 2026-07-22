@@ -1,0 +1,12 @@
+n=3: 1 extremal (seed) — expected 1
+n=4: 2 extremal grown — matches exhaustive census ✓
+n=5: 3 extremal grown — matches exhaustive census ✓
+n=6: 5 extremal grown — matches exhaustive census ✓
+n=7: 8 extremal grown — matches exhaustive census ✓
+n=8: 12 extremal grown — matches exhaustive census ✓
+n=9: 18 extremal grown — matches exhaustive census ✓
+n=10: 27 extremal grown — PREDICTION (check against iteration 4)
+n=11: 40 extremal grown — PREDICTION (check against iteration 4)
+   e-distribution: 3×9, 9×21, 27×10
+n=12: 59 extremal grown — PREDICTION (check against iteration 4)
+   e-distribution: 3×10, 9×28, 27×20, 81×1

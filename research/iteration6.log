@@ -1,0 +1,22 @@
+enumerating base posets (n = 9)…
+183231 base posets [31855ms]
+  …5630/183231, 490322 candidates, best runner-up 1/1, 0 full scans [20s]
+  …13391/183231, 1022808 candidates, best runner-up 1/1, 0 full scans [40s]
+  …22706/183231, 1570490 candidates, best runner-up 1/1, 0 full scans [60s]
+  …34668/183231, 2142220 candidates, best runner-up 1/1, 0 full scans [80s]
+  …44355/183231, 2679443 candidates, best runner-up 1/1, 0 full scans [100s]
+  …55542/183231, 3248397 candidates, best runner-up 1/1, 0 full scans [120s]
+  …68740/183231, 3862418 candidates, best runner-up 1/1, 0 full scans [140s]
+  …84212/183231, 4495879 candidates, best runner-up 1/1, 0 full scans [160s]
+  …103297/183231, 5163700 candidates, best runner-up 1/1, 0 full scans [180s]
+  …116267/183231, 5777645 candidates, best runner-up 1/1, 0 full scans [200s]
+  …131577/183231, 6399275 candidates, best runner-up 1/1, 0 full scans [220s]
+  …150942/183231, 7055301 candidates, best runner-up 6/17, 22 full scans [240s]
+  …171242/183231, 7727886 candidates, best runner-up 37/106, 79 full scans [260s]
+
+n=10 runner-up sweep complete in 269.1s
+candidates: 8070524, full scans: 165, below 1/3: 0
+runner-up balance at n=10: 37/106 = 37/106 ≈ 0.3490566
+gap = 5/318 = 1/(3·21.2)  →  d-sequence 5, 11, 14, 15, 17, 21.2
+achieved by 1 poset(s) up to isomorphism:
+   {0<2 0<3 1<3 2<4 2<5 3<5 3<6 4<6 4<7 5<7 6<8 6<9 7<9}

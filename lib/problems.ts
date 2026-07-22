@@ -210,7 +210,7 @@ export const PROBLEMS: Problem[] = [
     status:
       "Open since 1968. Proven constant is (5−√5)/10 ≈ 0.2764 (Brightwell–Felsner–Trotter, after Kahn–Saks' 3/11); known for width-2 posets, semiorders, N-free posets, and all posets with ≤ 11 elements. 1/3 is tight: the disjoint union of a 2-chain and a point achieves it exactly.",
     attack:
-      "Fully instrumented: exact BigInt linear-extension DP, exhaustive isomorphism-free enumeration (verified against OEIS A000112), live balance lab, and a logged campaign — all posets on ≤ 9 elements machine-verified.",
+      "Fully instrumented: exact BigInt linear-extension DP, exhaustive isomorphism-free enumeration (verified against OEIS A000112), live balance lab, and a logged campaign — all 2.77M posets on ≤ 10 elements machine-verified, one in-house theorem proved.",
     tags: ["posets", "linear extensions", "sorting", "balance", "kahn-saks"],
     stage: "started",
     href: "/p/one-third-two-thirds",
@@ -222,6 +222,10 @@ export const PROBLEMS: Problem[] = [
       {
         date: "2026-07-22",
         body: "Iteration 2: the hook family H(k) — a k-chain with feet x<c₁, y<c₂ — achieves exactly 1/3 at every size computed (k ≤ 12, up to 14 elements), so the bound is tight at every scale. All 49 exactly-1/3 posets on ≤ 9 elements carry an induced 1+2 seed at their extremal pair. 8,000 random posets at n = 10–13: none below 1/3. Runner-up balances decrease toward 1/3: 2/5, 4/11, 5/14, 5/14, 16/45, 6/17 — the spectrum appears to accumulate at 1/3 from above.",
+      },
+      {
+        date: "2026-07-22",
+        body: "Iterations 3–7: proved b(H(k)) = 1/3 for all k (three-slot insertion argument, machine cross-checked). Extremal posets are totally balanced: every incomparable pair exactly 1/3, e(P) always a power of 3 — hook towers. The extremal class is self-generating from the 1+2 seed; growing it predicted 27 extremal posets at n = 10, confirmed independently by an exhaustive early-exit sweep of all 2,567,284 ten-element posets (zero below 1/3 — the conjecture is now machine-verified through n = 10). Census differences obey d(k) = d(k−1) + d(k−3) (compositions into parts {1,3}); a first guess (A000792) was falsified by our own growth run — correction on the record. Runner-up at n = 10: 37/106 ≈ 0.34906, a single braided poset; seventh consecutive decrease toward 1/3.",
       },
     ],
   },

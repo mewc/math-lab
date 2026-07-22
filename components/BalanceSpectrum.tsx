@@ -116,13 +116,33 @@ export default function BalanceSpectrum() {
                 </tr>
               );
             })}
+            <tr>
+              <td className="val">10</td>
+              <td>2,567,284</td>
+              <td>2,567,283</td>
+              <td className="val" style={{ color: "var(--accent)" }}>
+                1/3
+              </td>
+              <td>27</td>
+              <td>37/106 ≈ 0.3491</td>
+              <td style={{ color: "var(--even)" }}>0 ✓</td>
+              <td style={{ color: "var(--ink-faint)", whiteSpace: "normal" }}>
+                early-exit sweep (iterations 4 &amp; 6) — verdict, extremal census &amp; runner-up
+                only
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
       <p style={{ fontSize: 12.5, color: "var(--ink-faint)", margin: "10px 0 0" }}>
         Spectrum bins span b(P) ∈ [{lo.toFixed(4)}, {hi.toFixed(4)}], log-scaled; the gold spike is
-        the exactly-1/3 class. Data computed by <span className="mono">research/iteration1.ts</span>{" "}
-        (BigInt-exact; enumeration counts cross-checked against OEIS A000112 at every size).
+        the exactly-1/3 class. Rows n ≤ 9 computed by{" "}
+        <span className="mono">research/iteration1.ts</span> (BigInt-exact; enumeration counts
+        cross-checked against OEIS A000112 at every size). Row n = 10 by{" "}
+        <span className="mono">research/iteration4.ts</span> and{" "}
+        <span className="mono">iteration6.ts</span>: all 2,567,284 posets covered via 8,070,524
+        generation candidates, exact number arithmetic (10! &lt; 2⁵³), early exit once a pair
+        clears 1/3.
       </p>
       <div className="controls" style={{ marginTop: 12, marginBottom: 0 }}>
         <button className="btn ghost" type="button" onClick={runLive} disabled={running}>

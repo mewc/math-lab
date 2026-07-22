@@ -17,6 +17,11 @@ tokens at.
   margin notes, and the live 25-path attack log — is imported at `/p/collatz`.
   (`apps/collatz-lab` remains its own standalone island; this is a copy, not a
   dependency.)
+- **The 1/3–2/3 conjecture is tackled** at `/p/one-third-two-thirds`: an
+  active campaign (`research/`) with exhaustive machine verification of all
+  posets on ≤ 10 elements, an in-house elementary theorem (the hook family
+  sits at exactly 1/3 at every size), a census of the extremal landscape, and
+  live exact-arithmetic instruments (Balance Lab, Verification Ledger).
 
 ## Run
 
