@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CATEGORIES, PROBLEMS, problemHref } from "@/lib/problems";
-import { SITE_URL, absUrl, allTags, categorySlug } from "@/lib/seo";
+import { SITE_URL, absUrl, categorySlug, hubTags } from "@/lib/seo";
 
 // Every indexable URL, derived from the registry. Regenerates automatically as
 // problems, categories, and tags are added — nothing to hand-maintain.
@@ -30,17 +30,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
+  // Hand-built dossier sub-pages that aren't 1:1 with a registry entry (only
+  // Collatz has one today). Listed explicitly so crawlers can reach them.
+  const subPages: MetadataRoute.Sitemap = [
+    {
+      url: absUrl("/p/collatz/attack-log"),
+      lastModified: siteModified,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+  ];
+
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
     url: absUrl(`/problems/${categorySlug(c)}`),
     changeFrequency: "weekly",
     priority: 0.7,
   }));
 
-  const tagPages: MetadataRoute.Sitemap = allTags().map((t) => ({
+  const tagPages: MetadataRoute.Sitemap = hubTags().map((t) => ({
     url: absUrl(`/tags/${t.slug}`),
     changeFrequency: "monthly",
     priority: 0.4,
   }));
 
-  return [...staticPages, ...problemPages, ...categoryPages, ...tagPages];
+  return [...staticPages, ...problemPages, ...subPages, ...categoryPages, ...tagPages];
 }
