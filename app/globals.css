@@ -435,23 +435,27 @@ section.chapter {
   color: var(--ink-faint);
   white-space: nowrap;
 }
-.meme-stage {
+/* Square frame sized to the content and centered — not a full-width row. */
+.meme-frame {
   position: relative;
-  height: 300px;
+  width: min(440px, 100%);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--bg-inset);
   overflow: hidden;
 }
 .meme-img {
   position: absolute;
-  inset: 12px;
+  inset: 14px;
   margin: auto;
-  max-width: calc(100% - 24px);
-  max-height: calc(100% - 24px);
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 28px);
   width: auto;
   height: auto;
   object-fit: contain;
+  border-radius: 6px;
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
@@ -459,39 +463,74 @@ section.chapter {
 .meme-img[data-active="true"] {
   opacity: 1;
 }
-.meme-link {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+.meme-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.meme-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg-inset);
+  color: var(--ink-dim);
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.meme-arrow:hover {
+  color: var(--ink);
+  border-color: var(--ink-dim);
+  background: var(--bg-raised);
 }
 .meme-dots {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
+  align-items: center;
+  gap: 2px;
 }
+/* Big invisible hit area (34px) around a small visible dot, so it's easy to click. */
 .meme-dot {
-  width: 8px;
-  height: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 34px;
   padding: 0;
   border: none;
+  background: none;
+  cursor: pointer;
+}
+.meme-dot span {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--line);
-  cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
 }
-.meme-dot:hover {
+.meme-dot:hover span {
   background: var(--ink-dim);
 }
-.meme-dot[data-active="true"] {
+.meme-dot[data-active="true"] span {
   background: var(--accent);
-  transform: scale(1.25);
+  transform: scale(1.3);
 }
-@media (max-width: 640px) {
-  .meme-stage {
-    height: 220px;
-  }
+.meme-source {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.meme-source:hover {
+  color: var(--ink-dim);
 }
 
 h3.sub {
