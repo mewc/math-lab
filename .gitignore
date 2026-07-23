@@ -2,3 +2,10 @@ node_modules/
 .next/
 next-env.d.ts
 *.tsbuildinfo
+.vercel
+.env*.local
+
+# Conductor machine-local workspace config
+.conductor/settings.local.toml
+.env*
+.gstack/

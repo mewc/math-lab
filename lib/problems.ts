@@ -7,7 +7,7 @@
 // statuses honest. "Open" means open; partial results get named. Keep
 // quantifiers exact when editing.
 
-export type Stage = "live" | "started" | "untouched";
+export type Stage = "solved" | "live" | "started" | "untouched";
 
 export type Category =
   | "Number Theory"
@@ -22,6 +22,29 @@ export type Category =
 export interface ProblemNote {
   date: string; // ISO date of the note
   body: string;
+}
+
+/** An external reference or source. Rendered as a link when `url` is present. */
+export interface ProblemRef {
+  label: string;
+  url?: string;
+}
+
+/**
+ * Present only on solved problems: how it was resolved, by whom, and where to
+ * read the writeup. Surfaced on the homepage card and the dossier. Keep the
+ * attribution honest — name the actual solver (person, team, or campaign) and
+ * keep any pending-audit caveat on the record.
+ */
+export interface ProblemSolution {
+  /** Who resolved it — person, team, or campaign. */
+  by: string;
+  /** When resolved (year, month-year, or ISO date). */
+  when?: string;
+  /** One-to-two-sentence summary of the winning approach. */
+  approach: string;
+  /** Where it's written up / verified — external or in-lab links. */
+  links?: ProblemRef[];
 }
 
 export interface Problem {
@@ -41,6 +64,10 @@ export interface Problem {
   href?: string;
   /** Work-in-progress notes; accumulate as the problem gets tackled. */
   notes?: ProblemNote[];
+  /** External references / sources, cross-linked in the dossier. */
+  refs?: ProblemRef[];
+  /** Resolution details (solver, approach, links) — set on solved problems. */
+  solution?: ProblemSolution;
 }
 
 export const CATEGORIES: Category[] = [
@@ -137,6 +164,72 @@ export const PROBLEMS: Problem[] = [
   },
 
   // ------------------------------------------------------------ graph theory
+  {
+    slug: "goemans-unsplittable-flow",
+    title: "Goemans' unsplittable-flow cost conjecture",
+    aka: [
+      "Dinitz–Garg–Goemans cost conjecture",
+      "single-source unsplittable flow cost conjecture",
+      "SSUF cost conjecture",
+    ],
+    category: "Graph Theory",
+    statement:
+      "Given a single-source fractional flow x meeting demands d_i (D = max_i d_i), is there always an unsplittable routing y that is simultaneously congestion-good (y_a ≤ x_a + D on every arc) and cost-good (cᵀy ≤ cᵀx for every nonnegative cost c)? The congestion half alone is the proven Dinitz–Garg–Goemans theorem (1999); the simultaneous cost strengthening is Goemans' conjecture (Conjecture 1.3 in the SSUF literature).",
+    status:
+      "Disproved by counterexample (2026): the congestion-only DGG theorem stands, but the cost strengthening fails. A finite, integer-arithmetic-checkable instance (7 vertices; underlying graph a subdivision of K₄, hence planar but not series-parallel; three unequal demands 15,10,15; exactly two s→tᵢ paths per terminal, so 2³=8 routings total) has every congestion-good routing costing ≥ 60 while the fractional flow costs only 58. Because it is planar, it also breaks the exact-D bound restricted to planar graphs (consistent with the paper's proven planar 2D guarantee). As of Jan 2026 the literature still listed the cost conjecture open, so it still warrants external audit, though the certificate is exhaustive and needs no search.",
+    attack:
+      "The instance is engineered rather than searched for: a splice-closed path system in which the +D capacity slack forbids the three zero-cost detours pairwise (their loads form a triangle stable-set system the fractional point violates), forcing ≥ 2 expensive direct paths. Certified in-lab by an exhaustive exact-integer verifier over all 8 routings — run `bun run research/dgg-counterexample.ts`. Further directions: shrink the certificate, or push on the still-open frontier of the planar 2D→D gap and the series-parallel-to-general boundary.",
+    tags: [
+      "unsplittable flow",
+      "network flows",
+      "counterexample",
+      "single-source",
+      "combinatorial optimization",
+      "certificate",
+      "planar",
+    ],
+    stage: "solved",
+    solution: {
+      by: "Deep-reasoning campaign (ChatGPT), reproduced in-lab",
+      when: "Jul 2026",
+      approach:
+        "Disproved by construction: a 7-vertex splice-closed path system whose +D congestion slack rules out any two of the three zero-cost detours at once, so every congestion-good routing needs ≥2 costlier direct paths (min congestion-good cost 60 > 58 = cᵀx). An exhaustive exact-integer verifier checks all 8 routings; the certificate is self-contained and pending external audit.",
+      links: [
+        {
+          label: "Solution writeup & four-iteration search log (ChatGPT share)",
+          url: "https://chatgpt.com/share/6a60b2eb-0b64-83ee-9c76-7931ca1de063",
+        },
+        { label: "In-lab verifier — research/dgg-counterexample.ts" },
+      ],
+    },
+    notes: [
+      {
+        date: "2026-07-23",
+        body: "Result imported from a four-iteration deep-reasoning campaign (ChatGPT, source linked below). Iterations 1–3 produced only structured no-go results: the abstract cube/hypercube gadgets that separate cost all collapse to δ=0 once path-splicing hybrids are counted (a five-terminal probe that looked like δ≈0.152 fell to |δ|<5·10⁻¹⁴ after exact pricing generated 621 routing columns), and three demands over three gates provably cannot enforce one-per-gate at additive error D. The move that worked: stop trying to delete hybrid paths, and instead let the +D capacity bound neutralize them.",
+      },
+      {
+        date: "2026-07-23",
+        body: "Iteration 4 — complete counterexample. V={s,u,v,w,t₁,t₂,t₃}; demands d=(15,10,15), D=15. Each terminal has a cheap direct path Eᵢ (unit cost, total 30) and a zero-cost detour Zᵢ through the shared spine s→u→v→w. Any two detours overload a spine arc (Z₂+Z₃: v→w carries 25>24; Z₁+Z₃: u→v 30>29; Z₁+Z₂: s→u 40>39), so every congestion-good routing uses ≤1 detour ⇒ ≥2 direct paths ⇒ cost ≥ 60 > 58 = cᵀx. The three Zᵢ are the stable-set system of a triangle with Pr = 1/3+2/5+1/3 = 16/15 > 1: the fractional point violates the triangle inequality z₁+z₂+z₃≤1 that every good routing satisfies, and the E-costs are the nonnegative complementary separator.",
+      },
+      {
+        date: "2026-07-23",
+        body: "Reproduced in-lab: research/dgg-counterexample.ts rebuilds x from its path decomposition (verifies feasibility), enumerates all 8 unsplittable routings in exact integers, and confirms min congestion-good cost = 60 > 58. Exhaustive — the path system has exactly two s→tᵢ paths per terminal, so there are no hidden splice hybrids and the 8-routing table is the whole universe. Caveat on the record: the underlying conjecture was still listed open in Jan-2026 sources, so this is a self-contained certificate pending external audit rather than a literature-confirmed theorem.",
+      },
+    ],
+    refs: [
+      {
+        label: "Solution writeup & full four-iteration search log (ChatGPT share, 2026-07-23)",
+        url: "https://chatgpt.com/share/6a60b2eb-0b64-83ee-9c76-7931ca1de063",
+      },
+      {
+        label: "In-lab exhaustive verifier — research/dgg-counterexample.ts",
+      },
+      {
+        label:
+          "Y. Dinitz, N. Garg, M. X. Goemans — On the single-source unsplittable flow problem, Combinatorica 19 (1999), 17–41 (the proven congestion theorem)",
+      },
+    ],
+  },
   {
     slug: "erdos-faber-lovasz",
     title: "Erdős–Faber–Lovász conjecture",
@@ -622,6 +715,7 @@ export function problemHref(p: Problem): string {
 }
 
 export const STAGE_LABEL: Record<Stage, string> = {
+  solved: "solved",
   live: "live lab",
   started: "started",
   untouched: "untouched",

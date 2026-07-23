@@ -4,15 +4,35 @@ import HailstoneExplorer from "@/components/HailstoneExplorer";
 import StoppingTimeScatter from "@/components/StoppingTimeScatter";
 import VariantLab from "@/components/VariantLab";
 import { Note } from "@/components/Note";
+import JsonLd from "@/components/JsonLd";
+import { getProblem } from "@/lib/problems";
+import { breadcrumbLd, categorySlug, problemLd } from "@/lib/seo";
 
 // The Collatz dossier — imported from apps/collatz-lab (which remains its own
 // standalone island; this is a copy, not a dependency). The flagship "live"
 // problem of the Math Lab index.
 
+const DESCRIPTION =
+  "An annotated research dossier on the Collatz conjecture: interactive trajectories, the statistical landscape, every major partial result, and exactly what a settlement would require.";
+
 export const metadata: Metadata = {
-  title: "Math Lab — Collatz: the 3n + 1 dossier",
-  description:
-    "An annotated research dossier on the Collatz conjecture: interactive trajectories, the statistical landscape, every major partial result, and exactly what a settlement would require.",
+  title: "Collatz conjecture — the 3n + 1 dossier",
+  description: DESCRIPTION,
+  keywords: [
+    "Collatz conjecture",
+    "3n+1 problem",
+    "Syracuse problem",
+    "hailstone sequence",
+    "Ulam conjecture",
+    "stopping time",
+  ],
+  alternates: { canonical: "/p/collatz" },
+  openGraph: {
+    type: "article",
+    title: "Collatz conjecture — the 3n + 1 dossier",
+    description: DESCRIPTION,
+    url: "/p/collatz",
+  },
 };
 
 const SECTIONS = [
@@ -52,23 +72,23 @@ function Chapter({
 }
 
 export default function Page() {
+  const p = getProblem("collatz")!;
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">
-          <Link href="/" style={{ color: "inherit" }}>
-            <b>Math</b> Lab
-          </Link>
-        </span>
-        <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>Collatz · the 3n + 1 dossier</span>
-        <Link href="/p/collatz/attack-log" style={{ fontSize: 13 }}>
-          the attack log →
-        </Link>
-        <span className="status-chip">status: unsolved · 89 years</span>
-      </header>
-
+      <JsonLd data={problemLd(p)} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Math Lab", path: "/" },
+          { name: p.category, path: `/problems/${categorySlug(p.category)}` },
+          { name: p.title, path: "/p/collatz" },
+        ])}
+      />
       <div className="shell">
         <nav className="toc" aria-label="Contents">
+          <div className="crumbs">
+            <Link href="/">← all problems</Link>
+            <Link href="/p/collatz/attack-log">the attack log →</Link>
+          </div>
           <div className="toc-title">Contents</div>
           {SECTIONS.map(([id, title], i) => (
             <a key={id} href={`#${id}`}>

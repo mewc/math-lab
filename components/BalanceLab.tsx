@@ -147,7 +147,7 @@ function HasseDiagram({ p, highlight }: { p: Poset; highlight: [number, number] 
             textAnchor="middle"
             fontSize={13}
             fontFamily="var(--mono)"
-            fill={isHi(i) ? "#14161c" : "var(--ink)"}
+            fill={isHi(i) ? "var(--primary-foreground)" : "var(--ink)"}
           >
             {i}
           </text>

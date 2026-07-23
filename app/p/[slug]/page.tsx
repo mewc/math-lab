@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProblem, PROBLEMS, STAGE_LABEL } from "@/lib/problems";
+import { getProblem, problemHref, PROBLEMS, STAGE_LABEL } from "@/lib/problems";
+import JsonLd from "@/components/JsonLd";
+import {
+  breadcrumbLd,
+  categorySlug,
+  problemLd,
+  relatedProblems,
+  SITE_NAME,
+} from "@/lib/seo";
 
 // Generic dossier scaffold for every registry problem that doesn't yet have a
 // hand-built page (Collatz has one at app/p/collatz/, which shadows this
@@ -20,9 +28,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const p = getProblem(slug);
   if (!p) return { title: "Math Lab" };
+  // Keyword-led title: searchers type the problem name, not the brand. aka's
+  // widen the match ("3n+1 problem", "Syracuse problem") without stuffing.
+  const title = p.aka && p.aka.length > 0 ? `${p.title} (${p.aka[0]})` : p.title;
+  const canonical = `/p/${p.slug}`;
   return {
-    title: `Math Lab — ${p.title}`,
+    title,
     description: p.statement,
+    keywords: [p.title, ...(p.aka ?? []), p.category, ...p.tags],
+    alternates: { canonical },
+    openGraph: {
+      type: "article",
+      title: `${p.title} · ${SITE_NAME}`,
+      description: p.statement,
+      url: canonical,
+    },
+    twitter: { card: "summary_large_image", title: p.title, description: p.statement },
   };
 }
 
@@ -31,20 +52,26 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
   const p = getProblem(slug);
   if (!p) notFound();
 
+  const related = relatedProblems(p);
+  const breadcrumb = breadcrumbLd([
+    { name: "Math Lab", path: "/" },
+    { name: p.category, path: `/problems/${categorySlug(p.category)}` },
+    { name: p.title, path: `/p/${p.slug}` },
+  ]);
+
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">
-          <Link href="/" style={{ color: "inherit" }}>
-            <b>Math</b> Lab
-          </Link>
-        </span>
-        <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>{p.category}</span>
-        <span className="status-chip">{STAGE_LABEL[p.stage]}</span>
-      </header>
-
+      <JsonLd data={problemLd(p)} />
+      <JsonLd data={breadcrumb} />
       <div className="shell" style={{ gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 940 }}>
         <main>
+          <div className="crumbs">
+            <Link href="/">← all problems</Link>
+            <Link href={`/problems/${categorySlug(p.category)}`}>{p.category}</Link>
+            <span className="status-chip" data-stage={p.stage}>
+              {STAGE_LABEL[p.stage]}
+            </span>
+          </div>
           <div className="hero">
             <div className="kicker">Problem dossier · {p.category}</div>
             <h1>{p.title}</h1>
@@ -62,6 +89,12 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
               <h2>Status</h2>
             </div>
             <p>{p.status}</p>
+            {p.stage !== "solved" && (
+              <div className="solved-cta">
+                Think you can crack this one?{" "}
+                <Link href="/solved">Read the playbook before you announce →</Link>
+              </div>
+            )}
           </section>
 
           <section className="chapter">
@@ -115,6 +148,50 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
               corrections kept on the record. &ldquo;Open&rdquo; means open.
             </div>
           </section>
+
+          {p.refs && p.refs.length > 0 && (
+            <section className="chapter">
+              <div className="chapter-head">
+                <span className="num">§5</span>
+                <h2>References</h2>
+              </div>
+              <ul className="ref-list">
+                {p.refs.map((ref, i) => (
+                  <li key={i}>
+                    {ref.url ? (
+                      <a href={ref.url} target="_blank" rel="noreferrer noopener">
+                        {ref.label}
+                      </a>
+                    ) : (
+                      ref.label
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {related.length > 0 && (
+            <section className="chapter">
+              <div className="chapter-head">
+                <span className="num">§{p.refs && p.refs.length > 0 ? 6 : 5}</span>
+                <h2>Related Problems</h2>
+              </div>
+              <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>
+                More open problems in{" "}
+                <Link href={`/problems/${categorySlug(p.category)}`}>{p.category}</Link> and
+                adjacent territory.
+              </p>
+              <ul className="ref-list">
+                {related.map((r) => (
+                  <li key={r.slug}>
+                    <Link href={problemHref(r)}>{r.title}</Link>
+                    <span style={{ color: "var(--ink-faint)" }}> — {r.category}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </main>
       </div>
     </>
