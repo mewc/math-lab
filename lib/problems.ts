@@ -176,9 +176,9 @@ export const PROBLEMS: Problem[] = [
     statement:
       "Given a single-source fractional flow x meeting demands d_i (D = max_i d_i), is there always an unsplittable routing y that is simultaneously congestion-good (y_a ≤ x_a + D on every arc) and cost-good (cᵀy ≤ cᵀx for every nonnegative cost c)? The congestion half alone is the proven Dinitz–Garg–Goemans theorem (1999); the simultaneous cost strengthening is Goemans' conjecture (Conjecture 1.3 in the SSUF literature).",
     status:
-      "Disproved by counterexample (2026) — the congestion-only DGG theorem stands, but the cost strengthening fails. A finite, integer-arithmetic-checkable instance (7 vertices; underlying graph a subdivision of K₄, hence planar but not series-parallel; three unequal demands 15,10,15; exactly two s→tᵢ paths per terminal, so 2³=8 routings total) has every congestion-good routing costing ≥ 60 while the fractional flow costs only 58. Being planar, it also breaks the exact-D bound restricted to planar graphs (consistent with the paper's proven planar 2D guarantee). As of Jan 2026 the literature still listed the cost conjecture open, so this warrants external audit — but the certificate is exhaustive and needs no search.",
+      "Disproved by counterexample (2026): the congestion-only DGG theorem stands, but the cost strengthening fails. A finite, integer-arithmetic-checkable instance (7 vertices; underlying graph a subdivision of K₄, hence planar but not series-parallel; three unequal demands 15,10,15; exactly two s→tᵢ paths per terminal, so 2³=8 routings total) has every congestion-good routing costing ≥ 60 while the fractional flow costs only 58. Because it is planar, it also breaks the exact-D bound restricted to planar graphs (consistent with the paper's proven planar 2D guarantee). As of Jan 2026 the literature still listed the cost conjecture open, so it still warrants external audit, though the certificate is exhaustive and needs no search.",
     attack:
-      "Solved by construction, not brute search: design a splice-closed path system where the +D capacity slack itself forbids the three zero-cost detours pairwise (their loads form a triangle stable-set system the fractional point violates), forcing ≥ 2 expensive direct paths. Certified in-lab by an exhaustive exact-integer verifier over all 8 routings — run `bun run research/dgg-counterexample.ts`. To push further: shrink the certificate, or attack the still-open frontier — the planar 2D→D gap and the series-parallel-to-general boundary.",
+      "The instance is engineered rather than searched for: a splice-closed path system in which the +D capacity slack forbids the three zero-cost detours pairwise (their loads form a triangle stable-set system the fractional point violates), forcing ≥ 2 expensive direct paths. Certified in-lab by an exhaustive exact-integer verifier over all 8 routings — run `bun run research/dgg-counterexample.ts`. Further directions: shrink the certificate, or push on the still-open frontier of the planar 2D→D gap and the series-parallel-to-general boundary.",
     tags: [
       "unsplittable flow",
       "network flows",
@@ -193,7 +193,7 @@ export const PROBLEMS: Problem[] = [
       by: "Deep-reasoning campaign (ChatGPT), reproduced in-lab",
       when: "Jul 2026",
       approach:
-        "Disproved by construction: a 7-vertex splice-closed path system where the +D capacity slack itself forbids the three zero-cost detours pairwise, forcing ≥2 costlier direct paths (min congestion-good cost 60 > 58 = cᵀx). Certified by an exhaustive exact-integer verifier over all 8 routings — a self-contained certificate pending external audit.",
+        "Disproved by construction: a 7-vertex splice-closed path system whose +D congestion slack rules out any two of the three zero-cost detours at once, so every congestion-good routing needs ≥2 costlier direct paths (min congestion-good cost 60 > 58 = cᵀx). An exhaustive exact-integer verifier checks all 8 routings; the certificate is self-contained and pending external audit.",
       links: [
         {
           label: "Solution writeup & four-iteration search log (ChatGPT share)",
@@ -205,7 +205,7 @@ export const PROBLEMS: Problem[] = [
     notes: [
       {
         date: "2026-07-23",
-        body: "Result imported from a four-iteration deep-reasoning campaign (ChatGPT, source linked below). Iterations 1–3 produced only structured no-go results: the abstract cube/hypercube gadgets that separate cost all collapse to δ=0 once path-splicing hybrids are counted (a five-terminal probe that looked like δ≈0.152 fell to |δ|<5·10⁻¹⁴ after exact pricing generated 621 routing columns), and three demands over three gates provably cannot enforce one-per-gate at additive error D. The decisive shift: stop trying to delete hybrid paths and instead make the +D capacity bound itself neutralize them.",
+        body: "Result imported from a four-iteration deep-reasoning campaign (ChatGPT, source linked below). Iterations 1–3 produced only structured no-go results: the abstract cube/hypercube gadgets that separate cost all collapse to δ=0 once path-splicing hybrids are counted (a five-terminal probe that looked like δ≈0.152 fell to |δ|<5·10⁻¹⁴ after exact pricing generated 621 routing columns), and three demands over three gates provably cannot enforce one-per-gate at additive error D. The move that worked: stop trying to delete hybrid paths, and instead let the +D capacity bound neutralize them.",
       },
       {
         date: "2026-07-23",
@@ -213,7 +213,7 @@ export const PROBLEMS: Problem[] = [
       },
       {
         date: "2026-07-23",
-        body: "Reproduced in-lab: research/dgg-counterexample.ts rebuilds x from its path decomposition (verifies feasibility), enumerates all 8 unsplittable routings in exact integers, and confirms min congestion-good cost = 60 > 58. Exhaustive — the path system has exactly two s→tᵢ paths per terminal, so there are no hidden splice hybrids and the 8-routing table is the whole universe. Honest caveat kept on the record: the underlying conjecture was still listed open in Jan-2026 sources, so this is a self-contained certificate pending external audit, not yet a literature-confirmed theorem.",
+        body: "Reproduced in-lab: research/dgg-counterexample.ts rebuilds x from its path decomposition (verifies feasibility), enumerates all 8 unsplittable routings in exact integers, and confirms min congestion-good cost = 60 > 58. Exhaustive — the path system has exactly two s→tᵢ paths per terminal, so there are no hidden splice hybrids and the 8-routing table is the whole universe. Caveat on the record: the underlying conjecture was still listed open in Jan-2026 sources, so this is a self-contained certificate pending external audit rather than a literature-confirmed theorem.",
       },
     ],
     refs: [
