@@ -1,0 +1,4 @@
+# Default owner for everything in the repo. GitHub will request review from
+# @mewc on every pull request. Add more owners / path-specific rules as the
+# project grows (e.g. `/research/ @some-collaborator`).
+* @mewc
