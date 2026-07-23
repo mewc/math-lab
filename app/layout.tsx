@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description:
     "One searchable index of open, computationally approachable math problems — each with a precise statement, honest status, and an attack plan. Tackled problems grow into live dossiers, starting with Collatz.",
   manifest: "/manifest.json",
+  // Favicon stack (abacus, theme-aware) generated with favicontools.com
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },

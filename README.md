@@ -50,6 +50,10 @@ happens client-side (Collatz trajectories in exact BigInt arithmetic).
 Ground rules, inherited from Collatz Lab: no fabricated steps, dead ends are
 logged as results, corrections stay on the record. "Open" means open.
 
+## Credits
+
+Favicons generated with [favicontools.com](https://favicontools.com).
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
