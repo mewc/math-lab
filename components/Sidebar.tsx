@@ -123,17 +123,6 @@ export default function Sidebar() {
         </div>
 
         <nav className="sb-nav" aria-label="Problems">
-          <Link
-            href="/"
-            className="sb-home"
-            data-active={pathname === "/"}
-            title="Home — latest & search"
-          >
-            <span className="sb-home-glyph" aria-hidden>
-              ⌂
-            </span>
-            <span className="sb-item-title">Home &amp; latest</span>
-          </Link>
 
           {total === 0 ? (
             <div className="sb-empty">No problems match &ldquo;{query}&rdquo;.</div>

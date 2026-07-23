@@ -1873,18 +1873,11 @@ html[data-sidebar="collapsed"] .app-main {
 .feed-item {
   background: var(--bg-raised);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--line);
   border-radius: 10px;
-  padding: 13px 16px;
+  padding: 12px 15px;
 }
-.feed-item[data-kind="solve"] {
-  border-left-color: #6ea8ff;
-}
-.feed-item[data-kind="note"] {
-  border-left-color: var(--accent);
-}
-.feed-item[data-kind="post"] {
-  border-left-color: var(--even);
+.feed-item:hover {
+  border-color: var(--ink-dim);
 }
 .feed-item-meta {
   display: flex;
@@ -1927,37 +1920,11 @@ html[data-sidebar="collapsed"] .app-main {
   font-family: var(--serif);
   font-size: 16.5px;
   color: var(--ink);
-  margin: 2px 0 4px;
+  margin: 4px 0 0;
 }
 a.feed-item-title:hover {
   color: var(--accent);
   text-decoration: none;
-}
-.feed-summary {
-  font-size: 13.5px;
-  color: var(--ink-dim);
-  margin: 4px 0 0;
-  max-width: 74ch;
-}
-.feed-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  margin-top: 8px;
-}
-.feed-links a {
-  font-size: 12px;
-  color: var(--link);
-  border-bottom: 1px solid rgba(110, 168, 255, 0.35);
-}
-.feed-links a:hover {
-  border-bottom-color: var(--link);
-  text-decoration: none;
-}
-.feed-link-plain {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-faint);
 }
 
 /* ---------- sidebar: home button + admin controls ---------- */
@@ -2269,12 +2236,11 @@ a.feed-item-title:hover {
   scrollbar-color: var(--line) transparent;
 }
 .feed-item {
-  flex: 0 0 300px;
+  flex: 0 0 260px;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  min-height: 176px;
-  border-left-width: 3px;
+  justify-content: flex-start;
 }
 .feed-item-title {
   /* two lines max so cards stay uniform */
@@ -2283,19 +2249,9 @@ a.feed-item-title:hover {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.feed-summary {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  flex: 1;
-}
-.feed-links {
-  margin-top: 10px;
-}
 @media (max-width: 560px) {
   .feed-item {
-    flex-basis: 82vw;
+    flex-basis: 78vw;
   }
 }
 

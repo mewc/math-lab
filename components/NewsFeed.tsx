@@ -78,22 +78,6 @@ function FeedCard({ item }: { item: FeedItem }) {
         <time className="feed-date">{formatDate(item.date)}</time>
       </div>
       {titleNode}
-      <p className="feed-summary">{item.summary}</p>
-      {item.links && item.links.length > 0 && (
-        <div className="feed-links">
-          {item.links.map((l, i) =>
-            l.url ? (
-              <a key={i} href={l.url} target="_blank" rel="noreferrer noopener">
-                {l.label}
-              </a>
-            ) : (
-              <span key={i} className="feed-link-plain">
-                {l.label}
-              </span>
-            ),
-          )}
-        </div>
-      )}
     </li>
   );
 }
