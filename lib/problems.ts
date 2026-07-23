@@ -19,9 +19,24 @@ export type Category =
   | "Graph Decompositions"
   | "Algorithms & Simulation";
 
+/**
+ * An illustrative image shown in the dossier — a diagram, screenshot, or figure.
+ * `src` is a path under /public. Keep `alt` descriptive and `credit` honest.
+ */
+export interface Figure {
+  src: string;
+  alt: string;
+  /** Shown beneath the image in small print. */
+  caption?: string;
+  /** Attribution/source line, e.g. "In-lab render" or a share link label. */
+  credit?: string;
+}
+
 export interface ProblemNote {
   date: string; // ISO date of the note
   body: string;
+  /** Optional figure illustrating this note (diagram, screenshot). */
+  figure?: Figure;
 }
 
 /** An external reference or source. Rendered as a link when `url` is present. */
@@ -45,6 +60,8 @@ export interface ProblemSolution {
   approach: string;
   /** Where it's written up / verified — external or in-lab links. */
   links?: ProblemRef[];
+  /** Optional figure — a screenshot of the solve, a certificate render, etc. */
+  figure?: Figure;
 }
 
 export interface Problem {
@@ -201,6 +218,13 @@ export const PROBLEMS: Problem[] = [
         },
         { label: "In-lab verifier — research/dgg-counterexample.ts" },
       ],
+      figure: {
+        src: "/figures/dgg-counterexample-chat.png",
+        alt: "Deep-reasoning chat: after being pushed for a complete unconditional counterexample, the model returns a finite exhaustive certificate for Goemans' cost conjecture.",
+        caption:
+          "The turn that landed it: pressed to stop at partial results and produce a complete unconditional counterexample, the campaign returned a finite, integer-checkable certificate (Conjecture 1.3 as stated in the uploaded paper).",
+        credit: "ChatGPT deep-reasoning share, 2026-07-23",
+      },
     },
     notes: [
       {
@@ -210,6 +234,13 @@ export const PROBLEMS: Problem[] = [
       {
         date: "2026-07-23",
         body: "Iteration 4 — complete counterexample. V={s,u,v,w,t₁,t₂,t₃}; demands d=(15,10,15), D=15. Each terminal has a cheap direct path Eᵢ (unit cost, total 30) and a zero-cost detour Zᵢ through the shared spine s→u→v→w. Any two detours overload a spine arc (Z₂+Z₃: v→w carries 25>24; Z₁+Z₃: u→v 30>29; Z₁+Z₂: s→u 40>39), so every congestion-good routing uses ≤1 detour ⇒ ≥2 direct paths ⇒ cost ≥ 60 > 58 = cᵀx. The three Zᵢ are the stable-set system of a triangle with Pr = 1/3+2/5+1/3 = 16/15 > 1: the fractional point violates the triangle inequality z₁+z₂+z₃≤1 that every good routing satisfies, and the E-costs are the nonnegative complementary separator.",
+        figure: {
+          src: "/figures/dgg-counterexample-instance.png",
+          alt: "The counterexample instance: single source s routing to terminals t₁, t₂, t₃ through spine nodes u, v, w, with per-arc flow, cost, and demand labels.",
+          caption:
+            "The fractional flow x on the 7-vertex instance (source s; terminals t₁,t₂,t₃ with demands 15,10,15; spine s→u→v→w). Blue = flow, red = arc cost, yellow = terminal demand. Every congestion-good unsplittable routing of this x costs ≥ 60 > 58 = cᵀx.",
+          credit: "In-lab render of research/dgg-counterexample.ts",
+        },
       },
       {
         date: "2026-07-23",
