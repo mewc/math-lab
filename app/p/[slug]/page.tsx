@@ -40,7 +40,9 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
           </Link>
         </span>
         <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>{p.category}</span>
-        <span className="status-chip">{STAGE_LABEL[p.stage]}</span>
+        <span className="status-chip" data-stage={p.stage}>
+          {STAGE_LABEL[p.stage]}
+        </span>
       </header>
 
       <div className="shell" style={{ gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 940 }}>
@@ -115,6 +117,28 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
               corrections kept on the record. &ldquo;Open&rdquo; means open.
             </div>
           </section>
+
+          {p.refs && p.refs.length > 0 && (
+            <section className="chapter">
+              <div className="chapter-head">
+                <span className="num">§5</span>
+                <h2>References</h2>
+              </div>
+              <ul className="ref-list">
+                {p.refs.map((ref, i) => (
+                  <li key={i}>
+                    {ref.url ? (
+                      <a href={ref.url} target="_blank" rel="noreferrer noopener">
+                        {ref.label}
+                      </a>
+                    ) : (
+                      ref.label
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </main>
       </div>
     </>

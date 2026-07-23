@@ -91,6 +91,10 @@ code,
   padding: 3px 12px;
   white-space: nowrap;
 }
+.topbar .status-chip[data-stage="solved"] {
+  color: #6ea8ff;
+  border-color: rgba(110, 168, 255, 0.5);
+}
 
 .shell {
   display: grid;
@@ -801,6 +805,11 @@ sup.inline-sup {
   border-color: rgba(240, 180, 41, 0.45);
   background: var(--accent-soft);
 }
+.stage-badge[data-stage="solved"] {
+  color: #6ea8ff;
+  border-color: rgba(110, 168, 255, 0.5);
+  background: rgba(110, 168, 255, 0.1);
+}
 
 .empty-results {
   text-align: center;
@@ -833,4 +842,22 @@ sup.inline-sup {
 .note-entry p {
   margin: 4px 0 0;
   font-size: 14.5px;
+}
+.ref-list {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.ref-list li {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+.ref-list a {
+  color: #6ea8ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(110, 168, 255, 0.35);
+}
+.ref-list a:hover {
+  border-bottom-color: #6ea8ff;
 }

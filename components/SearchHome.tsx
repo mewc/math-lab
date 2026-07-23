@@ -31,7 +31,8 @@ function score(p: Problem, tokens: string[]): number {
     if (s === 0) return 0; // every token must hit
     total += s;
   }
-  if (p.stage === "live") total += 5;
+  if (p.stage === "solved") total += 6;
+  else if (p.stage === "live") total += 5;
   else if (p.stage === "started") total += 3;
   return total;
 }
