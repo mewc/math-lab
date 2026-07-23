@@ -402,6 +402,20 @@ h3.sub {
   overflow-x: auto;
   color: var(--ink);
 }
+.mathbox math,
+.mathbox mi,
+.mathbox mo,
+.mathbox mn,
+.mathbox mtext,
+.mathbox mrow,
+.mathbox mfrac,
+.mathbox msup,
+.mathbox msub,
+.mathbox munder,
+.mathbox mover,
+.mathbox munderover {
+  color: inherit;
+}
 .mathbox .cases {
   display: inline-grid;
   grid-template-columns: auto auto;
@@ -1326,7 +1340,7 @@ html[data-sidebar="collapsed"] .app-main {
   align-items: center;
   gap: 9px;
   background: var(--accent);
-  color: #14110a;
+  color: var(--accent-foreground);
   border: none;
   border-radius: 9px;
   padding: 9px 12px;
@@ -1347,6 +1361,49 @@ html[data-sidebar="collapsed"] .app-main {
   padding: 2px 2px;
 }
 .sb-gh:hover {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.sb-iconrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sb-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-inset);
+  color: var(--ink-dim);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  line-height: 1;
+}
+.sb-iconbtn:hover {
+  color: var(--ink);
+  border-color: var(--ink-dim);
+  background: var(--bg-raised);
+}
+.sb-iconbtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sb-solved {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink-dim);
+  font-size: 12.5px;
+  padding: 2px 2px;
+}
+.sb-solved:hover {
   color: var(--ink);
   text-decoration: none;
 }
@@ -1392,7 +1449,17 @@ html[data-sidebar="collapsed"] .app-main {
   font-size: 18px;
   border-radius: 10px;
 }
-.sidebar[data-collapsed="true"] .sb-gh {
+.sidebar[data-collapsed="true"] .sb-iconrow {
+  flex-direction: column;
+  gap: 6px;
+}
+.sidebar[data-collapsed="true"] .sb-iconbtn {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  border-radius: 10px;
+}
+.sidebar[data-collapsed="true"] .sb-solved {
   justify-content: center;
   width: 40px;
   height: 40px;
@@ -1401,12 +1468,8 @@ html[data-sidebar="collapsed"] .app-main {
   border: 1px solid var(--line);
   border-radius: 10px;
 }
-.sidebar[data-collapsed="true"] .sb-gh:hover {
+.sidebar[data-collapsed="true"] .sb-solved:hover {
   border-color: var(--ink-dim);
-}
-/* declutter: drop RSS from the rail (it stays in the expanded footer) */
-.sidebar[data-collapsed="true"] .sb-rss {
-  display: none;
 }
 .sidebar[data-collapsed="true"] .sb-admin {
   border-top: none;

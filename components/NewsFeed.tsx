@@ -39,7 +39,7 @@ export default function NewsFeed({ limit = 8 }: { limit?: number }) {
         </h2>
         <a
           href="/feed.xml"
-          className="inline-flex items-center gap-1.5 text-[10.5px] tracking-[0.08em] text-muted-foreground uppercase hover:text-primary"
+          className="inline-flex items-center gap-1.5 text-[10.5px] tracking-[0.08em] text-foreground/70 uppercase hover:text-foreground"
           title="RSS feed"
           aria-label="RSS feed"
         >

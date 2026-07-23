@@ -7,6 +7,7 @@ import { CATEGORIES, PROBLEMS, problemHref, type Problem } from "@/lib/problems"
 import FeedbackModal, { REPO_URL, type FeedbackProblem } from "@/components/FeedbackModal";
 import CommandPalette from "@/components/CommandPalette";
 import ThemeControls from "@/components/ThemeControls";
+import { Rss } from "lucide-react";
 
 // Left nav that replaces the old top bar. Searchable and navigable "within
 // there": type to filter the whole registry, jump straight to any dossier.
@@ -154,23 +155,23 @@ export default function Sidebar() {
           <div className="sb-stats" title={`${PROBLEMS.length} problems · ${liveCount} live · ${tackledCount} tackled`}>
             {PROBLEMS.length} problems · {liveCount} live · {tackledCount} tackled
           </div>
+          <div className="sb-iconrow">
+            <ThemeControls />
+            <a className="sb-iconbtn" href="/feed.xml" title="RSS feed" aria-label="RSS feed">
+              <Rss className="size-4" />
+            </a>
+            <a className="sb-iconbtn" href={REPO_URL} target="_blank" rel="noreferrer noopener" title="GitHub repo" aria-label="GitHub">
+              <span aria-hidden>⌥</span>
+            </a>
+          </div>
           <button className="sb-submit" onClick={() => setFeedbackOpen(true)}>
             <span aria-hidden>✎</span>
             <span className="sb-submit-label">Submit / feedback</span>
           </button>
-          <a className="sb-gh" href={REPO_URL} target="_blank" rel="noreferrer noopener">
-            <span aria-hidden>⌥</span>
-            <span className="sb-gh-label">GitHub — PRs welcome</span>
-          </a>
-          <a className="sb-gh sb-rss" href="/feed.xml" title="RSS feed">
-            <span aria-hidden>⤳</span>
-            <span className="sb-gh-label">RSS — the latest</span>
-          </a>
-          <Link className="sb-gh" href="/solved" title="Think you've solved one? The playbook">
+          <Link className="sb-solved" href="/solved" title="Think you've solved one? The playbook">
             <span aria-hidden>✓</span>
             <span className="sb-gh-label">Solved something? Start here</span>
           </Link>
-          <ThemeControls />
         </div>
       </aside>
 
