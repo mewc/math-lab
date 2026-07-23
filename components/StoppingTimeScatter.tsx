@@ -101,7 +101,7 @@ export default function StoppingTimeScatter() {
         <path d={meanCurve} fill="none" stroke="#26c6a2" strokeWidth="1.8" strokeDasharray="5 4" />
         {records.map((n) => (
           <g key={n}>
-            <circle cx={x(n)} cy={y(times[n])} r="3.4" fill="#f0b429">
+            <circle cx={x(n)} cy={y(times[n])} r="3.4" fill="var(--accent)">
               <title>{`record: n=${n}, ${times[n]} steps`}</title>
             </circle>
           </g>
