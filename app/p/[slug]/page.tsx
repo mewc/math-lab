@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProblem, PROBLEMS, STAGE_LABEL } from "@/lib/problems";
+import ThemeToggle from "@/components/ThemeToggle";
 
 // Generic dossier scaffold for every registry problem that doesn't yet have a
 // hand-built page (Collatz has one at app/p/collatz/, which shadows this
@@ -41,6 +42,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
         </span>
         <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>{p.category}</span>
         <span className="status-chip">{STAGE_LABEL[p.stage]}</span>
+        <ThemeToggle />
       </header>
 
       <div className="shell" style={{ gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 940 }}>

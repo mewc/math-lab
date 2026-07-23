@@ -3,6 +3,7 @@ import Link from "next/link";
 import BalanceLab from "@/components/BalanceLab";
 import BalanceSpectrum from "@/components/BalanceSpectrum";
 import { Note } from "@/components/Note";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Math Lab — the 1/3–2/3 dossier",
@@ -53,6 +54,7 @@ export default function Page() {
         </span>
         <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>the 1/3–2/3 dossier</span>
         <span className="status-chip">status: open · since 1968</span>
+        <ThemeToggle />
       </header>
 
       <div className="shell">

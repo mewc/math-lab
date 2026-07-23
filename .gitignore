@@ -2,3 +2,7 @@ node_modules/
 .next/
 next-env.d.ts
 *.tsbuildinfo
+
+# Vercel CLI local link (do not commit)
+.vercel
+.env*.local

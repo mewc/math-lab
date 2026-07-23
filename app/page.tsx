@@ -1,4 +1,5 @@
 import SearchHome from "@/components/SearchHome";
+import ThemeToggle from "@/components/ThemeToggle";
 import { PROBLEMS } from "@/lib/problems";
 
 export default function Page() {
@@ -14,6 +15,7 @@ export default function Page() {
         <span className="status-chip" style={{ color: "var(--even)", borderColor: "rgba(38, 198, 162, 0.4)" }}>
           {PROBLEMS.length} problems · {live} live · {started} tackled
         </span>
+        <ThemeToggle />
       </header>
       <div className="home-shell">
         <SearchHome />

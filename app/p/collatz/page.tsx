@@ -4,6 +4,7 @@ import HailstoneExplorer from "@/components/HailstoneExplorer";
 import StoppingTimeScatter from "@/components/StoppingTimeScatter";
 import VariantLab from "@/components/VariantLab";
 import { Note } from "@/components/Note";
+import ThemeToggle from "@/components/ThemeToggle";
 
 // The Collatz dossier — imported from apps/collatz-lab (which remains its own
 // standalone island; this is a copy, not a dependency). The flagship "live"
@@ -65,6 +66,7 @@ export default function Page() {
           the attack log →
         </Link>
         <span className="status-chip">status: unsolved · 89 years</span>
+        <ThemeToggle />
       </header>
 
       <div className="shell">

@@ -84,29 +84,29 @@ export default function StoppingTimeScatter() {
       <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label="Scatter plot of total stopping times">
         {yTicks.map((t) => (
           <g key={t}>
-            <line x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} stroke="#1a2030" />
-            <text x={PAD.l - 6} y={y(t) + 3.5} textAnchor="end" fontSize="10" fill="#5d6575" fontFamily="monospace">
+            <line x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} stroke="var(--line-soft)" />
+            <text x={PAD.l - 6} y={y(t) + 3.5} textAnchor="end" fontSize="10" fill="var(--ink-faint)" fontFamily="monospace">
               {t}
             </text>
           </g>
         ))}
         <path
           d={cloudPath}
-          stroke="#6aa9ff"
+          stroke="var(--link)"
           strokeWidth="2.1"
           strokeLinecap="round"
           opacity="0.42"
           fill="none"
         />
-        <path d={meanCurve} fill="none" stroke="#26c6a2" strokeWidth="1.8" strokeDasharray="5 4" />
+        <path d={meanCurve} fill="none" stroke="var(--even)" strokeWidth="1.8" strokeDasharray="5 4" />
         {records.map((n) => (
           <g key={n}>
-            <circle cx={x(n)} cy={y(times[n])} r="3.4" fill="#f0b429">
+            <circle cx={x(n)} cy={y(times[n])} r="3.4" fill="var(--accent)">
               <title>{`record: n=${n}, ${times[n]} steps`}</title>
             </circle>
           </g>
         ))}
-        <text x={W - PAD.r} y={H - 8} textAnchor="end" fontSize="10" fill="#5d6575" fontFamily="monospace">
+        <text x={W - PAD.r} y={H - 8} textAnchor="end" fontSize="10" fill="var(--ink-faint)" fontFamily="monospace">
           n →
         </text>
       </svg>

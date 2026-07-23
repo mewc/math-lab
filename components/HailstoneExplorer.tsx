@@ -42,14 +42,14 @@ function TrajectoryChart({ result }: { result: TrajectoryResult }) {
     <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label="Trajectory chart, log scale">
       {ticks.map((t) => (
         <g key={t}>
-          <line x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} stroke="#1a2030" strokeWidth="1" />
-          <text x={PAD.l - 6} y={y(t) + 3.5} textAnchor="end" fontSize="10" fill="#5d6575" fontFamily="monospace">
+          <line x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} stroke="var(--line-soft)" strokeWidth="1" />
+          <text x={PAD.l - 6} y={y(t) + 3.5} textAnchor="end" fontSize="10" fill="var(--ink-faint)" fontFamily="monospace">
             2^{t}
           </text>
         </g>
       ))}
-      <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} stroke="#232a3a" />
-      <path d={path} fill="none" stroke="#f0b429" strokeWidth="1.6" strokeLinejoin="round" />
+      <line x1={PAD.l} x2={W - PAD.r} y1={H - PAD.b} y2={H - PAD.b} stroke="var(--line)" />
+      <path d={path} fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinejoin="round" />
       {showDots &&
         steps.map((s) => (
           <circle
@@ -57,13 +57,13 @@ function TrajectoryChart({ result }: { result: TrajectoryResult }) {
             cx={x(s.index)}
             cy={y(s.log2)}
             r="2.4"
-            fill={s.parity === "odd" ? "#ef476f" : "#26c6a2"}
+            fill={s.parity === "odd" ? "var(--odd)" : "var(--even)"}
           >
             <title>{`step ${s.index}: ${s.value.toString()} (${s.parity})`}</title>
           </circle>
         ))}
-      <circle cx={x(result.peakIndex)} cy={y(steps[result.peakIndex].log2)} r="4.5" fill="none" stroke="#f0b429" strokeWidth="1.5" />
-      <text x={W - PAD.r} y={H - 8} textAnchor="end" fontSize="10" fill="#5d6575" fontFamily="monospace">
+      <circle cx={x(result.peakIndex)} cy={y(steps[result.peakIndex].log2)} r="4.5" fill="none" stroke="var(--accent)" strokeWidth="1.5" />
+      <text x={W - PAD.r} y={H - 8} textAnchor="end" fontSize="10" fill="var(--ink-faint)" fontFamily="monospace">
         step →
       </text>
     </svg>

@@ -102,11 +102,11 @@ export default function VariantLab() {
             const path = steps.map((s, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(s.log2).toFixed(1)}`).join("");
             return (
               <>
-                <text x="42" y="18" textAnchor="end" fontSize="10" fill="#5d6575" fontFamily="monospace">
+                <text x="42" y="18" textAnchor="end" fontSize="10" fill="var(--ink-faint)" fontFamily="monospace">
                   2^{Math.round(maxLog)}
                 </text>
-                <line x1="46" x2="788" y1="186" y2="186" stroke="#232a3a" />
-                <path d={path} fill="none" stroke={result.cycle ? "#ef476f" : result.reachedOne ? "#26c6a2" : "#ef476f"} strokeWidth="1.6" />
+                <line x1="46" x2="788" y1="186" y2="186" stroke="var(--line)" />
+                <path d={path} fill="none" stroke={result.cycle ? "var(--odd)" : result.reachedOne ? "var(--even)" : "var(--odd)"} strokeWidth="1.6" />
               </>
             );
           })()}

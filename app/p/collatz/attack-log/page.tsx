@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import AttackLog from "@/components/AttackLog";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Math Lab — Collatz: the attack log",
@@ -21,6 +22,7 @@ export default function AttackLogPage() {
           ← the dossier
         </Link>
         <span className="status-chip">status: unsolved · 89 years</span>
+        <ThemeToggle />
       </header>
       <div className="shell" style={{ gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 1000 }}>
         <main>

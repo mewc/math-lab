@@ -8,15 +8,26 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f0b429",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf8f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0e14" },
+  ],
 };
+
+// Applies the visitor's saved theme choice before first paint so there is no
+// flash of the wrong theme. If no explicit choice is stored we leave the
+// document alone and CSS `prefers-color-scheme` governs (system default).
+const NO_FLASH = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH }} />
+        {children}
+      </body>
     </html>
   );
 }
