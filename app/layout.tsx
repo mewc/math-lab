@@ -29,7 +29,10 @@ export const metadata: Metadata = {
   },
   description: DESCRIPTION,
   applicationName: SITE_NAME,
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    types: { "application/rss+xml": [{ url: "/feed.xml", title: "Math Lab — the latest" }] },
+  },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -58,8 +61,15 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1815" },
+  ],
 };
+
+// Applies the saved theme (light/dark/system) to <html> before first paint so
+// there's no flash of the wrong theme. Mirrors the logic in ThemeControls.
+const THEME_SCRIPT = `(function(){try{var k='mathlab-theme';var t=localStorage.getItem(k)||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -67,6 +77,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistMono.variable} ${prata.variable}`}>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <Sidebar />
         <div className="app-main">{children}</div>
       </body>

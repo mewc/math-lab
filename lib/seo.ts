@@ -63,6 +63,22 @@ export function tagFromSlug(slug: string): string | undefined {
   return TAG_BY_SLUG.get(slug);
 }
 
+/**
+ * A tag earns its own hub page only if it cuts across ≥ 2 problems. A
+ * single-problem tag page would just duplicate that one dossier — index bloat
+ * and thin content, the exact pSEO failure mode. Singletons still show as plain
+ * text on the dossier; they just aren't linkable pages.
+ */
+export const HUB_TAG_MIN = 2;
+
+export function hubTags(): TagEntry[] {
+  return allTags().filter((t) => t.count >= HUB_TAG_MIN);
+}
+
+export function isHubTag(tag: string): boolean {
+  return problemsWithTag(tag).length >= HUB_TAG_MIN;
+}
+
 export function problemsWithTag(tag: string): Problem[] {
   return PROBLEMS.filter((p) => p.tags.includes(tag)).sort(byInterest);
 }

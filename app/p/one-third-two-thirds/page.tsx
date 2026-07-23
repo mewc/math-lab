@@ -3,11 +3,31 @@ import Link from "next/link";
 import BalanceLab from "@/components/BalanceLab";
 import BalanceSpectrum from "@/components/BalanceSpectrum";
 import { Note } from "@/components/Note";
+import JsonLd from "@/components/JsonLd";
+import { getProblem } from "@/lib/problems";
+import { breadcrumbLd, categorySlug, problemLd } from "@/lib/seo";
+
+const DESCRIPTION =
+  "An annotated dossier on the 1/3–2/3 conjecture for posets: exact linear-extension instruments, an exhaustive machine-verified campaign over every poset on up to 9 elements, and the extremal landscape at 1/3.";
 
 export const metadata: Metadata = {
-  title: "Math Lab — the 1/3–2/3 dossier",
-  description:
-    "An annotated dossier on the 1/3–2/3 conjecture for posets: exact linear-extension instruments, an exhaustive machine-verified campaign over every poset on up to 9 elements, and the extremal landscape at 1/3.",
+  title: "1/3–2/3 conjecture — the poset balance dossier",
+  description: DESCRIPTION,
+  keywords: [
+    "1/3–2/3 conjecture",
+    "posets",
+    "linear extensions",
+    "balance constant",
+    "Kahn–Saks",
+    "sorting",
+  ],
+  alternates: { canonical: "/p/one-third-two-thirds" },
+  openGraph: {
+    type: "article",
+    title: "1/3–2/3 conjecture — the poset balance dossier",
+    description: DESCRIPTION,
+    url: "/p/one-third-two-thirds",
+  },
 };
 
 const SECTIONS = [
@@ -43,8 +63,17 @@ function Chapter({
 }
 
 export default function Page() {
+  const p = getProblem("one-third-two-thirds")!;
   return (
     <>
+      <JsonLd data={problemLd(p)} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Math Lab", path: "/" },
+          { name: p.category, path: `/problems/${categorySlug(p.category)}` },
+          { name: p.title, path: "/p/one-third-two-thirds" },
+        ])}
+      />
       <div className="shell">
         <nav className="toc" aria-label="Contents">
           <div className="crumbs">
