@@ -33,20 +33,14 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">
-          <Link href="/" style={{ color: "inherit" }}>
-            <b>Math</b> Lab
-          </Link>
-        </span>
-        <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>{p.category}</span>
-        <span className="status-chip" data-stage={p.stage}>
-          {STAGE_LABEL[p.stage]}
-        </span>
-      </header>
-
       <div className="shell" style={{ gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 940 }}>
         <main>
+          <div className="crumbs">
+            <Link href="/">← all problems</Link>
+            <span className="status-chip" data-stage={p.stage}>
+              {STAGE_LABEL[p.stage]}
+            </span>
+          </div>
           <div className="hero">
             <div className="kicker">Problem dossier · {p.category}</div>
             <h1>{p.title}</h1>

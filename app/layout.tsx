@@ -1,5 +1,20 @@
 import type { Metadata, Viewport } from "next";
+import { Geist_Mono, Prata } from "next/font/google";
+import Sidebar from "@/components/Sidebar";
 import "./globals.css";
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
+
+const prata = Prata({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-prata",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Math Lab — the open problems index",
@@ -8,15 +23,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f0b429",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${geistMono.variable} ${prata.variable}`}>
+      <body>
+        <Sidebar />
+        <div className="app-main">{children}</div>
+      </body>
     </html>
   );
 }

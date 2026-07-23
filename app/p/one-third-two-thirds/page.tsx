@@ -45,18 +45,12 @@ function Chapter({
 export default function Page() {
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">
-          <Link href="/" style={{ color: "inherit" }}>
-            <b>Math</b> Lab
-          </Link>
-        </span>
-        <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>the 1/3–2/3 dossier</span>
-        <span className="status-chip">status: open · since 1968</span>
-      </header>
-
       <div className="shell">
         <nav className="toc" aria-label="Contents">
+          <div className="crumbs">
+            <Link href="/">← all problems</Link>
+            <span className="status-chip">open · since 1968</span>
+          </div>
           <div className="toc-title">Contents</div>
           {SECTIONS.map(([id, title], i) => (
             <a key={id} href={`#${id}`}>

@@ -20,8 +20,12 @@ own — keep it self-contained (no external package deps, no DB, no server).
   `bun run research/iterationN.ts`; log in `research/RESEARCH.md`). Checked-in
   datasets for instruments are generated (e.g. `research/emit-data.ts` →
   `lib/onethird-data.ts`) — regenerate, don't hand-edit.
-- No database, no auth, no server code — client-side computation only
-  (Collatz math is BigInt-exact in `lib/collatz.ts`; keep it that way).
+- No database, no auth — client-side computation only (Collatz math is
+  BigInt-exact in `lib/collatz.ts`; keep it that way). The **one** server seam
+  is `app/api/feedback/route.ts`: the Submit/feedback modal relays a note to
+  Slack via a bot token that must stay server-side (env `SLACK_BOT_TOKEN` +
+  `SLACK_FEEDBACK_CHANNEL`; see `.env.example`). No new deps — plain `fetch`.
+  Keep server code confined to that route.
 - Charts are hand-rolled inline SVG; don't add a chart library.
 - Content accuracy matters more than usual: statements and statuses in
   `lib/problems.ts` are honest research claims. "Open" means open; partial

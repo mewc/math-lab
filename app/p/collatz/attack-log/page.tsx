@@ -11,19 +11,12 @@ export const metadata: Metadata = {
 export default function AttackLogPage() {
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">
-          <Link href="/" style={{ color: "inherit" }}>
-            <b>Math</b> Lab
-          </Link>
-        </span>
-        <Link href="/p/collatz" style={{ fontSize: 13 }}>
-          ← the dossier
-        </Link>
-        <span className="status-chip">status: unsolved · 89 years</span>
-      </header>
       <div className="shell" style={{ gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 1000 }}>
         <main>
+          <div className="crumbs">
+            <Link href="/p/collatz">← the dossier</Link>
+            <Link href="/">all problems</Link>
+          </div>
           <div className="hero">
             <div className="kicker">Live execution · every number computed in this browser</div>
             <h1>

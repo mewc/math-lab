@@ -54,21 +54,12 @@ function Chapter({
 export default function Page() {
   return (
     <>
-      <header className="topbar">
-        <span className="wordmark">
-          <Link href="/" style={{ color: "inherit" }}>
-            <b>Math</b> Lab
-          </Link>
-        </span>
-        <span style={{ color: "var(--ink-faint)", fontSize: 13 }}>Collatz · the 3n + 1 dossier</span>
-        <Link href="/p/collatz/attack-log" style={{ fontSize: 13 }}>
-          the attack log →
-        </Link>
-        <span className="status-chip">status: unsolved · 89 years</span>
-      </header>
-
       <div className="shell">
         <nav className="toc" aria-label="Contents">
+          <div className="crumbs">
+            <Link href="/">← all problems</Link>
+            <Link href="/p/collatz/attack-log">the attack log →</Link>
+          </div>
           <div className="toc-title">Contents</div>
           {SECTIONS.map(([id, title], i) => (
             <a key={id} href={`#${id}`}>
