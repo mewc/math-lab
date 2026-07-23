@@ -89,6 +89,12 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
               <h2>Status</h2>
             </div>
             <p>{p.status}</p>
+            {p.stage !== "solved" && (
+              <div className="solved-cta">
+                Think you can crack this one?{" "}
+                <Link href="/solved">Read the playbook before you announce →</Link>
+              </div>
+            )}
           </section>
 
           <section className="chapter">

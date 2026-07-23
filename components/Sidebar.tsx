@@ -166,6 +166,10 @@ export default function Sidebar() {
             <span aria-hidden>⤳</span>
             <span className="sb-gh-label">RSS — the latest</span>
           </a>
+          <Link className="sb-gh" href="/solved" title="Think you've solved one? The playbook">
+            <span aria-hidden>✓</span>
+            <span className="sb-gh-label">Solved something? Start here</span>
+          </Link>
           <ThemeControls />
         </div>
       </aside>

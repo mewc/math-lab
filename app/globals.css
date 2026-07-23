@@ -2514,3 +2514,18 @@ a.feed-item-title:hover {
 .fb-playbook-hint a {
   color: var(--accent);
 }
+
+/* ---------- dossier → /solved call-to-action ---------- */
+.solved-cta {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-inset);
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.solved-cta a {
+  color: var(--accent);
+}
