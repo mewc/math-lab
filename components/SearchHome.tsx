@@ -47,7 +47,7 @@ function score(p: Problem, tokens: string[]): number {
   return total;
 }
 
-export default function SearchHome({ feed, banner }: { feed?: ReactNode; banner?: ReactNode }) {
+export default function SearchHome({ feed }: { feed?: ReactNode }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | null>(null);
   const [stages, setStages] = useState<Set<Stage>>(() => new Set(ALL_STAGES));
@@ -194,7 +194,6 @@ export default function SearchHome({ feed, banner }: { feed?: ReactNode; banner?
       </div>
 
       {feed && query.trim() === "" && activeFilters === 0 && feed}
-      {banner && query.trim() === "" && activeFilters === 0 && banner}
 
       <div className="result-count">
         {results.length} {results.length === 1 ? "problem" : "problems"}

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import SearchHome from "@/components/SearchHome";
 import NewsFeed from "@/components/NewsFeed";
-import HomeMemeLoop from "@/components/HomeMemeLoop";
 import { CATEGORIES } from "@/lib/problems";
 import { categorySlug, hubTags } from "@/lib/seo";
 
@@ -11,7 +10,7 @@ export default function Page() {
 
   return (
     <div className="home-shell">
-      <SearchHome feed={<NewsFeed limit={6} />} banner={<HomeMemeLoop />} />
+      <SearchHome feed={<NewsFeed limit={6} />} />
 
       {/* Server-rendered internal-link layer. The search filters above are
           client-only; these real <a>s give crawlers (and AI answer engines) a

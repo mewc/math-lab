@@ -61,6 +61,50 @@ function FeedCard({ item }: { item: FeedItem }) {
   const href = feedItemHref(item);
   const internal = href?.startsWith("/") ?? false;
 
+  // Memes are image-only cards — no title/summary. A small corner tag keeps them
+  // honestly labeled as memes; the image links out when there's a real source.
+  if (item.kind === "meme" && item.image) {
+    const media = (
+      <div className="relative h-full w-full">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={item.image}
+          alt={item.imageAlt ?? item.title}
+          loading="lazy"
+          className="h-full w-full bg-[var(--bg-inset)] object-contain"
+        />
+        <span className="absolute top-2 left-2 rounded bg-background/70 px-1.5 py-0.5 text-[9px] tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
+          Meme
+        </span>
+      </div>
+    );
+    return (
+      <li className="max-md:basis-[86vw] flex shrink-0 basis-[320px] snap-start list-none">
+        <Card className="h-full w-full gap-0 overflow-hidden p-0">
+          {href ? (
+            internal ? (
+              <Link href={href} className="block h-full w-full" aria-label={item.title}>
+                {media}
+              </Link>
+            ) : (
+              <a
+                href={href}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="block h-full w-full"
+                aria-label={item.title}
+              >
+                {media}
+              </a>
+            )
+          ) : (
+            media
+          )}
+        </Card>
+      </li>
+    );
+  }
+
   const title = "line-clamp-2 text-[16.5px] leading-snug text-foreground hover:text-primary";
   const titleNode = href ? (
     internal ? (
