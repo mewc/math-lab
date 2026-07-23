@@ -7,3 +7,4 @@ next-env.d.ts
 
 # Conductor machine-local workspace config
 .conductor/settings.local.toml
+.env*

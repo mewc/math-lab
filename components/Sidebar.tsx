@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORIES, PROBLEMS, problemHref, type Problem } from "@/lib/problems";
 import FeedbackModal, { REPO_URL, type FeedbackProblem } from "@/components/FeedbackModal";
+import ThemeControls from "@/components/ThemeControls";
 
 // Left nav that replaces the old top bar. Searchable and navigable "within
 // there": type to filter the whole registry, jump straight to any dossier.
@@ -108,6 +109,18 @@ export default function Sidebar() {
         </div>
 
         <nav className="sb-nav" aria-label="Problems">
+          <Link
+            href="/"
+            className="sb-home"
+            data-active={pathname === "/"}
+            title="Home — latest & search"
+          >
+            <span className="sb-home-glyph" aria-hidden>
+              ⌂
+            </span>
+            <span className="sb-item-title">Home &amp; latest</span>
+          </Link>
+
           {total === 0 ? (
             <div className="sb-empty">No problems match &ldquo;{query}&rdquo;.</div>
           ) : (
@@ -146,6 +159,11 @@ export default function Sidebar() {
             <span aria-hidden>⌥</span>
             <span className="sb-gh-label">GitHub — PRs welcome</span>
           </a>
+          <a className="sb-gh" href="/feed.xml" title="RSS feed">
+            <span aria-hidden>⤳</span>
+            <span className="sb-gh-label">RSS — the latest</span>
+          </a>
+          <ThemeControls />
         </div>
       </aside>
 

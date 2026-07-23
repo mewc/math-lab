@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Prata } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -16,10 +17,31 @@ const prata = Prata({
   display: "swap",
 });
 
+const DESCRIPTION =
+  "One searchable index of open, computationally approachable math problems — each with a precise statement, honest status, and an attack plan. Tackled problems grow into live dossiers, starting with Collatz.";
+
 export const metadata: Metadata = {
-  title: "Math Lab — the open problems index",
-  description:
-    "One searchable index of open, computationally approachable math problems — each with a precise statement, honest status, and an attack plan. Tackled problems grow into live dossiers, starting with Collatz.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Math Lab — the open problems index",
+    // Child pages set a keyword-led title; this appends the brand.
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    url: SITE_URL,
+    title: "Math Lab — the open problems index",
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Math Lab — the open problems index",
+    description: DESCRIPTION,
+  },
   manifest: "/manifest.json",
   // Favicon stack (abacus, theme-aware) generated with favicontools.com
   icons: {

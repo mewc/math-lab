@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   CATEGORIES,
@@ -15,7 +15,10 @@ import {
 
 // Client-side search over the whole registry. Simple token scoring: every
 // query token must match somewhere; title/aka hits rank above tag hits, which
-// rank above statement hits. Tackled problems break ties upward.
+// rank above statement hits. Tackled problems break ties upward. A funnel
+// button beside the search input opens a popover with category + stage filters.
+
+const ALL_STAGES: Stage[] = ["solved", "live", "started", "untouched"];
 
 function score(p: Problem, tokens: string[]): number {
   const title = p.title.toLowerCase();
@@ -38,15 +41,37 @@ function score(p: Problem, tokens: string[]): number {
   return total;
 }
 
-export default function SearchHome() {
+export default function SearchHome({ feed }: { feed?: ReactNode }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | null>(null);
-  const [tackledOnly, setTackledOnly] = useState(false);
+  const [stages, setStages] = useState<Set<Stage>>(() => new Set(ALL_STAGES));
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  const stagesFiltered = stages.size !== ALL_STAGES.length;
+  const activeFilters = (category ? 1 : 0) + (stagesFiltered ? 1 : 0);
+
+  // Close the popover on outside click or Escape.
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFiltersOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFiltersOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [filtersOpen]);
 
   const results = useMemo(() => {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
     let list = PROBLEMS.filter(
-      (p) => (!category || p.category === category) && (!tackledOnly || p.stage !== "untouched"),
+      (p) => (!category || p.category === category) && stages.has(p.stage),
     );
     if (tokens.length > 0) {
       list = list
@@ -56,7 +81,22 @@ export default function SearchHome() {
         .map((r) => r.p);
     }
     return list;
-  }, [query, category, tackledOnly]);
+  }, [query, category, stages]);
+
+  function toggleStage(s: Stage) {
+    setStages((prev) => {
+      const next = new Set(prev);
+      if (next.has(s)) next.delete(s);
+      else next.add(s);
+      // Never allow an empty set (would hide everything); reset to all instead.
+      return next.size === 0 ? new Set(ALL_STAGES) : next;
+    });
+  }
+
+  function resetFilters() {
+    setCategory(null);
+    setStages(new Set(ALL_STAGES));
+  }
 
   return (
     <>
@@ -69,55 +109,102 @@ export default function SearchHome() {
         </h1>
       </div>
 
-      <div className="searchbar">
-        <span className="search-glyph" aria-hidden>
-          ⌕
-        </span>
-        <input
-          type="search"
-          autoFocus
-          placeholder="Search problems — try “cycles”, “packing”, “sat”, “polynomials”…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          aria-label="Search problems"
-        />
+      <div className="searchbar-row">
+        <div className="searchbar">
+          <span className="search-glyph" aria-hidden>
+            ⌕
+          </span>
+          <input
+            type="search"
+            autoFocus
+            placeholder="Search problems — try “cycles”, “packing”, “sat”, “polynomials”…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search problems"
+          />
+        </div>
+
+        <div className="filter-wrap" ref={filterRef}>
+          <button
+            type="button"
+            className="filter-btn"
+            aria-label="Filter"
+            aria-expanded={filtersOpen}
+            data-active={activeFilters > 0}
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M3 5h18l-7 8v6l-4 2v-8L3 5z" />
+            </svg>
+            {activeFilters > 0 && <span className="filter-badge">{activeFilters}</span>}
+          </button>
+
+          {filtersOpen && (
+            <div className="filter-popover" role="dialog" aria-label="Filters">
+              <div className="fp-section">
+                <div className="fp-label">Category</div>
+                <div className="fp-chips">
+                  <button
+                    type="button"
+                    className="fp-chip"
+                    data-active={!category}
+                    onClick={() => setCategory(null)}
+                  >
+                    all
+                  </button>
+                  {CATEGORIES.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      className="fp-chip"
+                      data-active={category === c}
+                      onClick={() => setCategory((cur) => (cur === c ? null : c))}
+                    >
+                      {c.toLowerCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="fp-section">
+                <div className="fp-label">Stage</div>
+                <div className="fp-stages">
+                  {ALL_STAGES.map((s) => (
+                    <label key={s} className="fp-check">
+                      <input
+                        type="checkbox"
+                        checked={stages.has(s)}
+                        onChange={() => toggleStage(s)}
+                      />
+                      <span className="sb-dot" data-stage={s} aria-hidden />
+                      {STAGE_LABEL[s]}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="fp-foot">
+                <button type="button" className="fp-reset" onClick={resetFilters} disabled={activeFilters === 0}>
+                  Reset
+                </button>
+                <button type="button" className="fp-done" onClick={() => setFiltersOpen(false)}>
+                  Done
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="filter-row">
-        <button
-          type="button"
-          className="filter-chip"
-          data-active={!category && !tackledOnly}
-          onClick={() => {
-            setCategory(null);
-            setTackledOnly(false);
-          }}
-        >
-          all
-        </button>
-        <button
-          type="button"
-          className="filter-chip"
-          data-active={tackledOnly}
-          onClick={() => setTackledOnly((v) => !v)}
-        >
-          tackled
-        </button>
-        {CATEGORIES.map((c) => (
-          <button
-            key={c}
-            type="button"
-            className="filter-chip"
-            data-active={category === c}
-            onClick={() => setCategory((cur) => (cur === c ? null : c))}
-          >
-            {c.toLowerCase()}
-          </button>
-        ))}
-      </div>
+      {feed && query.trim() === "" && activeFilters === 0 && feed}
 
       <div className="result-count">
         {results.length} {results.length === 1 ? "problem" : "problems"}
+        {activeFilters > 0 && (
+          <button type="button" className="result-clear" onClick={resetFilters}>
+            clear filters
+          </button>
+        )}
       </div>
 
       {results.length === 0 ? (
