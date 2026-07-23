@@ -94,12 +94,9 @@ function FeedCard({ item }: { item: FeedItem }) {
   );
 
   return (
-    <li className="max-md:basis-[82vw] shrink-0 basis-[300px] snap-start list-none">
-      <Card
-        className="h-full gap-3 border-l-[3px] py-4"
-        style={{ borderLeftColor: KIND_ACCENT[item.kind] }}
-      >
-        <div className="flex flex-col gap-2 px-4">
+    <li className="max-md:basis-[86vw] flex shrink-0 basis-[320px] snap-start list-none">
+      <Card className="h-full w-full gap-2.5 py-4">
+        <div className="flex h-full flex-col gap-2 px-4">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="text-[9.5px] tracking-wider uppercase">
               {FEED_KIND_LABEL[item.kind]}
@@ -114,6 +111,9 @@ function FeedCard({ item }: { item: FeedItem }) {
             </time>
           </div>
           {titleNode}
+          <p className="line-clamp-4 text-[12.5px] leading-relaxed text-muted-foreground">
+            {item.summary}
+          </p>
         </div>
       </Card>
     </li>
