@@ -168,17 +168,18 @@ export default function SearchHome({ feed }: { feed?: ReactNode }) {
 
               <div className="fp-section">
                 <div className="fp-label">Stage</div>
-                <div className="fp-stages">
+                <div className="fp-chips">
                   {ALL_STAGES.map((s) => (
-                    <label key={s} className="fp-check">
-                      <input
-                        type="checkbox"
-                        checked={stages.has(s)}
-                        onChange={() => toggleStage(s)}
-                      />
+                    <button
+                      key={s}
+                      type="button"
+                      className="fp-chip fp-chip-stage"
+                      data-active={stages.has(s)}
+                      onClick={() => toggleStage(s)}
+                    >
                       <span className="sb-dot" data-stage={s} aria-hidden />
                       {STAGE_LABEL[s]}
-                    </label>
+                    </button>
                   ))}
                 </div>
               </div>
