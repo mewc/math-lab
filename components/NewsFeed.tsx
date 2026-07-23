@@ -101,6 +101,17 @@ function FeedCard({ item }: { item: FeedItem }) {
               {formatDate(item.date)}
             </time>
           </div>
+          {item.image && (
+            <div className="overflow-hidden rounded-md border bg-[var(--bg-inset)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.image}
+                alt={item.imageAlt ?? ""}
+                loading="lazy"
+                className="h-[150px] w-full object-contain"
+              />
+            </div>
+          )}
           {titleNode}
           <p className="line-clamp-4 text-[12.5px] leading-relaxed text-muted-foreground">
             {item.summary}

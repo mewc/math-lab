@@ -17,7 +17,7 @@
 
 import { PROBLEMS, problemHref, type ProblemRef } from "@/lib/problems";
 
-export type FeedKind = "solve" | "post" | "note" | "release";
+export type FeedKind = "solve" | "post" | "note" | "release" | "meme";
 
 /** Where an item came from — drives the little source glyph/label in the UI. */
 export type FeedSource = "chatgpt" | "x" | "lab" | "github" | "web";
@@ -36,6 +36,10 @@ export interface FeedItem {
   source?: FeedSource;
   /** External / in-lab links (write-ups, posts, verifiers). */
   links?: ProblemRef[];
+  /** Optional image (path under /public, e.g. a meme) — shown in the card + RSS. */
+  image?: string;
+  /** Alt text for `image`. */
+  imageAlt?: string;
 }
 
 // --------------------------------------------------------------------------
@@ -74,6 +78,55 @@ export const CURATED_FEED: FeedItem[] = [
   //   source: "x",
   //   links: [{ label: "View on X", url: "https://x.com/…/status/…" }],
   // },
+
+  // Memes — clearly tagged as memes (kind "meme"), not research claims. Being a
+  // little funny is fine; keep it honest by labeling them and only linking to
+  // real sources (the cat is from the trending X topic; the comics have no known
+  // canonical source, so they carry no link).
+  {
+    id: "meme-open-x-every-6-hours",
+    date: "2026-07-23",
+    kind: "meme",
+    title: "Meme: open X every 6 hours → AI disproves another conjecture",
+    summary:
+      "It's a meme, but it's the mood of the week: refresh the timeline, another conjecture falls. Fitting — the DGG cost conjecture just went down by counterexample.",
+    source: "x",
+    image: "/figures/ai-disproves-conjecture.png",
+    imageAlt: "A cat captioned 'open X every 6 hours → AI disproves another conjecture', on a loop.",
+    links: [{ label: "The trending topic on X", url: "https://x.com/i/trending/2080179717932458044" }],
+  },
+  {
+    id: "meme-pls-continue-counterexample",
+    date: "2026-07-23",
+    kind: "meme",
+    title: "Meme: 'pls continue' → 'Fine. Counterexample attached.'",
+    summary:
+      "A meme going around: badgering the model past 'I couldn't find a counterexample' until it finally attaches one. Any resemblance to real research is coincidental. Mostly.",
+    image: "/figures/meme-disprove-conjecture.png",
+    imageAlt:
+      "Comic: 'Disprove the conjecture.' — 'I couldn't find a counterexample.' — 'pls continue' … 'Fine. Counterexample attached.' — 'oh my god.'",
+  },
+  {
+    id: "meme-complete-unconditional-counterexample",
+    date: "2026-07-23",
+    kind: "meme",
+    title: "Meme: 'complete unconditional counterexample' … 'oh my god.'",
+    summary:
+      "Another from the timeline: 'let's finish with a complete unconditional counterexample' → it finishes. A meme — but also basically the DGG solve log.",
+    image: "/figures/meme-complete-counterexample.png",
+    imageAlt:
+      "Comic: 'let's finish with a complete unconditional counterexample' → 'finished with complete counterexample' → 'oh my god.'",
+  },
+  {
+    id: "meme-dont-give-up-diamonds",
+    date: "2026-07-23",
+    kind: "meme",
+    title: "Meme: don't turn back three feet from the diamonds",
+    summary:
+      "The classic 'never give up' cartoon — the miner who turned back was inches from the vein. A meme, and a decent reminder for iteration 4.",
+    image: "/figures/meme-dont-give-up-diamonds.png",
+    imageAlt: "Cartoon: two miners — the one who turned back gave up inches from a wall of diamonds.",
+  },
 ];
 
 // --------------------------------------------------------------------------
@@ -147,7 +200,31 @@ export function buildFeed(limit?: number): FeedItem[] {
     merged.push(item);
   }
   merged.sort((a, b) => dateSortKey(b.date) - dateSortKey(a.date));
-  return typeof limit === "number" ? merged.slice(0, limit) : merged;
+
+  // Memes are timeless and share the same add-date, so a plain date sort clumps
+  // them all at the top. Weave them through the real timeline instead — one meme
+  // after every couple of substantive items — so the serious news leads and the
+  // funny stuff is sprinkled "in parts of" the feed rather than dumped up front.
+  const woven = weaveMemes(merged);
+  return typeof limit === "number" ? woven.slice(0, limit) : woven;
+}
+
+/** Interleave meme items through the non-meme timeline (order otherwise kept). */
+function weaveMemes(items: FeedItem[]): FeedItem[] {
+  const memes = items.filter((i) => i.kind === "meme");
+  if (memes.length === 0) return items;
+  const rest = items.filter((i) => i.kind !== "meme");
+  if (rest.length === 0) return memes;
+
+  const GAP = 2; // a meme after every 2 substantive items
+  const out: FeedItem[] = [];
+  let m = 0;
+  for (let i = 0; i < rest.length; i++) {
+    out.push(rest[i]);
+    if (m < memes.length && (i + 1) % GAP === 0) out.push(memes[m++]);
+  }
+  while (m < memes.length) out.push(memes[m++]); // any leftover memes at the tail
+  return out;
 }
 
 /** Link target for a feed item: its problem dossier, else the first external URL. */
@@ -165,6 +242,7 @@ export const FEED_KIND_LABEL: Record<FeedKind, string> = {
   post: "Post",
   note: "Progress",
   release: "Release",
+  meme: "Meme",
 };
 
 export const FEED_SOURCE_LABEL: Record<FeedSource, string> = {
