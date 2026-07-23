@@ -102,6 +102,7 @@ function derivedItems(): FeedItem[] {
       const s = p.solution;
       const chatgpt = /chatgpt|gpt|openai/i.test(s.by) ||
         (s.links ?? []).some((l) => (l.url ?? "").includes("chatgpt.com"));
+      const x = (s.links ?? []).some((l) => /(^|\.)x\.com\//.test(l.url ?? ""));
       items.push({
         id: `solve-${p.slug}`,
         date: s.when ?? "",
@@ -109,7 +110,7 @@ function derivedItems(): FeedItem[] {
         title: `${p.title} — solved (${s.by})`,
         summary: s.approach,
         problemSlug: p.slug,
-        source: chatgpt ? "chatgpt" : "lab",
+        source: chatgpt ? "chatgpt" : x ? "x" : "lab",
         links: s.links,
       });
     }
