@@ -17,6 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, lastModified: siteModified, changeFrequency: "weekly", priority: 1 },
     { url: absUrl("/problems"), changeFrequency: "weekly", priority: 0.8 },
     { url: absUrl("/tags"), changeFrequency: "weekly", priority: 0.5 },
+    // Evergreen playbook — strong search/GEO target, rank it high.
+    { url: absUrl("/solved"), changeFrequency: "monthly", priority: 0.8 },
   ];
 
   const problemPages: MetadataRoute.Sitemap = PROBLEMS.map((p) => {

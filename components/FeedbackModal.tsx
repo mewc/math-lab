@@ -169,6 +169,13 @@ export default function FeedbackModal({
               ))}
             </div>
 
+            {category === "submit" && (
+              <p className="fb-playbook-hint">
+                Think you&apos;ve solved one?{" "}
+                <a href="/solved">Read the playbook first →</a>
+              </p>
+            )}
+
             <label className="fb-field">
               <textarea
                 ref={textareaRef}
