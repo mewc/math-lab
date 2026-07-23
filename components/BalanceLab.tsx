@@ -34,6 +34,16 @@ function build(n: number, edges: Array<[number, number]>): Poset {
 const PRESETS: Array<{ key: string; label: string; make: () => Poset }> = [
   { key: "onetwo", label: "1 + 2 (the extremal seed)", make: () => build(3, [[0, 2]]) },
   { key: "hook4", label: "hook H(4)", make: () => build(6, [[2, 3], [3, 4], [4, 5], [0, 2], [1, 3]]) },
+  {
+    key: "tower",
+    label: "tower (1+2) ⊕ (1+2)",
+    make: () =>
+      build(6, [
+        [0, 2],
+        [3, 5],
+        [0, 3], [0, 4], [1, 3], [1, 4], [2, 3], [2, 4],
+      ]),
+  },
   { key: "v", label: "V (one below two)", make: () => build(3, [[0, 1], [0, 2]]) },
   { key: "n", label: "N poset", make: () => build(4, [[0, 2], [1, 2], [1, 3]]) },
   { key: "twotwo", label: "2 + 2", make: () => build(4, [[0, 1], [2, 3]]) },

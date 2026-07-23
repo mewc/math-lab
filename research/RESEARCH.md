@@ -151,18 +151,48 @@ results, logged as results:
   into parts {1, 3}, i.e. towers assembled from chain-links (1 element) and
   hooks (3 elements). Predicts census(13) = 87; next falsifiable target.
 
+## Iteration 8 — the Tower Theorem & complete extremal characterization (2026-07-23)
+
+`research/iteration8.ts`
+
+- **THEOREM 2 (in-house; rigorous — the Tower Theorem).** Let P = B₁ ⊕ … ⊕
+  B_m be an ordinal sum with every block a single point or the 3-element
+  poset 1+2, and h ≥ 1 blocks equal to 1+2. Then e(P) = 3^h, every
+  incomparable pair of P sits at exactly {1/3, 2/3}, and b(P) = 1/3.
+  *Proof.* Linear extensions of an ordinal sum are exactly concatenations of
+  block extensions, so e(P) = Πe(Bᵢ) = 3^h and a uniform extension restricts
+  uniformly to each block. Incomparable pairs live only inside 1+2 blocks,
+  where each pair's minority order occurs in exactly one of the block's three
+  extensions. ∎  (Iteration 3's H(k) theorem is the case (1+2) ⊕ point^(k−1).)
+- **Converse verified on the whole known extremal class**: all 175 extremal
+  posets (grown class n ≤ 12; exhaustively confirmed n ≤ 10) ordinal-
+  decompose into {point, 1+2} blocks — 175/175, no exceptions.
+- **Constructive bijection**: generating one tower per composition of n into
+  parts {1, 3} (excluding all-1s = the chain) reproduces the extremal class
+  exactly — canonical set equality at every n ≤ 12. Hence
+  **census(n) = #compositions(n; {1,3}) − 1**, which also explains iteration
+  7's d(k) = d(k−1) + d(k−3) recurrence (append a 1-part or a 3-part) and
+  the e-distribution (h hooks ⇔ C(n−2h, h) compositions ⇔ e = 3^h).
+- Standing: the theorem direction is proved unconditionally; the converse
+  ("b(P) = 1/3 only for towers") is a conjecture verified through n = 10
+  exhaustively and n = 12 on the grown class. Both may exist in the
+  literature (equality cases of 1/3–2/3 are a natural question); unverifiable
+  offline, no novelty claimed.
+
 ## Loose ends / next iterations
 
 - ~~Prove b(H(k)) = 1/3~~ — done (iteration 3, slot argument).
 - ~~n = 10 exhaustive~~ — done (iteration 4, early-exit redesign).
-- Prove the tower theorem in general (m pairwise-separated hooks ⇒ e = 3^m,
-  every pair exactly 1/3) — same slot bookkeeping, straightforward.
-- Prove the converse characterization: every totally-balanced (all pairs
-  exactly 1/3) poset is a hook tower. Would turn the census recurrence
-  d(k) = d(k−1) + d(k−3) into a theorem via compositions into parts {1, 3}.
-- Exhaustively confirm census(11) = 40 (needs the n = 11 sweep: ~46M
-  candidates at 2048-mask DPs — roughly 10× iteration 4; feasible with
-  patience or parallelism). Then census(13) = 87 is the recurrence's test.
+- ~~Prove the tower theorem in general~~ — done (iteration 8, ordinal-sum
+  form; rigorous).
+- ~~Identify the extremal census law~~ — done (iteration 8: census(n) =
+  #compositions(n; {1,3}) − 1, constructive bijection verified n ≤ 12).
+- Prove the converse rigorously: b(P) = 1/3 ⇒ P is a tower of {point, 1+2}
+  blocks. Verified n ≤ 10 exhaustive / n ≤ 12 grown; a proof likely needs
+  the equality analysis of Kahn–Saks-type inequalities. Check literature
+  first — this may well be known.
+- n = 11 exhaustive sweep — running (iteration 9, 4 workers); tests
+  "0 below 1/3" and census(11) = 40 at the exhaustive level.
 - The accumulation question stands: explain the runner-up braid at n = 10
   (37/106), find the family it belongs to, and compute its limit. The
   gap sequence 1/15, 1/33, 1/42, 1/45, 1/51, 5/318 wants a law.

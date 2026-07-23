@@ -197,10 +197,11 @@ export default function Page() {
             <BalanceLab />
             <p>
               Things worth trying: <strong>1+2</strong>, the extremal seed, sits at exactly 1/3.
-              The <strong>hook H(4)</strong> — a 4-chain with two pendant feet — also lands at
-              exactly 1/3 (§5). The <strong>Boolean cube B₃</strong> is rigid with symmetry: its
-              best pair is perfectly fair at 1/2. Random posets essentially never come close to
-              1/3.
+              The <strong>hook H(4)</strong> and the <strong>tower (1+2) ⊕ (1+2)</strong> land at
+              exactly 1/3 too — they are the §5 characterization made clickable (note the
+              tower&apos;s 9 = 3² extensions and <em>every</em> pair at 1/3). The{" "}
+              <strong>Boolean cube B₃</strong> is rigid with symmetry: its best pair is perfectly
+              fair at 1/2. Random posets essentially never come close to 1/3.
             </p>
           </Chapter>
 
@@ -291,44 +292,53 @@ export default function Page() {
                 .
               </li>
               <li>
-                <strong>Extremal posets are totally balanced.</strong> In all 49 exactly-1/3 posets
-                on ≤ 9 elements, <em>every</em> incomparable pair sits at exactly 1/3 — none below
-                — and the extension count is always a power of 3 (49/49 on both counts). Extremal
-                posets look like towers of decoupled hooks, each hook contributing a factor of 3
+                <strong>Theorem 2 (in-house — the Tower Theorem).</strong> Every ordinal sum of
+                blocks, each a single point or a 1+2, with h ≥ 1 blocks of the 1+2 kind, has e =
+                3<sup className="inline-sup">h</sup>, every incomparable pair at exactly
+                &#123;1/3, 2/3&#125;, and hence b = 1/3
                 <Note n={11}>
-                  Directly buildable: stack a hook at the bottom of a long chain and a dual hook
-                  (two heads) at the top. Iteration 5 computed this two-hook tower exactly: for
-                  chain gap ≥ 3 the hooks decouple and b = 1/3 exactly with e = 9 = 3². The n = 10
-                  extremal posets have e ∈ &#123;3, 9, 27&#125; — towers of one, two, three hooks.
+                  <b>Proof.</b> A linear extension of an ordinal sum B₁ ⊕ … ⊕ B_m (everything in
+                  each block below everything in the next) is exactly a concatenation of linear
+                  extensions of the blocks — so e = Π e(Bᵢ) = 3<sup className="inline-sup">h</sup>,
+                  and a uniform random extension restricts to a uniform extension of each block.
+                  Incomparable pairs exist only inside 1+2 blocks, where each pair&apos;s minority
+                  order occurs in exactly one of the block&apos;s three extensions. ∎ The H(k)
+                  theorem above is the special case (1+2) ⊕ point<sup className="inline-sup">
+                  k−1</sup>. This gives an infinite, fully explicit family on which the
+                  conjectured bound is attained exactly at every size.
                 </Note>
-                . And every one carries an induced 1+2 pattern seeded at its extremal pair.
+                .
               </li>
               <li>
-                <strong>The extremal class is self-generating — confirmed by two independent
-                computations.</strong> Growing the class one element at a time from the single 1+2
-                seed reproduces the exhaustive census exactly at every level (1, 2, 3, 5, 8, 12,
-                18), and <em>predicted</em> 27 extremal posets at n = 10 — which the independent
-                early-exit sweep of all 8,070,524 candidates then confirmed: 27, on the nose
+                <strong>And the converse holds everywhere we can see:</strong> every extremal
+                poset in the verified range <em>is</em> such a tower. All 175 known extremal
+                posets (exhaustive through n = 10, grown class through n = 12) ordinal-decompose
+                into &#123;point, 1+2&#125; blocks, and generating one tower per composition of n
+                into parts &#123;1, 3&#125; (excluding the all-1s chain) reproduces the extremal
+                class <em>exactly</em> — canonical set equality at every level. The census
+                therefore obeys <strong>census(n) = #compositions(n; &#123;1,3&#125;) − 1</strong>
                 <Note n={12}>
-                  Two different programs, two different methods (constructive growth with
-                  canonical dedup vs. exhaustive generate-and-test), same answer. On the verified
-                  range, no extremal poset is an &ldquo;orphan&rdquo;: each contains an extremal
-                  poset of every smaller size down to the 1+2 seed. Grown further (closure
-                  assumed, awaiting exhaustive confirmation): 40 at n = 11 and 59 at n = 12, with
-                  e-distributions that stay pure powers of 3 — the first four-hook tower (e = 81)
-                  appears at n = 12. A characterization of the extremal class as &ldquo;hook
-                  towers&rdquo; looks provable by the same slot bookkeeping as the H(k) theorem —
-                  the campaign&apos;s next natural theorem.
+                  This single identity explains everything the census data showed: the
+                  d(k) = d(k−1) + d(k−3) difference recurrence (a composition ends in a 1-part or
+                  a 3-part), the counts 1, 2, 3, 5, 8, 12, 18, 27, 40, 59, and the e-distribution
+                  (h hooks ⇔ C(n−2h, h) compositions ⇔ e = 3<sup className="inline-sup">h</sup>).
+                  The growth computation also predicted 27 extremal posets at n = 10 before the
+                  exhaustive sweep independently confirmed 27 — two programs, two methods, same
+                  answer. Status, stated precisely: the theorem direction is proved; the converse
+                  (&ldquo;b(P) = 1/3 <em>only</em> for towers&rdquo;) is machine-verified through
+                  n = 10 exhaustively and n = 12 on the grown class, and is conjecture beyond —
+                  quite possibly known in the literature as the equality case of Kahn–Saks-era
+                  results; we cannot check offline and claim no novelty.
                 </Note>
                 .
               </li>
             </ul>
             <p>
-              The picture: 1/3 is not a small-n accident that larger posets escape — it is a
-              structural floor propped up by one 3-element pattern that embeds, tower-fashion, at
-              every scale. A proof of the conjecture has to explain why <em>nothing does worse</em>{" "}
-              than this pattern; a disproof has to beat it — and our sweep certifies nothing does,
-              anywhere below 11 elements.
+              The picture is now sharp: 1/3 is not a small-n accident — it is the exact floor of
+              an explicit, fully characterized family (towers of 1+2 blocks) that exists at every
+              size, and <em>nothing else touches it</em> anywhere in the verified range. A proof
+              of the conjecture has to explain why nothing does worse than a 1+2 block; a disproof
+              has to beat one — and our sweeps certify nothing does, anywhere below 11 elements.
             </p>
           </Chapter>
 

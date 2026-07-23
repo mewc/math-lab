@@ -227,6 +227,10 @@ export const PROBLEMS: Problem[] = [
         date: "2026-07-22",
         body: "Iterations 3–7: proved b(H(k)) = 1/3 for all k (three-slot insertion argument, machine cross-checked). Extremal posets are totally balanced: every incomparable pair exactly 1/3, e(P) always a power of 3 — hook towers. The extremal class is self-generating from the 1+2 seed; growing it predicted 27 extremal posets at n = 10, confirmed independently by an exhaustive early-exit sweep of all 2,567,284 ten-element posets (zero below 1/3 — the conjecture is now machine-verified through n = 10). Census differences obey d(k) = d(k−1) + d(k−3) (compositions into parts {1,3}); a first guess (A000792) was falsified by our own growth run — correction on the record. Runner-up at n = 10: 37/106 ≈ 0.34906, a single braided poset; seventh consecutive decrease toward 1/3.",
       },
+      {
+        date: "2026-07-23",
+        body: "Iteration 8 — the Tower Theorem (proved): every ordinal sum of {point, 1+2} blocks with h ≥ 1 blocks of 1+2 has e = 3^h, every incomparable pair exactly at {1/3, 2/3}, hence b = 1/3. Converse machine-verified on all 175 known extremal posets (exhaustive n ≤ 10, grown n ≤ 12): each is such a tower, via an explicit bijection with compositions of n into parts {1,3} minus the chain — so census(n) = c(n) − 1, closing the census law. Iteration 9 (n = 11 exhaustive, ~46.7M posets, 4 workers) launched to test 'zero below 1/3' and census 40.",
+      },
     ],
   },
   {
