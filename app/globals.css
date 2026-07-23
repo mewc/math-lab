@@ -1,4 +1,60 @@
 /* ---------------------------------------------------------------------------
+   Tailwind v4 + shadcn/ui. We import ONLY the theme + utilities layers (not
+   preflight): shadcn components need the utility classes, but the rest of the
+   app is hand-rolled CSS that predates Tailwind and must NOT be reset. The
+   design tokens live in :root/.dark below; @theme inline maps them onto
+   Tailwind's color/radius scale so `bg-primary`, `text-muted-foreground`,
+   `rounded-lg`, … resolve to the same palette.
+--------------------------------------------------------------------------- */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent-token);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Minimal base: shadcn expects a default border color; keep it in the base
+   layer so utility classes still win. (Preflight is intentionally excluded.) */
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--border);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Palette — shadcn-style theme tokens. `:root` is the default (light) theme;
    `.dark` holds the dark variant (no toggle is wired yet, so the site renders
    light). The hand-rolled semantic variables at the end of each block map the
@@ -35,7 +91,7 @@
   --radius: 0.5rem;
 
   /* fonts (wired via next/font in app/layout.tsx) */
-  --font-heading: var(--font-prata), Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-geist-mono), ui-monospace, Menlo, Consolas, monospace;
   --font-mono: var(--font-geist-mono), "SFMono-Regular", ui-monospace, Menlo, monospace;
 
@@ -126,12 +182,16 @@ body {
   color: var(--accent);
 }
 
-a {
-  color: var(--link);
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
+/* Base link styling lives in the base layer so Tailwind utility classes (used
+   by shadcn components) win over it — e.g. a Button rendered as <a>. */
+@layer base {
+  a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 }
 
 code,
@@ -2417,4 +2477,13 @@ a.feed-item-title:hover {
   .cmdk-foot {
     gap: 12px;
   }
+}
+
+/* Collapsed sidebar rail: compact the shadcn theme switch to icon-only. */
+.sidebar[data-collapsed="true"] .theme-controls {
+  justify-content: center;
+  padding: 6px;
+}
+.sidebar[data-collapsed="true"] .theme-controls-text {
+  display: none;
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Prata } from "next/font/google";
+import { Geist_Mono, Fraunces } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
@@ -10,10 +10,15 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const prata = Prata({
+// Fraunces: a sturdier, screen-friendly old-style serif (variable weights +
+// true italic). Replaces Prata, whose hairline didone strokes shimmered on
+// screen. The headings already ask for weight 500–700, which Prata (single
+// 400) couldn't honor — Fraunces renders them at their intended weight.
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-prata",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -75,7 +80,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistMono.variable} ${prata.variable}`}>
+    <html lang="en" className={`${geistMono.variable} ${fraunces.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <Sidebar />
