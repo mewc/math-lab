@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Rss } from "lucide-react";
+import { CheckCircle2, Rss } from "lucide-react";
 
 import {
   buildFeed,
@@ -65,13 +65,16 @@ function FeedCard({ item }: { item: FeedItem }) {
   // honestly labeled as memes; the image links out when there's a real source.
   if (item.kind === "meme" && item.image) {
     const media = (
-      <div className="relative h-full w-full">
+      <div className="relative flex h-full w-full items-center justify-center bg-[var(--bg-inset)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* Cap the height so a portrait meme can't stretch the whole row (and
+            leave the text cards with big empty gaps); object-contain + center
+            letterboxes shorter memes cleanly. */}
         <img
           src={item.image}
           alt={item.imageAlt ?? item.title}
           loading="lazy"
-          className="h-full w-full bg-[var(--bg-inset)] object-contain"
+          className="max-h-[260px] w-full object-contain"
         />
         <span className="absolute top-2 left-2 rounded bg-background/70 px-1.5 py-0.5 text-[9px] tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
           Meme
@@ -128,14 +131,29 @@ function FeedCard({ item }: { item: FeedItem }) {
     </span>
   );
 
+  // Solves are the marquee outcome — ring them in blue and give the badge a
+  // check so a solved problem reads as clearly "done" next to progress notes.
+  const isSolve = item.kind === "solve";
+
   return (
     <li className="max-md:basis-[86vw] flex shrink-0 basis-[320px] snap-start list-none">
-      <Card className="h-full w-full gap-2.5 py-4">
+      <Card
+        className={`h-full w-full gap-2.5 py-4 ${
+          isSolve ? "border-blue-500/70 ring-1 ring-blue-500/25 bg-blue-500/[0.04]" : ""
+        }`}
+      >
         <div className="flex h-full flex-col gap-2 px-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="text-[9.5px] tracking-wider uppercase">
-              {FEED_KIND_LABEL[item.kind]}
-            </Badge>
+            {isSolve ? (
+              <Badge className="gap-1 border-transparent bg-blue-600 text-[9.5px] tracking-wider text-white uppercase hover:bg-blue-600">
+                <CheckCircle2 className="size-3" />
+                {FEED_KIND_LABEL[item.kind]}
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="text-[9.5px] tracking-wider uppercase">
+                {FEED_KIND_LABEL[item.kind]}
+              </Badge>
+            )}
             {item.source && (
               <span className="text-[10.5px] text-muted-foreground">
                 {FEED_SOURCE_LABEL[item.source]}
