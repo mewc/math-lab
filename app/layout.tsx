@@ -80,7 +80,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistMono.variable} ${fraunces.variable}`}>
+    <html
+      lang="en"
+      className={`${geistMono.variable} ${fraunces.variable}`}
+      // THEME_SCRIPT toggles the `dark` class on <html> before hydration
+      // (no-FOUC), so the server/client class list differs by design.
+      suppressHydrationWarning
+    >
       <body>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <Sidebar />
