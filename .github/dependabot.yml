@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # App dependencies (Next/React + type packages). Bun lockfile is respected.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      types:
+        patterns:
+          - "@types/*"
+    labels:
+      - dependencies
+
+  # Keep GitHub Actions pinned versions current (and patched).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - ci

@@ -1,0 +1,38 @@
+name: Suggest a problem
+description: Propose an open, computationally approachable math problem to index.
+labels: [problem-suggestion]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Problem name
+      placeholder: e.g. The 1/3–2/3 Conjecture
+    validations:
+      required: true
+  - type: textarea
+    id: statement
+    attributes:
+      label: Precise statement
+      description: State it precisely. Keep quantifiers exact (almost all ≠ all).
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Honest status
+      options:
+        - Open
+        - Partial results known
+        - Solved (with reference)
+    validations:
+      required: true
+  - type: textarea
+    id: attack
+    attributes:
+      label: Why is it computationally approachable?
+      description: What can be computed, searched, or verified with exact arithmetic?
+  - type: textarea
+    id: refs
+    attributes:
+      label: References
+      description: Papers, links, or known partial results.
