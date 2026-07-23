@@ -47,7 +47,7 @@ function score(p: Problem, tokens: string[]): number {
   return total;
 }
 
-export default function SearchHome({ feed }: { feed?: ReactNode }) {
+export default function SearchHome({ feed, banner }: { feed?: ReactNode; banner?: ReactNode }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | null>(null);
   const [stages, setStages] = useState<Set<Stage>>(() => new Set(ALL_STAGES));
@@ -90,10 +90,10 @@ export default function SearchHome({ feed }: { feed?: ReactNode }) {
     <>
       <div className="search-hero">
         <div className="kicker" style={{ fontFamily: "var(--mono)", fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-faint)" }}>
-          Open problems · computationally approachable · honestly labeled
+          Open problems · honestly labeled
         </div>
         <h1>
-          Every problem worth <em>throwing tokens at</em>
+          Worth <em>throwing tokens at</em>
         </h1>
       </div>
 
@@ -194,6 +194,7 @@ export default function SearchHome({ feed }: { feed?: ReactNode }) {
       </div>
 
       {feed && query.trim() === "" && activeFilters === 0 && feed}
+      {banner && query.trim() === "" && activeFilters === 0 && banner}
 
       <div className="result-count">
         {results.length} {results.length === 1 ? "problem" : "problems"}
