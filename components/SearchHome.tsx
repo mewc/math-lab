@@ -9,6 +9,7 @@ import {
   STAGE_LABEL,
   type Category,
   type Problem,
+  type ProblemSolution,
   type Stage,
 } from "@/lib/problems";
 
@@ -66,11 +67,6 @@ export default function SearchHome() {
         <h1>
           Every problem worth <em>throwing tokens at</em>
         </h1>
-        <p className="lede">
-          One index of open math problems that reward construction, counterexample hunting, and
-          small-case search. Each entry states the problem precisely, reports its real status, and
-          sketches the attack. Tackled problems grow into live dossiers — Collatz is the first.
-        </p>
       </div>
 
       <div className="searchbar">
@@ -140,8 +136,12 @@ export default function SearchHome() {
 }
 
 function ProblemCard({ p }: { p: Problem }) {
+  // The card is a positioned container with a stretched Link covering it, so the
+  // whole card navigates to the dossier — but external links in the solved panel
+  // sit above it (z-index) and stay independently clickable without nesting <a>.
   return (
-    <Link href={problemHref(p)} className="problem-card">
+    <div className="problem-card">
+      <Link href={problemHref(p)} className="card-hitbox" aria-label={p.title} />
       <div className="card-top">
         <span className="card-title">{p.title}</span>
         <span className="card-cat">{p.category}</span>
@@ -149,7 +149,38 @@ function ProblemCard({ p }: { p: Problem }) {
       </div>
       <p className="card-statement">{p.statement}</p>
       {p.aka && p.aka.length > 0 && <div className="card-aka">a.k.a. {p.aka.join(" · ")}</div>}
-    </Link>
+      {p.stage === "solved" && p.solution && <SolvedPanel solution={p.solution} />}
+    </div>
+  );
+}
+
+function SolvedPanel({ solution }: { solution: ProblemSolution }) {
+  return (
+    <div className="card-solution">
+      <div className="sol-line">
+        <span className="sol-label">Solved by</span>
+        <span className="sol-by">
+          {solution.by}
+          {solution.when ? ` · ${solution.when}` : ""}
+        </span>
+      </div>
+      <p className="sol-approach">{solution.approach}</p>
+      {solution.links && solution.links.length > 0 && (
+        <div className="sol-links">
+          {solution.links.map((l, i) =>
+            l.url ? (
+              <a key={i} href={l.url} target="_blank" rel="noreferrer noopener">
+                {l.label}
+              </a>
+            ) : (
+              <span key={i} className="sol-link-plain">
+                {l.label}
+              </span>
+            ),
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

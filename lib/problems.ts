@@ -30,6 +30,23 @@ export interface ProblemRef {
   url?: string;
 }
 
+/**
+ * Present only on solved problems: how it was resolved, by whom, and where to
+ * read the writeup. Surfaced on the homepage card and the dossier. Keep the
+ * attribution honest — name the actual solver (person, team, or campaign) and
+ * keep any pending-audit caveat on the record.
+ */
+export interface ProblemSolution {
+  /** Who resolved it — person, team, or campaign. */
+  by: string;
+  /** When resolved (year, month-year, or ISO date). */
+  when?: string;
+  /** One-to-two-sentence summary of the winning approach. */
+  approach: string;
+  /** Where it's written up / verified — external or in-lab links. */
+  links?: ProblemRef[];
+}
+
 export interface Problem {
   slug: string;
   title: string;
@@ -49,6 +66,8 @@ export interface Problem {
   notes?: ProblemNote[];
   /** External references / sources, cross-linked in the dossier. */
   refs?: ProblemRef[];
+  /** Resolution details (solver, approach, links) — set on solved problems. */
+  solution?: ProblemSolution;
 }
 
 export const CATEGORIES: Category[] = [
@@ -170,6 +189,19 @@ export const PROBLEMS: Problem[] = [
       "planar",
     ],
     stage: "solved",
+    solution: {
+      by: "Deep-reasoning campaign (ChatGPT), reproduced in-lab",
+      when: "Jul 2026",
+      approach:
+        "Disproved by construction: a 7-vertex splice-closed path system where the +D capacity slack itself forbids the three zero-cost detours pairwise, forcing ≥2 costlier direct paths (min congestion-good cost 60 > 58 = cᵀx). Certified by an exhaustive exact-integer verifier over all 8 routings — a self-contained certificate pending external audit.",
+      links: [
+        {
+          label: "Solution writeup & four-iteration search log (ChatGPT share)",
+          url: "https://chatgpt.com/share/6a60b2eb-0b64-83ee-9c76-7931ca1de063",
+        },
+        { label: "In-lab verifier — research/dgg-counterexample.ts" },
+      ],
+    },
     notes: [
       {
         date: "2026-07-23",

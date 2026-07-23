@@ -741,6 +741,7 @@ sup.inline-sup {
   gap: 12px;
 }
 .problem-card {
+  position: relative;
   display: block;
   background: var(--bg-raised);
   border: 1px solid var(--line);
@@ -752,6 +753,14 @@ sup.inline-sup {
 .problem-card:hover {
   border-color: var(--accent);
   text-decoration: none;
+}
+/* Stretched navigation target: covers the whole card so any click opens the
+   dossier, while interactive children (solved-panel links) raise above it. */
+.problem-card .card-hitbox {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
 }
 .problem-card .card-top {
   display: flex;
@@ -781,6 +790,59 @@ sup.inline-sup {
   font-size: 12.5px;
   color: var(--ink-faint);
   margin-top: 4px;
+}
+
+/* Solved-problem panel: who resolved it, the approach, and where to read it.
+   Raised above the stretched hitbox so its links stay clickable. */
+.card-solution {
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.card-solution .sol-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.card-solution .sol-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6ea8ff;
+}
+.card-solution .sol-by {
+  font-size: 13px;
+  color: var(--ink);
+}
+.card-solution .sol-approach {
+  font-size: 13px;
+  color: var(--ink-dim);
+  margin: 6px 0 0;
+  max-width: 74ch;
+}
+.card-solution .sol-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 8px;
+}
+.card-solution .sol-links a {
+  font-size: 12.5px;
+  color: #6ea8ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(110, 168, 255, 0.35);
+}
+.card-solution .sol-links a:hover {
+  border-bottom-color: #6ea8ff;
+}
+.card-solution .sol-link-plain {
+  font-size: 12.5px;
+  font-family: var(--mono);
+  color: var(--ink-faint);
 }
 
 .stage-badge {
