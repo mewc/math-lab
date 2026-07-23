@@ -1,16 +1,21 @@
 import Link from "next/link";
+import { Rss } from "lucide-react";
+
 import {
   buildFeed,
   feedItemHref,
   FEED_KIND_LABEL,
   FEED_SOURCE_LABEL,
   type FeedItem,
+  type FeedKind,
 } from "@/lib/feed";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-// "The latest" — a news feed of solves, progress notes, and curated updates
-// (external write-ups, X posts). Server component: the data is static (derived
-// from the registry + curated list), so it renders on the server and ships no
-// JS. Sources it from lib/feed.ts; the same items back /feed.xml.
+// "The latest" — a horizontal-scroll row of shadcn cards: solves, progress
+// notes, and curated updates (external write-ups, X posts). Server component:
+// the data is static (derived from the registry + curated list in lib/feed.ts),
+// so it renders on the server and ships no JS. The same items back /feed.xml.
 
 function formatDate(d: string): string {
   const t = Date.parse(d);
@@ -23,25 +28,36 @@ function formatDate(d: string): string {
   });
 }
 
+// Left-border accent per kind (data-viz colors have no shadcn token).
+const KIND_ACCENT: Record<FeedKind, string> = {
+  solve: "#6ea8ff",
+  note: "var(--accent)",
+  post: "var(--even)",
+  release: "var(--accent)",
+};
+
 export default function NewsFeed({ limit = 8 }: { limit?: number }) {
   const items = buildFeed(limit);
   if (items.length === 0) return null;
 
   return (
-    <section className="feed" aria-label="Latest updates">
-      <div className="feed-head">
-        <h2 className="feed-title">Latest</h2>
-        <a className="feed-rss" href="/feed.xml" title="RSS feed" aria-label="RSS feed">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-            <circle cx="6.18" cy="17.82" r="2.18" />
-            <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83C19.56 11.4 12.6 4.44 4 4.44z" />
-            <path d="M4 10.1v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83C13.9 14.4 9.5 10.1 4 10.1z" />
-          </svg>
-          <span>RSS</span>
+    <section className="my-6" aria-label="Latest updates">
+      <div className="mb-3.5 flex items-baseline justify-between border-b pb-2">
+        <h2 className="text-xl" style={{ fontFamily: "var(--serif)" }}>
+          Latest
+        </h2>
+        <a
+          href="/feed.xml"
+          className="inline-flex items-center gap-1.5 text-[10.5px] tracking-[0.08em] text-muted-foreground uppercase hover:text-primary"
+          title="RSS feed"
+          aria-label="RSS feed"
+        >
+          <Rss className="size-3.5" />
+          RSS
         </a>
       </div>
 
-      <ol className="feed-list">
+      <ol className="flex snap-x snap-proximity gap-3 overflow-x-auto pb-3.5 [scrollbar-color:var(--border)_transparent] [scrollbar-width:thin]">
         {items.map((item) => (
           <FeedCard key={item.id} item={item} />
         ))}
@@ -54,30 +70,52 @@ function FeedCard({ item }: { item: FeedItem }) {
   const href = feedItemHref(item);
   const internal = href?.startsWith("/") ?? false;
 
+  const title = "line-clamp-2 text-[16.5px] leading-snug text-foreground hover:text-primary";
   const titleNode = href ? (
     internal ? (
-      <Link href={href} className="feed-item-title">
+      <Link href={href} className={title} style={{ fontFamily: "var(--serif)" }}>
         {item.title}
       </Link>
     ) : (
-      <a href={href} className="feed-item-title" target="_blank" rel="noreferrer noopener">
+      <a
+        href={href}
+        className={title}
+        style={{ fontFamily: "var(--serif)" }}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
         {item.title}
       </a>
     )
   ) : (
-    <span className="feed-item-title">{item.title}</span>
+    <span className={title} style={{ fontFamily: "var(--serif)" }}>
+      {item.title}
+    </span>
   );
 
   return (
-    <li className="feed-item" data-kind={item.kind}>
-      <div className="feed-item-meta">
-        <span className="feed-kind" data-kind={item.kind}>
-          {FEED_KIND_LABEL[item.kind]}
-        </span>
-        {item.source && <span className="feed-source">{FEED_SOURCE_LABEL[item.source]}</span>}
-        <time className="feed-date">{formatDate(item.date)}</time>
-      </div>
-      {titleNode}
+    <li className="max-md:basis-[82vw] shrink-0 basis-[300px] snap-start list-none">
+      <Card
+        className="h-full gap-3 border-l-[3px] py-4"
+        style={{ borderLeftColor: KIND_ACCENT[item.kind] }}
+      >
+        <div className="flex flex-col gap-2 px-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary" className="text-[9.5px] tracking-wider uppercase">
+              {FEED_KIND_LABEL[item.kind]}
+            </Badge>
+            {item.source && (
+              <span className="text-[10.5px] text-muted-foreground">
+                {FEED_SOURCE_LABEL[item.source]}
+              </span>
+            )}
+            <time className="ml-auto text-[10.5px] text-muted-foreground">
+              {formatDate(item.date)}
+            </time>
+          </div>
+          {titleNode}
+        </div>
+      </Card>
     </li>
   );
 }

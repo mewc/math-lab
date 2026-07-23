@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { Filter } from "lucide-react";
 import {
   CATEGORIES,
   PROBLEMS,
@@ -12,6 +13,11 @@ import {
   type ProblemSolution,
   type Stage,
 } from "@/lib/problems";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 // Client-side search over the whole registry. Simple token scoring: every
 // query token must match somewhere; title/aka hits rank above tag hits, which
@@ -46,27 +52,9 @@ export default function SearchHome({ feed }: { feed?: ReactNode }) {
   const [category, setCategory] = useState<Category | null>(null);
   const [stages, setStages] = useState<Set<Stage>>(() => new Set(ALL_STAGES));
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const filterRef = useRef<HTMLDivElement>(null);
 
   const stagesFiltered = stages.size !== ALL_STAGES.length;
   const activeFilters = (category ? 1 : 0) + (stagesFiltered ? 1 : 0);
-
-  // Close the popover on outside click or Escape.
-  useEffect(() => {
-    if (!filtersOpen) return;
-    const onDown = (e: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFiltersOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setFiltersOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [filtersOpen]);
 
   const results = useMemo(() => {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
@@ -124,77 +112,85 @@ export default function SearchHome({ feed }: { feed?: ReactNode }) {
           />
         </div>
 
-        <div className="filter-wrap" ref={filterRef}>
-          <button
-            type="button"
-            className="filter-btn"
-            aria-label="Filter"
-            aria-expanded={filtersOpen}
-            data-active={activeFilters > 0}
-            onClick={() => setFiltersOpen((v) => !v)}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M3 5h18l-7 8v6l-4 2v-8L3 5z" />
-            </svg>
-            {activeFilters > 0 && <span className="filter-badge">{activeFilters}</span>}
-          </button>
+        <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              aria-label="Filter"
+              className={cn(
+                "relative h-auto w-14 self-stretch rounded-[14px]",
+                activeFilters > 0 && "border-primary text-primary",
+              )}
+            >
+              <Filter className="size-[18px]" />
+              {activeFilters > 0 && (
+                <Badge className="absolute -top-2 -right-2 size-[18px] justify-center rounded-full p-0 text-[10px]">
+                  {activeFilters}
+                </Badge>
+              )}
+            </Button>
+          </PopoverTrigger>
 
-          {filtersOpen && (
-            <div className="filter-popover" role="dialog" aria-label="Filters">
-              <div className="fp-section">
-                <div className="fp-label">Category</div>
-                <div className="fp-chips">
-                  <button
-                    type="button"
-                    className="fp-chip"
-                    data-active={!category}
+          <PopoverContent align="end" className="w-[300px]">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <div className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                  Category
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <Button
+                    variant={!category ? "secondary" : "outline"}
+                    size="sm"
+                    className="h-7 rounded-full px-3 text-xs font-normal"
                     onClick={() => setCategory(null)}
                   >
                     all
-                  </button>
+                  </Button>
                   {CATEGORIES.map((c) => (
-                    <button
+                    <Button
                       key={c}
-                      type="button"
-                      className="fp-chip"
-                      data-active={category === c}
+                      variant={category === c ? "secondary" : "outline"}
+                      size="sm"
+                      className="h-7 rounded-full px-3 text-xs font-normal"
                       onClick={() => setCategory((cur) => (cur === c ? null : c))}
                     >
                       {c.toLowerCase()}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
 
-              <div className="fp-section">
-                <div className="fp-label">Stage</div>
-                <div className="fp-chips">
+              <div className="flex flex-col gap-2">
+                <div className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                  Stage
+                </div>
+                <div className="grid gap-2">
                   {ALL_STAGES.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      className="fp-chip fp-chip-stage"
-                      data-active={stages.has(s)}
-                      onClick={() => toggleStage(s)}
-                    >
+                    <label key={s} className="flex cursor-pointer items-center gap-2.5 text-sm">
+                      <Checkbox checked={stages.has(s)} onCheckedChange={() => toggleStage(s)} />
                       <span className="sb-dot" data-stage={s} aria-hidden />
                       {STAGE_LABEL[s]}
-                    </button>
+                    </label>
                   ))}
                 </div>
               </div>
 
-              <div className="fp-foot">
-                <button type="button" className="fp-reset" onClick={resetFilters} disabled={activeFilters === 0}>
+              <div className="flex items-center justify-between gap-2 border-t pt-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetFilters}
+                  disabled={activeFilters === 0}
+                >
                   Reset
-                </button>
-                <button type="button" className="fp-done" onClick={() => setFiltersOpen(false)}>
+                </Button>
+                <Button size="sm" onClick={() => setFiltersOpen(false)}>
                   Done
-                </button>
+                </Button>
               </div>
             </div>
-          )}
-        </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {feed && query.trim() === "" && activeFilters === 0 && feed}

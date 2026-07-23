@@ -1,11 +1,21 @@
 # Math Lab — Claude notes
 
 Standalone open-source repo (`github.com/mewc/math-lab`): own `bun.lock`,
-Next.js + React + TypeScript, **zero runtime deps beyond Next/React**. It was
-extracted from the `drummerduck-apps` monorepo (2026-07-23) and now lives on its
-own — keep it self-contained (no external package deps, no DB, no server).
+Next.js + React + TypeScript. It was extracted from the `drummerduck-apps`
+monorepo (2026-07-23) and now lives on its own — keep it self-contained (no DB,
+one thin server seam; see below).
 
-- Next.js App Router + React, TypeScript, no other runtime deps. Port **4708**.
+- Next.js App Router + React, TypeScript. Port **4708**.
+- **UI: Tailwind v4 + shadcn/ui** (added 2026-07-23; deps: `tailwindcss`,
+  `@tailwindcss/postcss`, Radix primitives, `class-variance-authority`,
+  `clsx`, `tailwind-merge`, `lucide-react`, `tw-animate-css`). shadcn primitives
+  live in `components/ui/`; add more with `bunx shadcn@latest add <name>`. It is
+  layered **over** the original hand-rolled CSS: `app/globals.css` imports only
+  Tailwind's theme + utilities layers (NOT preflight) so the legacy dossier
+  pages aren't reset. Design tokens are the `:root`/`.dark` oklch vars at the top
+  of `globals.css`; `@theme inline` maps them onto Tailwind (`bg-primary`, etc.).
+  New UI should use shadcn/Tailwind; the old `.sb-*`/`.problem-card`/`.mathbox`
+  classes remain for the existing pages.
 - One searchable index of open math problems. The homepage is a search bar over
   `lib/problems.ts` (the registry); `/p/[slug]` renders a dossier scaffold per
   problem.
@@ -26,6 +36,14 @@ own — keep it self-contained (no external package deps, no DB, no server).
   Slack via a bot token that must stay server-side (env `SLACK_BOT_TOKEN` +
   `SLACK_FEEDBACK_CHANNEL`; see `.env.example`). No new deps — plain `fetch`.
   Keep server code confined to that route.
+- **News feed + RSS** (`/`, `app/feed.xml`): the "Latest" row and the RSS feed
+  are built by `lib/feed.ts`. Two sources merge — items DERIVED from the registry
+  (every solved problem's `solution` + every dated `note` in `lib/problems.ts`)
+  and a CURATED list in `lib/feed.ts` for things not tied to a note (external
+  write-ups, X/Twitter posts, releases). **When you tackle a problem or ship an
+  update, consider whether it belongs in the feed:** a problem note/solve lands
+  automatically; anything else (a ChatGPT solve write-up, an X post) gets a real,
+  sourced entry appended to `CURATED_FEED`. Keep it honest — only real links.
 - Charts are hand-rolled inline SVG; don't add a chart library.
 - Content accuracy matters more than usual: statements and statuses in
   `lib/problems.ts` are honest research claims. "Open" means open; partial
