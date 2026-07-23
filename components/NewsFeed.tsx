@@ -7,7 +7,6 @@ import {
   FEED_KIND_LABEL,
   FEED_SOURCE_LABEL,
   type FeedItem,
-  type FeedKind,
 } from "@/lib/feed";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,14 +26,6 @@ function formatDate(d: string): string {
     timeZone: "UTC",
   });
 }
-
-// Left-border accent per kind (data-viz colors have no shadcn token).
-const KIND_ACCENT: Record<FeedKind, string> = {
-  solve: "#6ea8ff",
-  note: "var(--accent)",
-  post: "var(--even)",
-  release: "var(--accent)",
-};
 
 export default function NewsFeed({ limit = 8 }: { limit?: number }) {
   const items = buildFeed(limit);
