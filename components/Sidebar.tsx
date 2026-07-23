@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORIES, PROBLEMS, problemHref, type Problem } from "@/lib/problems";
 import FeedbackModal, { REPO_URL, type FeedbackProblem } from "@/components/FeedbackModal";
+import CommandPalette from "@/components/CommandPalette";
 import ThemeControls from "@/components/ThemeControls";
 
 // Left nav that replaces the old top bar. Searchable and navigable "within
@@ -29,6 +30,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   // The problem currently in view (drives the modal's "head-on" context and the
   // active highlight). /p/collatz/attack-log → collatz, etc.
@@ -95,6 +97,15 @@ export default function Sidebar() {
           </button>
         </div>
 
+        <button
+          className="sb-railsearch"
+          aria-label="Search (⌘K)"
+          title="Search — ⌘K"
+          onClick={() => setPaletteOpen(true)}
+        >
+          ⌕
+        </button>
+
         <div className="sb-searchbar">
           <span className="sb-search-glyph" aria-hidden>
             ⌕
@@ -106,6 +117,9 @@ export default function Sidebar() {
             placeholder="Type to search…"
             aria-label="Search problems"
           />
+          <kbd className="sb-kbd" aria-hidden onClick={() => setPaletteOpen(true)}>
+            ⌘K
+          </kbd>
         </div>
 
         <nav className="sb-nav" aria-label="Problems">
@@ -159,7 +173,7 @@ export default function Sidebar() {
             <span aria-hidden>⌥</span>
             <span className="sb-gh-label">GitHub — PRs welcome</span>
           </a>
-          <a className="sb-gh" href="/feed.xml" title="RSS feed">
+          <a className="sb-gh sb-rss" href="/feed.xml" title="RSS feed">
             <span aria-hidden>⤳</span>
             <span className="sb-gh-label">RSS — the latest</span>
           </a>
@@ -171,6 +185,12 @@ export default function Sidebar() {
         open={feedbackOpen}
         onClose={() => setFeedbackOpen(false)}
         problem={feedbackProblem}
+      />
+
+      <CommandPalette
+        open={paletteOpen}
+        setOpen={setPaletteOpen}
+        onOpenFeedback={() => setFeedbackOpen(true)}
       />
     </>
   );
