@@ -1,8 +1,11 @@
 # Math Lab
 
 One searchable index of open, computationally approachable math problems — the
-generalization of [Collatz Lab](../collatz-lab) to *any* problem worth throwing
-tokens at.
+generalization of Collatz Lab to *any* problem worth throwing tokens at.
+
+Open source. The point is to keep building on it: pick an open problem, throw
+compute and reasoning at it, and log honest results (solves, dead ends,
+partial progress) right in the repo.
 
 - **The homepage is a search bar.** It searches the whole problem registry
   (`lib/problems.ts`): 41 problems across number theory, graph theory,
@@ -14,9 +17,9 @@ tokens at.
   initially empty lab + log that fill in as the problem gets tackled.
 - **Collatz is the flagship.** The full Collatz Lab dossier — hailstone
   explorer, statistical landscape, 3n−1 / 5n+1 failure-mode lab, the 24
-  margin notes, and the live 25-path attack log — is imported at `/p/collatz`.
-  (`apps/collatz-lab` remains its own standalone island; this is a copy, not a
-  dependency.)
+  margin notes, and the live 25-path attack log — is at `/p/collatz`. (It was
+  imported as a copy from the original Collatz Lab; there is no runtime
+  dependency on it.)
 - **The 1/3–2/3 conjecture is tackled** at `/p/one-third-two-thirds`: an
   active campaign (`research/`) with exhaustive machine verification of all
   posets on ≤ 10 elements, an in-house elementary theorem (the hook family
@@ -46,3 +49,7 @@ happens client-side (Collatz trajectories in exact BigInt arithmetic).
 
 Ground rules, inherited from Collatz Lab: no fabricated steps, dead ends are
 logged as results, corrections stay on the record. "Open" means open.
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
