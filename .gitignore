@@ -9,3 +9,7 @@ next-env.d.ts
 .conductor/settings.local.toml
 .env*
 .gstack/
+
+# mathsmasher project-local runs (default is ~/.mathsmasher/runs)
+.mathsmasher-runs/
+mathsmasher/runs/

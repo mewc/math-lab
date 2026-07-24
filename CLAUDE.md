@@ -30,6 +30,13 @@ one thin server seam; see below).
   `bun run research/iterationN.ts`; log in `research/RESEARCH.md`). Checked-in
   datasets for instruments are generated (e.g. `research/emit-data.ts` →
   `lib/onethird-data.ts`) — regenerate, don't hand-edit.
+- **mathsmasher** (`mathsmasher/`): terminal-only multi-model attack loop
+  (Claude/Grok adapters). Yeet a problem for N turns; partials don't win;
+  proven/disproven requires a Bun verifier exit 0. Runs store under
+  `~/.mathsmasher/runs/`. No website surface. Usage:
+  `bun run mathsmasher -- run --problem "…" --turns 12` or
+  `bun run mathsmasher -- run --dry-run --turns 3 --problem test`.
+  See `mathsmasher/README.md`.
 - No database, no auth — client-side computation only (Collatz math is
   BigInt-exact in `lib/collatz.ts`; keep it that way). The **one** server seam
   is `app/api/feedback/route.ts`: the Submit/feedback modal relays a note to
