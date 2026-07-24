@@ -666,3 +666,140 @@ export function completeMask(n: number): EdgeMask {
   const e = (n * (n - 1)) / 2;
   return (1n << BigInt(e)) - 1n;
 }
+
+// ── forced-endpoint path decomp (for leaf / universal reductions) ──────────
+
+function residualAdjSets(
+  n: number,
+  mask: EdgeMask,
+  pairs: Array<[number, number]>,
+): Set<number>[] {
+  const adj: Set<number>[] = Array.from({ length: n }, () => new Set());
+  for (let i = 0; i < pairs.length; i++) {
+    if (!hasEdge(mask, i)) continue;
+    const [u, v] = pairs[i]!;
+    adj[u]!.add(v);
+    adj[v]!.add(u);
+  }
+  return adj;
+}
+
+function removePathEdges(adj: Set<number>[], path: number[]): void {
+  for (let i = 0; i < path.length - 1; i++) {
+    adj[path[i]!]!.delete(path[i + 1]!);
+    adj[path[i + 1]!]!.delete(path[i]!);
+  }
+}
+
+function addPathEdges(adj: Set<number>[], path: number[]): void {
+  for (let i = 0; i < path.length - 1; i++) {
+    adj[path[i]!]!.add(path[i + 1]!);
+    adj[path[i + 1]!]!.add(path[i]!);
+  }
+}
+
+function remEdgeCountSets(adj: Set<number>[], n: number): number {
+  let s = 0;
+  for (let u = 0; u < n; u++) s += adj[u]!.size;
+  return s >> 1;
+}
+
+function maskFromAdjSets(
+  n: number,
+  adj: Set<number>[],
+  pairs: Array<[number, number]>,
+): EdgeMask {
+  let m = 0n;
+  for (let i = 0; i < pairs.length; i++) {
+    const [u, v] = pairs[i]!;
+    if (adj[u]!.has(v)) m |= 1n << BigInt(i);
+  }
+  return m;
+}
+
+function enumerateStartPaths(
+  adj: Set<number>[],
+  n: number,
+  start: number,
+  maxCount: number,
+): number[][] {
+  const out: number[][] = [];
+  if (adj[start]!.size === 0) return out;
+  const used = new Uint8Array(n);
+  used[start] = 1;
+  const path = [start];
+
+  function dfs(cur: number): void {
+    if (out.length >= maxCount) return;
+    for (const v of adj[cur]!) {
+      if (used[v]) continue;
+      used[v] = 1;
+      path.push(v);
+      out.push(path.slice());
+      dfs(v);
+      path.pop();
+      used[v] = 0;
+      if (out.length >= maxCount) return;
+    }
+  }
+
+  for (const v of [...adj[start]!]) {
+    used[v] = 1;
+    path.push(v);
+    out.push(path.slice());
+    dfs(v);
+    path.pop();
+    used[v] = 0;
+    if (out.length >= maxCount) break;
+  }
+  out.sort((a, b) => b.length - a.length);
+  return out;
+}
+
+function pathsEndAt(paths: number[][], a: number): boolean {
+  return paths.some((P) => P[0] === a || P[P.length - 1] === a);
+}
+
+/**
+ * Find a path decomposition of size ≤ budget in which `endpoint` is an end of
+ * some path. Forces the first path to start at endpoint when it has degree > 0.
+ * Returns null if no such decomp is found within the search budget.
+ */
+export function decompWithEndpoint(
+  n: number,
+  mask: EdgeMask,
+  pairs: Array<[number, number]>,
+  budget: number,
+  endpoint: number,
+): number[][] | null {
+  if (edgeCount(mask) === 0) return [];
+
+  const plain = pathNumberAtMost(n, mask, pairs, budget);
+  if (plain.ok && pathsEndAt(plain.paths, endpoint)) return plain.paths;
+  if (budget >= 1) {
+    const tight = pathNumberAtMost(n, mask, pairs, budget - 1);
+    if (tight.ok && pathsEndAt(tight.paths, endpoint)) return tight.paths;
+  }
+
+  const adj = residualAdjSets(n, mask, pairs);
+  if (adj[endpoint]!.size === 0) {
+    return plain.ok ? plain.paths : null;
+  }
+
+  const maxEnum = n <= 6 ? 50_000 : n <= 8 ? 12_000 : 4_000;
+  const starts = enumerateStartPaths(adj, n, endpoint, maxEnum);
+  for (const P of starts) {
+    removePathEdges(adj, P);
+    const rem = remEdgeCountSets(adj, n);
+    if (rem === 0) {
+      addPathEdges(adj, P);
+      if (1 <= budget) return [P];
+      continue;
+    }
+    const remMask = maskFromAdjSets(n, adj, pairs);
+    const r = pathNumberAtMost(n, remMask, pairs, budget - 1);
+    addPathEdges(adj, P);
+    if (r.ok) return [P, ...r.paths];
+  }
+  return null;
+}
