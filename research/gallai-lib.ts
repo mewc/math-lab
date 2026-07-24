@@ -222,83 +222,158 @@ function addEdge(bs: Uint32Array, u: number, v: number): void {
   bs[v]! |= 1 << u;
 }
 
+/**
+ * Multi-start greedy path cover.
+ * Modes: high-deg extension (default/fast), low-deg, double-ended.
+ * If `target` is set, return as soon as a cover of size ≤ target is found
+ * (keeps the common Gallai check path fast).
+ */
 function greedyDegreePaths(
   n: number,
   edgeMask: EdgeMask,
   pairs: Array<[number, number]>,
+  target?: number,
 ): number[][] {
   let best: number[][] | null = null;
 
-  for (let seed0 = 0; seed0 < n; seed0++) {
-    const bs = residualFromMask(n, edgeMask, pairs);
-    const paths: number[][] = [];
-    const deg = (u: number) => popcount32(bs[u]!);
+  type Mode = "high" | "low" | "double";
+  // Try fast high-deg first (original behaviour); escalate only if needed.
+  const modes: Mode[] =
+    target === undefined ? ["high"] : ["high", "low", "double"];
 
-    function extendFrom(start: number): number[] {
-      const path = [start];
-      const usedV = new Uint8Array(n);
-      usedV[start] = 1;
-      let cur = start;
-      for (;;) {
+  for (const mode of modes) {
+    const seedLimit = mode === "high" ? n : n;
+    for (let seed0 = 0; seed0 < seedLimit; seed0++) {
+      const bs = residualFromMask(n, edgeMask, pairs);
+      const paths: number[][] = [];
+      const deg = (u: number) => popcount32(bs[u]!);
+
+      function pickNbr(cur: number, usedV: Uint8Array): number {
         let nbrs = bs[cur]!;
         let bestV = -1;
-        let bestD = -1;
+        let bestD = mode === "low" ? Infinity : -1;
         while (nbrs) {
           const lsb = nbrs & -nbrs;
           const v = 31 - Math.clz32(lsb);
           nbrs ^= lsb;
           if (usedV[v]) continue;
           const d = deg(v);
-          if (d > bestD) {
-            bestD = d;
-            bestV = v;
+          if (mode === "low") {
+            if (d < bestD || (d === bestD && (bestV < 0 || v < bestV))) {
+              bestD = d;
+              bestV = v;
+            }
+          } else {
+            if (d > bestD || (d === bestD && (bestV < 0 || v < bestV))) {
+              bestD = d;
+              bestV = v;
+            }
           }
         }
-        if (bestV < 0) break;
-        path.push(bestV);
-        usedV[bestV] = 1;
-        cur = bestV;
+        return bestV;
       }
-      return path;
-    }
 
-    while (residualEdgeCount(bs, n) > 0) {
-      let start = -1;
-      for (let u = 0; u < n; u++) {
-        if (popcount32(bs[u]!) & 1) {
-          start = u;
-          break;
+      function extendFrom(start: number): number[] {
+        if (mode !== "double") {
+          const path = [start];
+          const usedV = new Uint8Array(n);
+          usedV[start] = 1;
+          let cur = start;
+          for (;;) {
+            const bestV = pickNbr(cur, usedV);
+            if (bestV < 0) break;
+            path.push(bestV);
+            usedV[bestV] = 1;
+            cur = bestV;
+          }
+          return path;
         }
+        const usedV = new Uint8Array(n);
+        usedV[start] = 1;
+        const first = pickNbr(start, usedV);
+        if (first < 0) return [start];
+        const seq = [start, first];
+        usedV[first] = 1;
+        let left = start;
+        let right = first;
+        for (;;) {
+          const nr = pickNbr(right, usedV);
+          const nl = pickNbr(left, usedV);
+          if (nr < 0 && nl < 0) break;
+          let goR = false;
+          if (nr >= 0 && nl >= 0) {
+            const dr = deg(nr);
+            const dl = deg(nl);
+            if (mode === "low") goR = dr < dl || (dr === dl && nr <= nl);
+            else goR = dr > dl || (dr === dl && nr <= nl);
+          } else goR = nr >= 0;
+          if (goR && nr >= 0) {
+            seq.push(nr);
+            usedV[nr] = 1;
+            right = nr;
+          } else if (nl >= 0) {
+            seq.unshift(nl);
+            usedV[nl] = 1;
+            left = nl;
+          } else break;
+        }
+        return seq;
       }
-      if (start < 0) {
+
+      while (residualEdgeCount(bs, n) > 0) {
+        let start = -1;
         for (let k = 0; k < n; k++) {
           const u = (seed0 + k) % n;
-          if (bs[u]!) {
+          if (popcount32(bs[u]!) & 1) {
             start = u;
             break;
           }
         }
-      }
-      if (start < 0) break;
-
-      let path = extendFrom(start);
-      if (path.length < 2) {
-        let found = false;
-        for (let u = 0; u < n && !found; u++) {
-          const high = bs[u]! & ~((1 << (u + 1)) - 1);
-          if (high) {
-            const v = 31 - Math.clz32(high & -high);
-            path = [u, v];
-            found = true;
+        if (start < 0) {
+          for (let k = 0; k < n; k++) {
+            const u = (seed0 + k) % n;
+            if (bs[u]!) {
+              start = u;
+              break;
+            }
           }
         }
-        if (!found) throw new Error("greedy: residual edges but no edge found");
-      }
-      for (let i = 0; i < path.length - 1; i++) removeEdge(bs, path[i]!, path[i + 1]!);
-      paths.push(path);
-    }
+        if (start < 0) break;
 
-    if (!best || paths.length < best.length) best = paths;
+        let path = extendFrom(start);
+        if (path.length < 2) {
+          let found = false;
+          for (let u = 0; u < n && !found; u++) {
+            const high = bs[u]! & ~((1 << (u + 1)) - 1);
+            if (high) {
+              const v = 31 - Math.clz32(high & -high);
+              path = [u, v];
+              found = true;
+            }
+          }
+          if (!found) throw new Error("greedy: residual edges but no edge found");
+        }
+        for (let i = 0; i < path.length - 1; i++) {
+          const u = path[i]!;
+          const v = path[i + 1]!;
+          if ((bs[u]! & (1 << v)) === 0) {
+            throw new Error("greedy internal: missing residual edge");
+          }
+          removeEdge(bs, u, v);
+        }
+        paths.push(path);
+        // abandon this seed early if already worse than best
+        if (best && paths.length >= best.length) break;
+        if (target !== undefined && paths.length > target) break;
+      }
+
+      if (residualEdgeCount(bs, n) === 0) {
+        if (!best || paths.length < best.length) best = paths;
+        if (target !== undefined && paths.length <= target) return paths;
+      }
+    }
+    // after high mode, if we have a target and missed, escalate modes
+    if (target !== undefined && best && best.length <= target) return best;
   }
 
   return best ?? [];
@@ -317,9 +392,16 @@ export function exactPathNumber(
   const m = edgeCount(edgeMask);
   if (m === 0) return { num: 0, paths: [] };
 
-  const greedy = greedyDegreePaths(n, edgeMask, pairs);
-  const gCheck = verifyDecomposition(n, edgeMask, pairs, greedy);
-  if (!gCheck.ok) throw new Error(`greedy bad: ${gCheck.reason}`);
+  // Pass budget as target so multi-mode greedy only escalates when needed.
+  // If the target is too tight, multi-mode may return an incomplete/empty
+  // cover — fall back to unconstrained greedy (always produces a valid cover).
+  let greedy = greedyDegreePaths(n, edgeMask, pairs, budget);
+  let gCheck = verifyDecomposition(n, edgeMask, pairs, greedy);
+  if (!gCheck.ok) {
+    greedy = greedyDegreePaths(n, edgeMask, pairs);
+    gCheck = verifyDecomposition(n, edgeMask, pairs, greedy);
+    if (!gCheck.ok) throw new Error(`greedy bad: ${gCheck.reason}`);
+  }
 
   if (greedy.length <= budget) {
     return { num: greedy.length, paths: greedy };
@@ -339,7 +421,15 @@ export function exactPathNumber(
     bestPaths = triv;
   }
 
+  // If greedy already meets budget, done. Cap DFS so dense hard cases
+  // cannot hang the finite-check pipeline indefinitely.
+  if (best <= budget) {
+    return { num: best, paths: bestPaths };
+  }
+
   const pathsSoFar: number[][] = [];
+  let dfsNodes = 0;
+  const DFS_NODE_LIMIT = n <= 8 ? 2_000_000 : n <= 10 ? 200_000 : 50_000;
 
   function enumeratePathsContainingClean(
     a: number,
@@ -415,6 +505,7 @@ export function exactPathNumber(
   }
 
   function search(pathCount: number): void {
+    if (++dfsNodes > DFS_NODE_LIMIT) return;
     if (pathCount >= best) return;
     if (pathCount > budget) return;
 
