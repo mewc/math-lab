@@ -1,11 +1,13 @@
 import { claudeAdapter } from "./claude.ts";
 import { grokAdapter } from "./grok.ts";
 import { mockAdapter } from "./mock.ts";
+import { opencodeAdapter } from "./opencode.ts";
 import type { AgentAdapter } from "./types.ts";
 
 const BUILTIN: Record<string, AgentAdapter> = {
   claude: claudeAdapter,
   grok: grokAdapter,
+  opencode: opencodeAdapter,
   mock: mockAdapter,
 };
 

@@ -20,6 +20,17 @@ export interface Campaign {
   successCriteria?: string;
   contextPaths: string[];
   maxTurns: number;
+  /**
+   * Agents that do research turns (round-robin).
+   * When set, preferred over plain `adapters` for brains selection.
+   */
+  brains: string[];
+  /**
+   * Optional judge adapter — runs after each brains turn and may override status.
+   * e.g. "opencode". Not counted as a research adapter in round-robin.
+   */
+  judge?: string;
+  /** @deprecated Prefer brains; kept as alias for brains when brains empty. */
   adapters: string[];
   nudgeMode: NudgeMode;
   /** Working directory agents may edit (repo root). */
@@ -45,11 +56,15 @@ export interface TurnStatus {
 export interface TurnRecord {
   index: number;
   adapter: string;
+  /** brains | judge — who produced the final status for this turn. */
+  role: "brains" | "judge" | "solo";
   startedAt: string;
   endedAt: string;
   promptPath: string;
   transcriptPath: string;
   statusPath: string;
+  /** Brains transcript path when a judge overrode status. */
+  brainsTranscriptPath?: string;
   verdict: Verdict;
   summary: string;
   claimedVerifier: string | null;
@@ -89,6 +104,11 @@ export interface CampaignInput {
   successCriteria?: string;
   contextPaths?: string[];
   maxTurns?: number;
+  /** Research agents (e.g. ["grok"]). */
+  brains?: string[];
+  /** Judge agent (e.g. "opencode") — reviews each brains turn. */
+  judge?: string;
+  /** Alias for brains when brains not set. */
   adapters?: string[];
   nudgeMode?: NudgeMode;
   cwd?: string;

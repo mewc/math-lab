@@ -45,8 +45,12 @@ export async function buildTurnPrompt(
 
   const parts: string[] = [];
   parts.push("# System\n\n" + system.trim());
+  const brains = state.campaign.brains?.length
+    ? state.campaign.brains.join(", ")
+    : state.campaign.adapters.join(", ");
+  const judge = state.campaign.judge ?? "(none)";
   parts.push(
-    `# Campaign\n\n- **Title:** ${state.campaign.title}\n- **Goal:** ${state.campaign.goal}\n- **Turn:** ${turnIndex} / budget ${state.campaign.maxTurns} (this invocation)\n- **Run dir:** ${state.runDir}\n- **Repo cwd:** ${state.campaign.cwd}\n`,
+    `# Campaign\n\n- **Title:** ${state.campaign.title}\n- **Goal:** ${state.campaign.goal}\n- **Role this call:** brains (research)\n- **Brains:** ${brains}\n- **Judge:** ${judge}\n- **Turn:** ${turnIndex} / budget ${state.campaign.maxTurns} (this invocation)\n- **Run dir:** ${state.runDir}\n- **Repo cwd:** ${state.campaign.cwd}\n`,
   );
 
   if (state.campaign.successCriteria) {
@@ -94,4 +98,27 @@ export async function buildTurnPrompt(
   parts.push(`# Instructions for this turn\n\n${nudge.trim()}\n`);
 
   return parts.join("\n---\n\n");
+}
+
+/** Prompt for the judge pass after a brains turn. */
+export async function buildJudgePrompt(
+  state: RunState,
+  turnIndex: number,
+  brainsTranscript: string,
+  brainsStatusJson: unknown,
+): Promise<string> {
+  const judgeTpl = await loadTemplate("judge.md");
+  const tail =
+    brainsTranscript.length > MAX_TRANSCRIPT_TAIL
+      ? brainsTranscript.slice(-MAX_TRANSCRIPT_TAIL)
+      : brainsTranscript;
+
+  return [
+    "# Judge brief\n\n" + judgeTpl.trim(),
+    `# Campaign\n\n- **Title:** ${state.campaign.title}\n- **Goal:** ${state.campaign.goal}\n- **Turn:** ${turnIndex}\n- **Run dir:** ${state.runDir}\n- **Repo cwd:** ${state.campaign.cwd}\n`,
+    `# Problem\n\n${state.campaign.problem}\n`,
+    `# Brains claimed status\n\n\`\`\`json\n${JSON.stringify(brainsStatusJson, null, 2)}\n\`\`\`\n`,
+    `# Brains transcript (tail)\n\n\`\`\`\n${tail}\n\`\`\`\n`,
+    "Produce your judgment and the final `<status>` block now.\n",
+  ].join("\n---\n\n");
 }

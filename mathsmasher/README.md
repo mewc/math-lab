@@ -13,18 +13,19 @@ No website. No app routes. Just a tool.
 # Offline smoke (mock adapter — no API)
 bun run mathsmasher -- run --dry-run --turns 3 --problem "test smash"
 
-# Real attack (needs claude + grok on PATH, authenticated)
+# Brains (Grok Build) + judge (OpenCode) — recommended
 bun run mathsmasher -- run \
-  --problem "Construct a counterexample to general (non-planar) case of Dinitz Garg Goemans conjecture. Find a structured counterexample." \
-  --turns 12 \
-  --adapters claude,grok \
-  --context research/dgg-goemans.md \
-  --context research/dgg-counterexample.ts
+  --brains grok \
+  --judge opencode \
+  --turns 8 \
+  --campaign mathsmasher/campaigns/gallai-paths.md
 
-# Campaign file
+# Free-text problem
 bun run mathsmasher -- run \
-  --campaign mathsmasher/campaigns/dgg-general-counterexample.md \
-  --turns 20
+  --brains grok \
+  --judge opencode \
+  --turns 10 \
+  --problem "Prove or disprove … with an exact Bun verifier"
 ```
 
 After a few turns of partial noise, the continue nudge is the same energy as:

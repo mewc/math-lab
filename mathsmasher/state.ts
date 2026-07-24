@@ -29,14 +29,21 @@ export function makeRunId(title: string): string {
 }
 
 export function normalizeCampaign(input: CampaignInput): Campaign {
-  const adapters =
-    input.dryRun || input.adapters?.includes("mock")
-      ? input.adapters?.length
-        ? input.adapters
-        : ["mock"]
+  let brains =
+    input.brains?.length
+      ? input.brains
       : input.adapters?.length
         ? input.adapters
-        : ["claude", "grok"];
+        : ["grok"];
+
+  if (input.dryRun || brains.includes("mock")) {
+    brains = ["mock"];
+  }
+
+  const judge =
+    input.dryRun
+      ? undefined
+      : input.judge?.trim() || undefined;
 
   return {
     id: input.resumeId ?? makeRunId(input.title ?? "smash"),
@@ -46,7 +53,9 @@ export function normalizeCampaign(input: CampaignInput): Campaign {
     successCriteria: input.successCriteria,
     contextPaths: input.contextPaths ?? [],
     maxTurns: input.maxTurns ?? 10,
-    adapters: input.dryRun ? ["mock"] : adapters,
+    brains,
+    judge,
+    adapters: brains, // keep in sync for older resume paths
     nudgeMode: input.nudgeMode ?? "aggressive",
     cwd: defaultCwd(input.cwd),
     runRoot: resolve(input.runRoot ?? defaultRunRoot()),

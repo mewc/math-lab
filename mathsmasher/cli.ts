@@ -77,6 +77,11 @@ async function cmdRun(args: string[]): Promise<number> {
     ?.split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+  let brains = str(flags.brains)
+    ?.split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  let judge = str(flags.judge);
   let successCriteria: string | undefined;
   let campaignProblem = "";
 
@@ -87,6 +92,8 @@ async function cmdRun(args: string[]): Promise<number> {
     contextPaths = contextPaths.length ? contextPaths : loaded.context;
     goal = goal ?? loaded.goal;
     adapters = adapters ?? loaded.adapters;
+    brains = brains ?? loaded.brains;
+    judge = judge ?? loaded.judge;
     successCriteria = loaded.successCriteria;
   }
 
@@ -110,6 +117,8 @@ async function cmdRun(args: string[]): Promise<number> {
     successCriteria,
     contextPaths,
     maxTurns: num(flags.turns) ?? 10,
+    brains: brains ?? adapters,
+    judge,
     adapters,
     nudgeMode: (str(flags.nudge) as NudgeMode) ?? "aggressive",
     cwd: str(flags.cwd),
@@ -203,6 +212,8 @@ interface CampaignFile {
   problem: string;
   goal?: Goal;
   adapters?: string[];
+  brains?: string[];
+  judge?: string;
   context: string[];
   successCriteria?: string;
 }
@@ -219,6 +230,13 @@ async function loadCampaignFile(path: string): Promise<CampaignFile> {
   } else if (typeof front.adapters === "string") {
     adapters = front.adapters.split(",").map((s) => s.trim());
   }
+  let brains: string[] | undefined;
+  if (Array.isArray(front.brains)) {
+    brains = front.brains.map(String);
+  } else if (typeof front.brains === "string") {
+    brains = front.brains.split(",").map((s) => s.trim());
+  }
+  const judge = front.judge ? String(front.judge) : undefined;
   let context: string[] = [];
   if (Array.isArray(front.context)) {
     context = front.context.map(String);
@@ -228,6 +246,8 @@ async function loadCampaignFile(path: string): Promise<CampaignFile> {
     problem: body.trim(),
     goal,
     adapters,
+    brains,
+    judge,
     context,
     successCriteria: front.successCriteria
       ? String(front.successCriteria)
@@ -353,7 +373,9 @@ RUN OPTIONS:
   --campaign <file.md>     Campaign markdown (YAML frontmatter + body)
   --title <text>           Run title
   --turns <n>              Max turns (default 10)
-  --adapters a,b           Round-robin adapters (default claude,grok)
+  --brains a,b             Research agents, round-robin (default grok)
+  --judge <name>           Review each turn (e.g. opencode)
+  --adapters a,b           Alias for --brains
   --nudge aggressive|gentle
   --context <path>         Extra context file (repeatable)
   --goal prove|disprove|either
@@ -365,12 +387,13 @@ RUN OPTIONS:
 
 EXAMPLES:
   bun run mathsmasher -- run --dry-run --turns 3 --problem "test smash"
-  bun run mathsmasher -- run --campaign ${campaignExample} --turns 10
-  mathsmasher run --problem "Construct a counterexample to …" --turns 12
+  bun run mathsmasher -- run --campaign mathsmasher/campaigns/gallai-paths.md --turns 8
+  bun run mathsmasher -- run --brains grok --judge opencode --turns 10 --problem "…"
 
 ENV:
-  MATHSMASHER_RUN_ROOT, MATHSMASHER_CLAUDE_BIN, MATHSMASHER_CLAUDE_ARGS,
-  MATHSMASHER_GROK_BIN, MATHSMASHER_GROK_ARGS
+  MATHSMASHER_RUN_ROOT, MATHSMASHER_GROK_BIN, MATHSMASHER_GROK_ARGS,
+  MATHSMASHER_OPENCODE_BIN, MATHSMASHER_OPENCODE_ARGS, MATHSMASHER_OPENCODE_MODEL,
+  MATHSMASHER_CLAUDE_BIN, MATHSMASHER_CLAUDE_ARGS
 
 Adapters: ${listAdapters().join(", ")}
 `);

@@ -52,15 +52,16 @@ function renderMarkdown(state: RunState, verdict: Verdict): string {
   lines.push("");
   lines.push("## Turns");
   lines.push("");
-  lines.push("| # | Adapter | Verdict | Verifier exit | Summary |");
-  lines.push("|---|---------|---------|---------------|---------|");
+  lines.push("| # | Role | Adapter | Verdict | Verifier exit | Summary |");
+  lines.push("|---|------|---------|---------|---------------|---------|");
   for (const t of state.turns) {
     const v =
       t.verifierExitCode === null || t.verifierExitCode === undefined
         ? "—"
         : String(t.verifierExitCode);
     const sum = t.summary.replace(/\|/g, "\\|").replace(/\n/g, " ").slice(0, 120);
-    lines.push(`| ${t.index} | ${t.adapter} | ${t.verdict} | ${v} | ${sum} |`);
+    const role = t.role ?? "solo";
+    lines.push(`| ${t.index} | ${role} | ${t.adapter} | ${t.verdict} | ${v} | ${sum} |`);
   }
   lines.push("");
 
