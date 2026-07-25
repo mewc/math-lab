@@ -472,11 +472,78 @@ natural thing for others to have done, and the literature cannot be checked from
 this environment. No priority is claimed for the n = 11 computation; what is
 in-lab is the reduction that made it cheap and the certificate discipline.
 
+## Turn 9 — Walecki rainbow: theory beats search on the dense band (2026-07-25)
+
+`research/gallai-walecki.ts`, `research/gallai-n11-census.ts`.
+
+Turn 8 confirmed the easy half of the odd-order characterization (the 20
+density-forced graphs at n = 11 are tight). The hard half — that **nothing else**
+at n = 11 is tight — needs `p ≤ 5` for every graph with m ≤ 50, and the danger
+zone is the top of that range: 5 paths hold at most 5·10 = 50 edges, so at
+m = 50 a decomposition must be **5 Hamiltonian paths exactly**, with zero slack.
+The general exhaustive solver bogs down precisely there — it left
+`J]zn^~~~~~_` (m = 50) undecided after 60,000,000 nodes.
+
+Classical Walecki settles it instead: for odd n = 2k+1, K_n decomposes into k
+Hamiltonian cycles (built explicitly as the zigzag ∞, j, j+1, j−1, …, j+k and
+**verified** here for n = 5..15 — k cycles, edge-disjoint, exact cover).
+
+- **RAINBOW LEMMA.** If a Hamiltonian cycle decomposition of K_n puts every edge
+  of F in a different cycle, then for G = K_n − F with |F| = c:
+  *c = k* → deleting F cuts each cycle once, so G IS k Hamiltonian paths, giving
+  p(G) ≤ k = B(n) − 1 (not tight). *c < k* → the c hit cycles give c Hamiltonian
+  paths, each of the k−c unhit cycles is cut at a chosen edge, and if those
+  chosen edges form a single path the total is c + (k−c) + 1 = B(n). Choosing one
+  cut edge **incident to a** makes that path end at a — certifying E(G, a).
+- **CONTIGUOUS RAINBOW.** Removing a cyclically *contiguous run* of edges from a
+  Hamiltonian cycle also leaves a single path (the complementary arc). So if
+  every cycle's F-edges form one contiguous run and no cycle is missed, G still
+  decomposes into exactly k paths — which extends the method past |F| > k.
+
+Any relabelling of a Walecki decomposition is again one, so the labelling is
+found by seeded-random permutation search; a miss is reported as "no labelling
+found", never as a proof of non-existence.
+
+Results at n = 11, all certificates verified edge-by-edge:
+
+- **m = 50 (26 graphs): every one decomposes into 5 Hamiltonian paths**, so
+  p = 5 and none is tight. The graph the exhaustive search could not decide took
+  **66 random labellings**, and the whole band ran in **0.025 s** — against
+  60M search nodes that produced no verdict.
+- **m = 45..49 (5,674 graphs): contiguous rainbow certified 5,595** of them
+  outright (34 s). The 79 misses are all at m = 45, where the ordinary search has
+  slack and handles them.
+- **The census sweep independently agrees**: m = 45 → all 3,663 certified p ≤ 5,
+  zero undecided (466 s); m = 46..49 → 2,009 of 2,011 by search, and the two it
+  left undecided (`J]zn^^n~~~_` at m = 48, `J]zn^^~~~~_` at m = 49) are exactly
+  the ones the contiguous-rainbow pass certifies. The union of the two methods
+  decides the entire band.
+- **m ≥ 51 (the 20 tight graphs): p = 6 exactly**, and **E(G, a) holds at all
+  220 (graph, vertex) pairs** with explicit size-6 certificates.
+
+So at n = 11 **the tight graphs among all graphs with m ≥ 45 are exactly the 20
+with m ≥ 51** — the odd-order characterization survives the entire zone where it
+could plausibly have broken, and my prediction was not saved by luck in the
+easy region. Sparser bands (m ≤ 44) are not claimed: Gallai itself is verified
+there by turn 8, but their *tightness* is untested, and a structure-forced tight
+graph could in principle hide in the slack. (At even order such graphs do exist —
+3 at n = 6, 51 at n = 8 — so this is a real caveat, not a formality.)
+
+A loose end also closes: **E is now certified on the whole odd-order tight class
+at n = 11**, which is exactly the input Theorem D consumes for leafy graphs at
+n = 12 — modulo the still-unproved characterization that those 20 are the only
+tight graphs of order 11.
+
+Method note worth keeping: on the hardest instances the win came from a
+construction, not from more compute. Six orders of magnitude, from a 1892
+theorem.
+
 ### Loose ends
 
-- Prove E, or at least prove it for the odd-order density-forced family
-  K_m minus ≤ (m−2)/2 edges (Lemma G gives the K_m endpoint; the sparse
-  deletions are open). That would make Theorem D unconditional.
+- Prove E for the odd-order density-forced family K_m minus ≤ (m−2)/2 edges.
+  Turn 9 certifies it computationally at m = 11 via rainbow Walecki, and the
+  construction is general — what is missing is a proof that the required
+  rainbow labelling always exists.
 - Prove the odd-order observation (tight ⇒ 2m > (n−1)²) — equivalently, that at
   odd n a connected graph with 2m ≤ (n−1)² needs only ⌊n/2⌋ paths. Test the
   census prediction **20 at n = 11**.
@@ -486,8 +553,15 @@ in-lab is the reduction that made it cheap and the certificate discipline.
   n = 12 (A001349(12) = 164,059,830,476) is ~164× larger and even-order, so the
   odd-n degree-2 shortcut does not apply — it would need the even-n leaf case
   (i.e. E) plus far more compute.
-- Test the upper half of the odd-order tight characterization at n = 11: does any
-  graph with m ≤ 50 need 6 paths? Requires a budget-5 sweep.
+- ~~Test the upper half of the odd-order characterization at n = 11~~ — **done
+  for m ≥ 45** (turn 9): tight ⟺ m ≥ 51 there. Open below m = 45, where a
+  structure-forced tight graph could still hide.
+- Prove the rainbow condition rather than searching for it: is every F with
+  |F| ≤ k rainbow-realizable in SOME Walecki relabelling? If yes, E follows for
+  the whole near-complete odd-order family in one step, and with the density
+  characterization the leafy case of Gallai closes at every odd order. The
+  search found a labelling for every instance tried (worst case 181,410
+  labellings), which is evidence, not proof.
 - Check the literature: the splice and parity arguments are elementary and
   likely folklore; the endpoint property E is the kind of thing an
   equality-analysis of Lovász's path/cycle theorem may already give. No novelty
