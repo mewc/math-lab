@@ -591,7 +591,7 @@ The experiment asked only whether **some** pairing works — that is all Gallai
 needs. The answer came back much stronger:
 
 - **Exhaustive, even n ≤ 8: all 11,235 connected graphs covered, and ALL 76,632
-  pairings worked** — not one pairing failed anywhere, at any graph. Each success
+  pairings worked** (zero undecided at a 20M-node cap) — not one pairing failed anywhere, at any graph. Each success
   carries a decomposition of G rebuilt from the all-odd case and verified
   edge-by-edge. The first pairing tried sufficed for 10,893 of the 11,117 graphs
   at n = 8, so the search over pairings is almost never needed.
@@ -607,6 +607,34 @@ needs. The answer came back much stronger:
   size-n/2 decomposition violates it — for 231 of them (9 hit the 20M-node
   limit; the lemma is proved above, so those are unaffordable confirmations, not
   doubts).
+
+### n = 10, sampled — and a correction to the reporting
+
+A systematic 1/512 geng slice of the 11.7M connected graphs at n = 10 (3,102
+graphs, 89,231 pairings, 35 min) with a 400,000-node cap per search:
+
+- **3,067 of 3,102 graphs covered; 69,746 pairings worked, 19,485 undecided at
+  the cap — and 69,746 + 19,485 = 89,231 exactly, so DECIDED failures = 0.**
+  The 35 uncovered graphs are ones where every pairing hit the cap, not ones
+  where a pairing was refuted. Free Toggle therefore survives n = 10 on the
+  sample with no counterexample, at a much lower decision rate (78% of pairings
+  decided, against 100% at n ≤ 8 with a 20M cap).
+
+**Correction, on the record.** The first version of the summary line in
+`gallai-parity.log` reads "146,276/165,863 pairings worked — some pairings fail,
+so the choice of pairing matters". That is a reporting bug, not a result: it
+compares successes against ALL pairings including the undecided ones, so it
+scores every node-limit timeout as a refutation. The arithmetic above shows the
+true count of decided failures is zero. The same bug produced the stale
+"pairing choice MATTERS here" lines for C_12² (399/400 free, 1 undecided) and
+K_{4,4,4} (122/400 free, 278 undecided) in that log — both are zero-failure
+results. The script now computes failures as `decided − worked` and says so
+explicitly; the misleading log is kept as-is rather than rewritten, with this
+note as the correction.
+
+That mistake is worth keeping visible because it is the exact failure mode this
+whole campaign guards against: a search that gives up looks identical to a
+search that refutes, unless the code is careful to distinguish them.
 
 ### It reaches past Pyber
 

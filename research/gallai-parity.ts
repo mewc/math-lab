@@ -681,15 +681,20 @@ if (totalCovered === totalGraphs - totalUndecidedGraphs) {
       `admits a pairing whose toggles are all free — each with a verified ` +
       `decomposition of G of size ≤ ceil(n/2) built from the all-odd case`,
   );
-  if (workedPairings === totalPairings) {
+  // A pairing that ran out of nodes is UNDECIDED, not a failure. Comparing
+  // `worked` against the raw total would silently report those as failures.
+  const decidedPairings = totalPairings - totalUndecidedPairings;
+  const failedPairings = decidedPairings - workedPairings;
+  if (failedPairings === 0) {
     ok(
-      `STRONGER, and unexpected: ALL ${totalPairings.toLocaleString()} pairings worked, not merely one ` +
-        `per graph. Gallai needs a single good pairing; the data says every pairing is good.`,
+      `STRONGER, and unexpected: ALL ${decidedPairings.toLocaleString()} DECIDED pairings worked, not merely ` +
+        `one per graph. Gallai needs a single good pairing; the data says every pairing is good. ` +
+        `(${totalUndecidedPairings.toLocaleString()} undecided at the node limit, excluded.)`,
     );
   } else {
     note(
-      `${workedPairings.toLocaleString()}/${totalPairings.toLocaleString()} pairings worked — some pairings fail, ` +
-        `so the choice of pairing matters`,
+      `${failedPairings.toLocaleString()} of ${decidedPairings.toLocaleString()} decided pairings FAILED — ` +
+        `the choice of pairing matters, and Free Toggle as stated is false`,
     );
   }
   note(`the toggle route reaches ${toggleOnly} graphs whose even vertices do NOT induce a forest, i.e. outside Pyber's classical class`);

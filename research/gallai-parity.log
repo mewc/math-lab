@@ -8,3 +8,26 @@ P2. The toggle experiment — even n ≤ 10, every graph, every pairing
   n=4: 6/6 graphs covered by parity toggling (2 already all-odd), pairings 6/6 worked, first pairing sufficed for 4, 0.0s
   n=6: 112/112 graphs covered by parity toggling (13 already all-odd), pairings 299/299 worked, first pairing sufficed for 99, 0.0s
   n=8: 11113/11117 graphs covered by parity toggling (224 already all-odd), pairings 76225/76327 worked (+102 undecided), first pairing sufficed for 10870, 4 graphs undecided, 46.3s
+  n=10 [slice 0/512]: 3067/3102 graphs covered by parity toggling (49 already all-odd), pairings 69746/89231 worked (+19485 undecided), first pairing sufficed for 2526, 35 graphs undecided, 2100.0s
+
+P4. Adversarial family probes (all degrees even ⇒ maximal pairing count)
+  ..   K_8 − perfect matching (n=8, z=8): 104/105 pairings free-toggle, 1 undecided at the node limit — pairing choice MATTERS here
+  ..   K_10 − perfect matching (n=10, z=10): 212/315 pairings free-toggle, 103 undecided at the node limit — pairing choice MATTERS here
+  ..   K_12 − perfect matching (n=12, z=12): 25/400 pairings free-toggle, 375 undecided at the node limit — pairing choice MATTERS here
+  ..   K_{4,6} (n=10, z=10): 120/315 pairings free-toggle, 195 undecided at the node limit — pairing choice MATTERS here
+  ..   K_{6,6} (n=12, z=12): 109/400 pairings free-toggle, 291 undecided at the node limit — pairing choice MATTERS here
+  ..   K_{4,8} (n=12, z=12): 23/400 pairings free-toggle, 377 undecided at the node limit — pairing choice MATTERS here
+  OK   C_8 (n=8, 8 edges, z=8): all 105 pairings free-toggle, every certificate verified
+  OK   C_8² (n=8, 16 edges, z=8): all 105 pairings free-toggle, every certificate verified
+  OK   C_10 (n=10, 10 edges, z=10): 315 of 945 pairings (every 3th) free-toggle, every certificate verified
+  OK   C_10² (n=10, 20 edges, z=10): 315 of 945 pairings (every 3th) free-toggle, every certificate verified
+  OK   C_12 (n=12, 12 edges, z=12): 400 of 10395 pairings (every 26th) free-toggle, every certificate verified
+  ..   C_12² (n=12, z=12): 399/400 pairings free-toggle, 1 undecided at the node limit — pairing choice MATTERS here
+  ..   K_{4,4,4} (n=12, z=12): 122/400 pairings free-toggle, 278 undecided at the node limit — pairing choice MATTERS here
+
+  ..   19,587 pairings hit the 400,000-node limit and are EXCLUDED from the counts (39 graphs have no decided pairing at all)
+  OK   Q ANSWERED YES: every one of the 14298 decided connected graphs tested on even n (exhaustive at n = 4, 6, 8; sampled at n = 10) admits a pairing whose toggles are all free — each with a verified decomposition of G of size ≤ ceil(n/2) built from the all-odd case
+  ..   146,276/165,863 pairings worked — some pairings fail, so the choice of pairing matters
+  ..   the toggle route reaches 6442 graphs whose even vertices do NOT induce a forest, i.e. outside Pyber's classical class
+
+ALL CERTIFICATES VALID
