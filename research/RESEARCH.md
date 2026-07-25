@@ -384,6 +384,94 @@ demand and did survive every instance tested. Dense tight graphs at n ≥ 7
 exhaust the 8M-node limit on E₂ instances; those are counted as undecided and
 excluded rather than silently dropped.
 
+### Correction — Theorem D is an equivalence, not a weakening (2026-07-25)
+
+Stated on the record, because turn 7 was first written up as if E were a
+*weaker* hypothesis that Gallai could be reduced to. It is not.
+
+**PROPOSITION.** Let m be odd, H connected and tight on m vertices, a ∈ V(H),
+and G = H + a pendant vertex x. Then E(H, a) ⟺ p(G) ≤ B(m+1).
+*Proof.* (⟸) Let D decompose G with |D| ≤ B(m+1) = (m+1)/2 = p(H). The path
+containing ax has x as an end (x is a leaf). If that path is the bare edge ax,
+then D ∖ {ax} decomposes H with p(H) − 1 paths — impossible. So it is longer,
+and deleting x from it leaves a path ending at a: a decomposition of H of size
+≤ p(H) with a as an end. (⟹) is Theorem D. ∎
+
+So "E on order n−1" and "Gallai for leafy graphs of order n" are the SAME
+statement, and proving E in general is exactly as hard as proving the leafy case
+of Gallai. Theorem D is therefore a reorganization plus a localization, not a
+reduction to something easier — and the loose end "prove E" below is not a
+shortcut past Gallai.
+
+What survives the correction, and is genuinely useful:
+
+- Theorems A, B and G really do confine where E can fail (non-tight graphs,
+  odd-degree vertices and whole automorphism orbits are free), which is what
+  made the exhaustive n ≤ 9 check affordable and what explains why turn 6's
+  1.98M-graph constructive sweep needed a forced-endpoint search only 5 times.
+- The odd-order density census localizes the residual leafy case to
+  near-complete graphs.
+- **Theorem F is NOT circular**: it bounds p(G) ≤ p(H) for a strictly smaller
+  H with no leftover hypothesis, so it genuinely removes degree-2 vertices from
+  the problem. That is the one reduction here that stands alone — and it is what
+  made the n = 11 verification below affordable.
+
+## Turn 8 — exhaustive verification at n = 11 (2026-07-25)
+
+`research/gallai-n11.ts`, log `research/gallai-n11.log`.
+
+The finite frontier moves from n = 10 to **n = 11**, and Theorem F is what made
+it affordable. At n = 11 there are A001349(11) = 1,006,700,565 connected graphs.
+But 11 is **odd**, and at odd order every vertex of degree ≤ 2 is free given
+Gallai on 10 vertices (which turn 6 verified exhaustively):
+
+- leaf at a: B(10) + 1 = 6 = B(11), so decompose G − v and add the path (a,v);
+- degree 2, neighbours non-adjacent: Theorem F gives p(G) ≤ p(H) ≤ B(10) = 5;
+- degree 2, neighbours adjacent: G − v is connected (reroute through uw) and the
+  two edges at v form the path u–v–w, so p(G) ≤ B(10) + 1 = 6.
+
+So the whole obligation collapses onto **δ ≥ 3**: `geng -c -d3 -u 11` counts
+**577,076,528** such graphs — the reduction removes **42.7%** of the population.
+
+**Result: all 577,076,528 verified, zero counterexamples, zero undecided**,
+15.5 min wall across 14 shards (621k graphs/s aggregate, 48k/s per shard).
+Coverage was asserted against the independent `geng -u` count, so no shard
+silently dropped graphs. Every accepted decomposition was re-verified
+edge-by-edge and its size re-checked against B = 6. Notably the greedy engine
+sufficed for **every single graph** — zero escalations to the capped exact
+search and zero to the exhaustive one — so no result here rests on a search
+that gave up. Together with the reduction: **Gallai's conjecture holds for every
+connected graph on at most 11 vertices.**
+
+Guard against the reduction hiding a coding error in the 42.7% we skip: the
+prescribed certificate was built and verified for **100,049** sampled δ ≤ 2
+graphs at n = 11, deliberately spread over edge bands m = 10–13, 17–20, 24–27,
+31–34, 38–41, 44–47 (12,996 leaf / 33,670 splice / 53,383 triangle). The first
+version of this check sampled only the head of geng's output, i.e. sparse graphs
+only — corrected. The densest band yields few instances (49 found within a 4M
+scan cap; m = 47 = C(10,2) + 2 is the largest edge count compatible with a
+degree-2 vertex on 11 vertices), and that cap is reported rather than papered
+over.
+
+**The census prediction came in exactly.** Turn 7 predicted 20 tight graphs at
+n = 11 from the odd-order density characterization (complements of the
+1+1+2+5+11 graphs with ≤ 4 edges). The sweep found **precisely 20** graphs whose
+classical lower bound equals B = 6; each also carries a verified 6-path
+decomposition, so **p = 6 exactly** for those 20 — proved, not conjectured. The
+odd-order tight census is now 1, 2, 4, 9, **20** for n = 3, 5, 7, 9, 11.
+
+Scope, stated precisely: this confirms the *lower* half of the characterization
+(these 20 are tight). The other half — that **nothing else** at n = 11 is tight
+— needs a budget-5 sweep, a strictly harder computation than the budget-6 one
+just run, and is not claimed. One free consequence of Theorem F in that
+direction: at odd n a tight graph can have no degree-2 vertex with non-adjacent
+neighbours, since Theorem F would give p(G) ≤ p(H) ≤ B(n−1) = B(n) − 1.
+
+Honesty note on novelty: exhaustive verification of Gallai at small n is a
+natural thing for others to have done, and the literature cannot be checked from
+this environment. No priority is claimed for the n = 11 computation; what is
+in-lab is the reduction that made it cheap and the certificate discipline.
+
 ### Loose ends
 
 - Prove E, or at least prove it for the odd-order density-forced family
@@ -393,9 +481,13 @@ excluded rather than silently dropped.
   odd n a connected graph with 2m ≤ (n−1)² needs only ⌊n/2⌋ paths. Test the
   census prediction **20 at n = 11**.
 - Prove E₂ˢ in general, closing the triangle case of Theorem F unconditionally.
-- n = 11 exhaustive Gallai (A001349(11) = 1,006,700,565) — ~86× the n = 10
-  stream, feasible only sharded and with the density filter doing most of the
-  work.
+- ~~n = 11 exhaustive Gallai~~ — **done** (turn 8): the δ ≤ 2 reduction cut the
+  population 42.7% and the δ ≥ 3 remainder verified in 15.5 min. Next frontier
+  n = 12 (A001349(12) = 164,059,830,476) is ~164× larger and even-order, so the
+  odd-n degree-2 shortcut does not apply — it would need the even-n leaf case
+  (i.e. E) plus far more compute.
+- Test the upper half of the odd-order tight characterization at n = 11: does any
+  graph with m ≤ 50 need 6 paths? Requires a budget-5 sweep.
 - Check the literature: the splice and parity arguments are elementary and
   likely folklore; the endpoint property E is the kind of thing an
   equality-analysis of Lovász's path/cycle theorem may already give. No novelty

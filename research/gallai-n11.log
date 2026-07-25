@@ -1,0 +1,28 @@
+Gallai exhaustive verification at n = 11 (δ ≥ 3 remainder, 14 shards)
+
+  OK   base: n=10 exhaustively verified, 11,716,571 = A001349(10), 0 counterexamples
+  OK   reduction sample at n=11: 150,000 graphs with δ ≤ 2 (leaf 37403, splice 53788, triangle 58809) — every prescribed certificate verified, size ≤ B=6
+  OK   population: 577,076,528 connected graphs on 11 vertices with δ ≥ 3 (of 1,006,700,565 connected — 42.7% removed by the reduction), counted in 88s
+shard 6/14: checked=37910987 ok=37910987 lbTight=0 esc=0/0 undecided=0 cex=0 47577/s
+shard 11/14: checked=38710108 ok=38710108 lbTight=2 esc=0/0 undecided=0 cex=0 47723/s
+shard 0/14: checked=39793752 ok=39793752 lbTight=3 esc=0/0 undecided=0 cex=0 48400/s
+shard 10/14: checked=39896210 ok=39896210 lbTight=1 esc=0/0 undecided=0 cex=0 48334/s
+shard 8/14: checked=38666534 ok=38666534 lbTight=0 esc=0/0 undecided=0 cex=0 46805/s
+shard 9/14: checked=39782503 ok=39782503 lbTight=1 esc=0/0 undecided=0 cex=0 47936/s
+shard 2/14: checked=40869089 ok=40869089 lbTight=2 esc=0/0 undecided=0 cex=0 48588/s
+shard 4/14: checked=41769303 ok=41769303 lbTight=2 esc=0/0 undecided=0 cex=0 47741/s
+shard 3/14: checked=41758969 ok=41758969 lbTight=1 esc=0/0 undecided=0 cex=0 47577/s
+shard 13/14: checked=42863710 ok=42863710 lbTight=2 esc=0/0 undecided=0 cex=0 48389/s
+shard 5/14: checked=42989289 ok=42989289 lbTight=2 esc=0/0 undecided=0 cex=0 48501/s
+shard 1/14: checked=42918264 ok=42918264 lbTight=1 esc=0/0 undecided=0 cex=0 47874/s
+shard 7/14: checked=44465786 ok=44465786 lbTight=1 esc=0/0 undecided=0 cex=0 48750/s
+shard 12/14: checked=44682024 ok=44682024 lbTight=2 esc=0/0 undecided=0 cex=0 48065/s
+
+  OK   zero counterexamples across 577,076,528 graphs
+  OK   zero undecided — every graph settled by a verified certificate
+  OK   coverage: 577,076,528 = the full δ ≥ 3 population
+  ..   greedy sufficed for 577,076,528; escalated to exact 0, exhaustive 0
+  ..   20 graphs have a classical lower bound equal to B = 6 (so p = B exactly — tight, density-forced at odd n)
+  ..   wall 15.5 min across 14 shards (620749 graphs/s aggregate)
+
+ALL CHECKS PASSED
