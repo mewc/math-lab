@@ -1,0 +1,72 @@
+Gallai endpoint property E(G,v) — exhaustive check (n ≤ 9)
+
+S0a. exact p(T) = q/2 on every tree (n ≤ 10), q = #odd-degree
+  OK   200 trees: exact path number equals q/2 in both directions
+S0b. exact p(K_n) = ceil(n/2) (n ≤ 8), tight in both directions
+  OK   K_2..K_8: p = ceil(n/2) exactly
+S0c. soundness vs. the campaign's capped engine, connected n ≤ 7
+  OK   995 graphs: capped engine never beats the exact optimum (sound)
+  ..   capped engine misses the optimum on 0/995 graphs — its failure at a budget is NOT a proof of tightness
+
+S2–S4. splitting / E on tight graphs / pendant equivalence
+  n= 2  B=1  graphs=      1  tight=     1  tight&even=     0  E@even=      0  lb-forced=     1  struct=    0  0.0s
+  n= 3  B=2  graphs=      2  tight=     1  tight&even=     1  E@even=      3  lb-forced=     1  struct=    0  0.0s
+  n= 4  B=2  graphs=      6  tight=     5  tight&even=     3  E@even=      8  lb-forced=     5  struct=    0  0.0s
+  n= 5  B=3  graphs=     21  tight=     2  tight&even=     2  E@even=      8  lb-forced=     2  struct=    0  0.0s
+  n= 6  B=3  graphs=    112  tight=    47  tight&even=    34  E@even=    106  lb-forced=    44  struct=    3  0.0s
+  n= 7  B=4  graphs=    853  tight=     4  tight&even=     4  E@even=     20  lb-forced=     4  struct=    0  0.0s
+  n= 8  B=4  graphs=  11117  tight=  1284  tight&even=  1060  E@even=   3868  lb-forced=  1233  struct=   51  7.4s
+  n= 9  B=5  graphs= 261080  tight=     9  tight&even=     9  E@even=     57  lb-forced=     9  struct=    0  12.1s
+  OK   no undecided graphs (node limit 8,000,000)
+  ..   capped engine called 0 graphs tight that the exhaustive search decomposes below B — tight censuses computed with the capped engine are upper bounds
+  OK   Theorem A: 2434738 split certificates verified (non-tight graphs)
+  OK   E: 10698 endpoint certificates verified on tight graphs
+  OK   S4: 10617 pendant-equivalence cross-checks passed
+  OK   S1: parity identity holds on all 2719830/2719830 certificates
+
+S5. probe: two-endpoint property E₂(G,u,v) on tight graphs (n ≤ 6)
+  ..   E₂ FAILS for 25/758 instances — strengthening is false, examples:
+  ..       n=4 CV {0,2} deg=(2,2)
+  ..       n=4 C^ {0,1} deg=(2,2)
+  ..       n=6 E?bw {0,4} deg=(2,2)
+  ..       n=6 E?rw {0,1} deg=(2,2)
+  ..       n=6 ECRw {0,3} deg=(2,2)
+  ..       n=6 ECRw {1,4} deg=(2,2)
+  ..       n=6 ECrw {1,3} deg=(2,2)
+  ..       n=6 ECYW {0,3} deg=(2,2)
+  ..   of those failures, 6 have both vertices of degree ≥ 3 (degree-2 vertices are removable by the splice reduction, so only these obstruct a δ≥3 induction)
+
+Census (tight graphs are the only place E can fail):
+  n=2: connected=1 tight=1 tight-with-even-vertex=0 lb-forced=1 structure-forced=0 maxSearchNodes=2
+  n=3: connected=2 tight=1 tight-with-even-vertex=1 lb-forced=1 structure-forced=0 maxSearchNodes=3
+  n=4: connected=6 tight=5 tight-with-even-vertex=3 lb-forced=5 structure-forced=0 maxSearchNodes=3
+  n=5: connected=21 tight=2 tight-with-even-vertex=2 lb-forced=2 structure-forced=0 maxSearchNodes=4
+  n=6: connected=112 tight=47 tight-with-even-vertex=34 lb-forced=44 structure-forced=3 maxSearchNodes=42
+  n=7: connected=853 tight=4 tight-with-even-vertex=4 lb-forced=4 structure-forced=0 maxSearchNodes=11
+  n=8: connected=11117 tight=1284 tight-with-even-vertex=1060 lb-forced=1233 structure-forced=51 maxSearchNodes=15159
+  n=9: connected=261080 tight=9 tight-with-even-vertex=9 lb-forced=9 structure-forced=0 maxSearchNodes=152
+
+Odd order (the orders Theorem D actually needs E for):
+  n=3: tight=1, all with 2m > (n−1)² = 4? yes
+  n=5: tight=2, all with 2m > (n−1)² = 16? yes
+  n=7: tight=4, all with 2m > (n−1)² = 36? yes
+  n=9: tight=9, all with 2m > (n−1)² = 64? yes
+  ..   every tight graph of odd order n ≤ 9 is density-forced (m > (n−1)²/2): the even-n leaf gap lives only on near-complete graphs
+
+Sample tight graphs with an even-degree vertex (the hard class):
+  n=3 Bw
+  n=4 CV
+  n=4 C]
+  n=4 C^
+  n=5 D^{
+  n=5 D~{
+  n=6 E?bw
+  n=6 E?rw
+  n=6 E?zw
+  n=6 E?~w
+  n=6 ECRw
+  n=6 ECrw
+
+wrote /private/tmp/claude-501/-Users-mewc-code-mewc-math-lab/ab3aed9a-da78-40fb-b04f-fcf8673d04d1/scratchpad/endpoint-n9.json
+
+ALL CHECKS PASSED

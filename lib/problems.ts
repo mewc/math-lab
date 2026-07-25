@@ -632,11 +632,21 @@ export const PROBLEMS: Problem[] = [
     category: "Graph Decompositions",
     statement: "The edges of every connected graph on n vertices can be decomposed into at most ⌈n/2⌉ paths.",
     status:
-      "Open. Known for graphs whose vertices of even degree form a forest (Lovász-derived), planar graphs (Blanché–Bonamy–Bonichon 2021 announcement), and other classes.",
+      "Open. Known for graphs whose vertices of even degree form a forest (Lovász-derived), maximum degree ≤ 5, planar graphs (Blanché–Bonamy–Bonichon 2021 announcement), and other classes. Machine-verified in-lab for every connected graph on ≤ 10 vertices.",
     attack:
-      "Exhaustively verify small graphs; implement decomposition heuristics and study which graphs need exactly ⌈n/2⌉ paths — the tight family drives the induction.",
+      "Instrumented: exact bitset path-number engine with an exhaustive forced-endpoint solver, nauty-driven enumeration, and certificate verification on every claim. Two unconditional reduction theorems (leaf, degree-2 splice) plus the endpoint property that closes the leaf induction.",
     tags: ["path decomposition", "edges", "connected graphs"],
-    stage: "untouched",
+    stage: "started",
+    notes: [
+      {
+        date: "2026-07-24",
+        body: "Exhaustive verification: all 11,716,571 connected graphs on 10 vertices (= A001349(10)) certified to decompose into ≤ 5 paths, zero counterexamples, each with a verified certificate. Catalogued the tight graphs — those needing exactly ⌈n/2⌉ paths — and isolated the ones no classical lower bound explains: 3 at n = 6 and 51 at n = 8, none at odd order ≤ 9. The leaf induction closed analytically for odd n and for even n when the attachment vertex has even degree; the remaining even-n case was closed only constructively (all 1,975,757 leafy graphs on ≤ 10 vertices, needing a forced-endpoint search just 5 times).",
+      },
+      {
+        date: "2026-07-25",
+        body: "Named the missing ingredient and proved the reduction around it. E(G,v): a decomposition of size ≤ ⌈n/2⌉ with v as a path end. Three elementary lemmas — splitting (non-tight graphs satisfy E), parity (odd-degree vertices are ends in every decomposition), and automorphism transfer (vertex-transitive graphs satisfy E, so K_n is free) — confine failures of E to tight graphs at even-degree vertices, and give a clean leaf reduction with no parity split and no search: Gallai on n−1 vertices plus E implies it on n. E is now verified exhaustively for every connected graph on ≤ 9 vertices and every vertex (2.7M certificates), making the leaf reduction unconditional through n = 10. A second, fully unconditional reduction: a degree-2 vertex whose neighbours are non-adjacent can be spliced out at no cost in path count, so Gallai reduces to graphs with δ ≥ 3 (plus degree-2 vertices trapped in triangles, closed constructively to n = 9). New structural finding: at odd n every tight graph is density-forced, i.e. K_n minus at most (n−3)/2 edges — census 1, 2, 4, 9 for n = 3, 5, 7, 9, predicting 20 at n = 11. Negative result on the record: the two-endpoint strengthening E₂ is false (25 of 758 instances at n ≤ 6).",
+      },
+    ],
   },
 
   // -------------------------------------------------- algorithms, simulation

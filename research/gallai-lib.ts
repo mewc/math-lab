@@ -764,6 +764,10 @@ function pathsEndAt(paths: number[][], a: number): boolean {
  * Find a path decomposition of size ≤ budget in which `endpoint` is an end of
  * some path. Forces the first path to start at endpoint when it has degree > 0.
  * Returns null if no such decomp is found within the search budget.
+ *
+ * HEURISTIC / INCOMPLETE: a null result is NOT a proof of non-existence
+ * (enumeration is capped). For decisive claims use
+ * `decompWithEndpointsExact`, whose null is exhaustive.
  */
 export function decompWithEndpoint(
   n: number,
@@ -802,4 +806,185 @@ export function decompWithEndpoint(
     if (r.ok) return [P, ...r.paths];
   }
   return null;
+}
+
+// ── exact (complete) forced-endpoint search ────────────────────────────────
+
+/** Thrown when the exhaustive search hits its node limit — never silent. */
+export class SearchLimitExceeded extends Error {
+  constructor(public nodes: number) {
+    super(`exact endpoint search exceeded ${nodes} nodes`);
+    this.name = "SearchLimitExceeded";
+  }
+}
+
+/**
+ * EXHAUSTIVE search for a path decomposition of `edgeMask` of size ≤ budget in
+ * which every vertex of `required` is an end of some path.
+ *
+ * Completeness: at each node the lowest residual edge (or the lowest residual
+ * edge at an unsatisfied required vertex) must lie on exactly one path of any
+ * decomposition, and every path of the residual graph through that edge is
+ * enumerated — so the recursion visits a superset of all decompositions.
+ * Therefore `paths === null` is a PROOF that none exists within budget.
+ * If the node limit would be exceeded the function throws instead of lying.
+ *
+ * `required = []` reduces to a complete decision procedure for
+ * path_number(G) ≤ budget.
+ *
+ * `accept` (optional) is an extra predicate on a completed decomposition; the
+ * search continues past decompositions it rejects, so `null` remains a proof
+ * that no ACCEPTED decomposition of size ≤ budget exists.
+ */
+export function decompWithEndpointsExact(
+  n: number,
+  edgeMask: EdgeMask,
+  pairs: Array<[number, number]>,
+  budget: number,
+  required: number[],
+  nodeLimit = 20_000_000,
+  accept?: (paths: number[][]) => boolean,
+): { paths: number[][] | null; nodes: number } {
+  if (n > 31) throw new Error(`exact endpoint search requires n≤31, got ${n}`);
+  const req = [...new Set(required)];
+  if (edgeCount(edgeMask) === 0) {
+    return { paths: req.length === 0 ? [] : null, nodes: 0 };
+  }
+  if (budget <= 0) return { paths: null, nodes: 0 };
+
+  const bs = residualFromMask(n, edgeMask, pairs);
+  const endCount = new Int32Array(n);
+  const chosen: number[][] = [];
+  let nodes = 0;
+  let result: number[][] | null = null;
+
+  /** Every path of the residual graph containing the edge a–b. */
+  function pathsThroughEdge(a: number, b: number): number[][] {
+    const out: number[][] = [];
+    const leftExts: number[][] = [];
+    {
+      const used = new Uint8Array(n);
+      used[a] = 1;
+      used[b] = 1;
+      const chain: number[] = [];
+      const dfsLeft = (cur: number): void => {
+        leftExts.push(chain.slice());
+        let nbrs = bs[cur]!;
+        while (nbrs) {
+          const lsb = nbrs & -nbrs;
+          const v = 31 - Math.clz32(lsb);
+          nbrs ^= lsb;
+          if (used[v]) continue;
+          used[v] = 1;
+          chain.push(v);
+          dfsLeft(v);
+          chain.pop();
+          used[v] = 0;
+        }
+      };
+      dfsLeft(a);
+    }
+    for (const left of leftExts) {
+      const used = new Uint8Array(n);
+      used[a] = 1;
+      used[b] = 1;
+      for (const v of left) used[v] = 1;
+      const rightChain: number[] = [];
+      const dfsRight = (cur: number): void => {
+        const p: number[] = [];
+        for (let i = left.length - 1; i >= 0; i--) p.push(left[i]!);
+        p.push(a, b);
+        for (const x of rightChain) p.push(x);
+        out.push(p);
+        let nbrs = bs[cur]!;
+        while (nbrs) {
+          const lsb = nbrs & -nbrs;
+          const v = 31 - Math.clz32(lsb);
+          nbrs ^= lsb;
+          if (used[v]) continue;
+          used[v] = 1;
+          rightChain.push(v);
+          dfsRight(v);
+          rightChain.pop();
+          used[v] = 0;
+        }
+      };
+      dfsRight(b);
+    }
+    return out;
+  }
+
+  /** Lowest residual edge, preferring one at a still-unsatisfied required vertex. */
+  function pickSeed(): [number, number] | null {
+    for (const r of req) {
+      if (endCount[r]! > 0) continue;
+      const nbrs = bs[r]!;
+      if (nbrs) {
+        const v = 31 - Math.clz32(nbrs & -nbrs);
+        return [r, v];
+      }
+    }
+    for (let u = 0; u < n; u++) {
+      const high = bs[u]! & ~((1 << (u + 1)) - 1);
+      if (high) return [u, 31 - Math.clz32(high & -high)];
+    }
+    return null;
+  }
+
+  function search(count: number): boolean {
+    if (++nodes > nodeLimit) throw new SearchLimitExceeded(nodes);
+
+    const rem = residualEdgeCount(bs, n);
+    if (rem === 0) {
+      for (const r of req) if (endCount[r]! === 0) return false;
+      const cand = chosen.map((p) => p.slice());
+      // `accept` narrows the goal (e.g. "u and w must end DISTINCT paths").
+      // Rejecting here keeps the search going, so exhaustiveness is preserved.
+      if (accept && !accept(cand)) return false;
+      result = cand;
+      return true;
+    }
+    if (count >= budget) return false;
+    // An unsatisfied required vertex with no residual edge can never become an
+    // end of a later path — this branch is dead.
+    for (const r of req) if (endCount[r]! === 0 && bs[r]! === 0) return false;
+
+    const odd = residualOddCount(bs, n);
+    const lb = Math.max(
+      (odd + 1) >> 1,
+      residualMaxCeilHalfDeg(bs, n),
+      n <= 1 ? 0 : Math.ceil(rem / (n - 1)),
+    );
+    if (count + lb > budget) return false;
+
+    const seed = pickSeed();
+    if (!seed) return false;
+    const cands = pathsThroughEdge(seed[0], seed[1]);
+    // Heuristic ordering only (does not affect completeness): paths that
+    // satisfy a pending required vertex first, then longest first.
+    const helps = (P: number[]): number => {
+      let h = 0;
+      for (const r of req) {
+        if (endCount[r]! === 0 && (P[0] === r || P[P.length - 1] === r)) h++;
+      }
+      return h;
+    };
+    cands.sort((p, q) => helps(q) - helps(p) || q.length - p.length);
+
+    for (const P of cands) {
+      for (let i = 0; i < P.length - 1; i++) removeEdge(bs, P[i]!, P[i + 1]!);
+      endCount[P[0]!]!++;
+      endCount[P[P.length - 1]!]!++;
+      chosen.push(P);
+      if (search(count + 1)) return true;
+      chosen.pop();
+      endCount[P[0]!]!--;
+      endCount[P[P.length - 1]!]!--;
+      for (let i = 0; i < P.length - 1; i++) addEdge(bs, P[i]!, P[i + 1]!);
+    }
+    return false;
+  }
+
+  search(0);
+  return { paths: result, nodes };
 }

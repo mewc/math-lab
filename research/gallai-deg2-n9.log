@@ -1,0 +1,24 @@
+Gallai degree-2 splice reduction (n ≤ 9)
+
+  OK   F1: B(n−1) = B(n) − [n odd] for all 2 ≤ n ≤ 2000
+  n= 3  connected=      2  leaf=      1  deg2-nonadj=      1  deg2-triangle-only=    1  δ≥3=      0  not-reduced=      1  0.0s
+  n= 4  connected=      6  leaf=      3  deg2-nonadj=      2  deg2-triangle-only=    2  δ≥3=      1  not-reduced=      2  0.0s
+  n= 5  connected=     21  leaf=     10  deg2-nonadj=      8  deg2-triangle-only=    8  δ≥3=      3  not-reduced=      7  0.0s
+  n= 6  connected=    112  leaf=     51  deg2-nonadj=     44  deg2-triangle-only=   36  δ≥3=     19  not-reduced=     39  0.0s
+  n= 7  connected=    853  leaf=    346  deg2-nonadj=    358  deg2-triangle-only=  261  δ≥3=    150  not-reduced=    306  0.0s
+  n= 8  connected=  11117  leaf=   3675  deg2-nonadj=   4416  deg2-triangle-only= 3063  δ≥3=   2589  not-reduced=   4632  0.3s
+  n= 9  connected= 261080  leaf=  63308  deg2-nonadj=  90931  deg2-triangle-only=64002  δ≥3=  84242  not-reduced= 132088  3.2s
+  OK   F2: 136553 splice certificates verified (size-preserving, ≤ B(n))
+  OK   F3: 132428 odd-n triangle certificates verified
+  OK   F4: 7328 even-n triangle cases all closed by distinct-ends splice
+
+Reduction coverage — share of connected graphs disposed of:
+  n=3: 1/2 (50.0%) have a leaf or a degree-2 vertex outside a triangle; 1 survive (δ≥3: 0)
+  n=4: 4/6 (66.7%) have a leaf or a degree-2 vertex outside a triangle; 2 survive (δ≥3: 1)
+  n=5: 14/21 (66.7%) have a leaf or a degree-2 vertex outside a triangle; 7 survive (δ≥3: 3)
+  n=6: 73/112 (65.2%) have a leaf or a degree-2 vertex outside a triangle; 39 survive (δ≥3: 19)
+  n=7: 547/853 (64.1%) have a leaf or a degree-2 vertex outside a triangle; 306 survive (δ≥3: 150)
+  n=8: 6485/11117 (58.3%) have a leaf or a degree-2 vertex outside a triangle; 4632 survive (δ≥3: 2589)
+  n=9: 128992/261080 (49.4%) have a leaf or a degree-2 vertex outside a triangle; 132088 survive (δ≥3: 84242)
+
+ALL CHECKS PASSED

@@ -1,4 +1,9 @@
-# Math Lab research log — 1/3–2/3 conjecture campaign
+# Math Lab research log
+
+Two campaigns so far: the **1/3–2/3 conjecture** (below) and **Gallai's path
+decomposition conjecture** (second half of this file).
+
+# 1/3–2/3 conjecture — campaign log
 
 Ground rules (inherited from Collatz Lab): no fabricated steps, dead ends are
 logged as results, corrections stay on the record. All mathematical claims are
@@ -199,3 +204,199 @@ results, logged as results:
 - Cross-check the {1,3}-composition sequence (1,1,2,3,4,6,9,13,19,28,…,
   a.k.a. Narayana's cows / A000930 shape) against OEIS from an unrestricted
   environment; identification is currently from the verified recurrence only.
+
+---
+
+# Gallai's path decomposition conjecture — campaign log
+
+> Every connected graph on n vertices decomposes into at most B(n) = ⌈n/2⌉
+> edge-disjoint paths. Open since 1968 (Gallai, reported by Lovász). Known for
+> graphs whose even-degree vertices induce a forest (Pyber, after Lovász),
+> maximum degree ≤ 5, planar graphs (Blanché–Bonamy–Bonichon), and other
+> classes.
+
+Same ground rules: exact integer/bitset arithmetic, every upper-bound claim
+carries a machine-verified certificate (`verifyDecomposition`), dead ends and
+corrections stay on the record. Unlabeled enumeration is nauty `geng -c`;
+`p(G)` is the path number and G is **tight** when p(G) = B(n).
+
+Machinery: `research/gallai-lib.ts` — BigInt edge masks, `number`-bitset
+residual adjacency (n ≤ 31), three classical lower bounds
+(⌈odd/2⌉, max⌈deg/2⌉, ⌈m/(n−1)⌉), a greedy+DFS budget engine
+(`pathNumberAtMost`, sound but node-capped) and, added in turn 7, an
+**exhaustive** forced-endpoint solver (`decompWithEndpointsExact`) whose `null`
+is a proof of non-existence rather than a timeout — it throws if it would hit
+its node limit.
+
+## Turns 1–6 — finite verification and the leaf induction (2026-07-24)
+
+Run under `mathsmasher` (`~/.mathsmasher/runs/2026-07-24T01-08-34-gallai-paths-v1`,
+final verdict `open`); scripts in-repo, artifacts out-of-repo.
+
+- **Exhaustive verification through n = 10.** `gallai-small-n.ts` (labeled,
+  n ≤ 7), `gallai-unlabeled.ts` (geng, n ≤ 9), then `gallai-n10-stream.ts` in
+  four `res/mod` shards + `gallai-n10-merge.ts`: **11,716,571 connected graphs
+  on 10 vertices = A001349(10), every one certified p ≤ 5, zero
+  counterexamples** (~47 s wall, 4 shards). 305,585 of them are tight by a
+  lower bound.
+- **Density lemma (I3).** m > (n−1)(B−1) ⇒ p = B, exhaustively certified n ≤ 10
+  (844 graphs).
+- **Structure-forced tight cores (I4/I5).** Tight graphs whose tightness no
+  classical lower bound explains: **3 at n = 6, 51 at n = 8, none at odd
+  n ≤ 9**. Each carries a size-B certificate plus an exhaustive refutation at
+  B−1; one edge-minimal core at n = 8 (`G?rLeW`).
+- **Leaf induction, partially closed.** A1: for odd n, B(n−1)+1 = B(n), so any
+  leaf-lift works — Gallai(n−1) ⇒ Gallai(n) for every leafy graph of odd order,
+  analytically, all n. A2 (parity): if deg_H(attach) is odd then every
+  decomposition of H = G−leaf ends at the attachment, so the lift extends a
+  path and spends nothing — closing even n in that case. What was left: even n
+  with an even-degree attachment. `gallai-leaf-closed.ts` closed it only
+  *constructively* for n ≤ 10 — all **1,975,757** leafy connected graphs got a
+  certificate, with the forced-endpoint search needed just **5** times and zero
+  exact-on-G fallbacks — but with no general argument.
+- **Universal-vertex merge** (`gallai-univ-closed.ts`) and constructive families
+  (stars, K_n, tree decompositions) verified separately.
+
+## Turn 7 — the endpoint property: the even-n leaf gap, reduced to a statement (2026-07-25)
+
+`research/gallai-endpoint.ts`, `research/gallai-deg2.ts`. For a connected G on n
+vertices and a vertex v define
+
+    E(G, v):  G has a path decomposition of size ≤ B(n) with v an END of some path.
+
+Four elementary lemmas, all **proved for all n** (proofs in the script headers):
+
+- **THEOREM A (splitting).** p(G) ≤ B(n) − 1 ⇒ E(G, v) for every v of positive
+  degree. Cut, at v, the path that v is interior to: +1 path, still ≤ B(n).
+- **THEOREM B (parity).** In *every* decomposition, #{paths ending at v} ≡
+  deg(v) (mod 2). So odd-degree vertices are ends for free.
+- **LEMMA G (orbit).** E transfers along automorphisms, so every
+  vertex-transitive graph satisfies E — in particular K_n, the extremal tight
+  graph at odd order.
+- **COROLLARY C.** E(G, v) can fail only if G is **tight** and deg(v) is
+  **even**. Hence E holds for every graph with all degrees odd, and for every
+  **tree** (a tree has p = q/2 with q = #odd-degree vertices, so tightness
+  forces q = n — all degrees odd).
+
+The payoff is that the campaign's messy even-n leaf case collapses into one
+clean conditional step, with no parity split and no search:
+
+- **THEOREM D (leaf reduction).** G connected with a leaf x at a, H = G − x. If
+  p(H) ≤ B(n−1) and E(H, a), then p(G) ≤ B(n). *Either* H has slack and the
+  edge ax becomes its own path, *or* H is tight and E(H, a) hands us a path
+  ending at a to extend. Both parities, all n. This is what the 5 forced-endpoint
+  instances of turn 6 were doing; now it is a theorem plus a named hypothesis.
+
+**E machine-verified exhaustively for every connected graph on n ≤ 9** — for
+every graph and *every* vertex, split three ways by the lemmas: non-tight
+graphs by an explicit split certificate (2,434,738 of them), tight graphs by
+**exhaustive** forced-endpoint search (10,698 certificates), and the parity
+identity re-checked on all **2,719,830** certificates produced. Zero failures,
+zero undecided. Engine validated first against two closed forms — exact
+p(T) = q/2 on all 200 trees n ≤ 10 and p(K_n) = ⌈n/2⌉ — in *both* directions,
+and cross-checked by the independent pendant identity (for tight G,
+E(G,v) ⇔ p(G + pendant at v) ≤ B(n), 10,617 agreements).
+
+Consequence: **Theorem D is now unconditional for every leafy connected graph
+on n ≤ 10**, by a general argument instead of a search over 1.98M graphs.
+
+### Where E can actually fail — and it is a small place
+
+Tight census by exact recount (`lb-forced` = some classical bound already
+reaches B, `struct` = tightness no bound explains):
+
+| n | connected | tight | tight w/ even-deg vertex | lb-forced | struct |
+|---|---|---|---|---|---|
+| 3 | 2 | 1 | 1 | 1 | 0 |
+| 4 | 6 | 5 | 3 | 5 | 0 |
+| 5 | 21 | 2 | 2 | 2 | 0 |
+| 6 | 112 | 47 | 34 | 44 | 3 |
+| 7 | 853 | 4 | 4 | 4 | 0 |
+| 8 | 11,117 | 1,284 | 1,060 | 1,233 | 51 |
+| 9 | 261,080 | **9** | 9 | 9 | 0 |
+
+The `struct` column reproduces turn 6's independent count (3 at n = 6, 51 at
+n = 8) from a different engine — two methods, same answer.
+
+**Observation (verified n ≤ 9, unproved).** At *odd* n every tight graph is
+density-forced: 2m > (n−1)². Both other classical bounds are structurally
+incapable of reaching B at odd n — the odd-vertex count is at most n−1 (an
+odd-order graph cannot have all degrees odd) and the max-degree bound is at
+most (n−1)/2, so only the edge bound can — and empirically nothing else is
+tight either. Equivalently the odd-order tight graphs are exactly **K_n minus a
+graph with at most (n−3)/2 edges**, which predicts the census as the number of
+graphs on n vertices with ≤ (n−3)/2 edges: 1, 2, 4, 9 for n = 3, 5, 7, 9 —
+matching the recount exactly (1 = K_3; 2 = K_5, K_5−e; 4; and **9 at n = 9**,
+i.e. 1+1+2+5 complements). **Next falsifiable target: 20 tight graphs at
+n = 11** (1+1+2+5+11).
+
+Why it matters: Theorem D applies E to H = G − x of order n−1, and the hard
+parity is n even, i.e. **H of odd order**. So the entire residual even-n leaf
+gap lives on near-complete graphs — and Lemma G already settles the extreme
+point K_{n−1} of that family for free.
+
+## Turn 7 — the degree-2 splice: a second unconditional reduction (2026-07-25)
+
+`research/gallai-deg2.ts`.
+
+- **THEOREM F (degree-2 splice; unconditional, all n, both parities).** Let v
+  have degree 2 with **non-adjacent** neighbours u, w and put
+  H = (G − v) + uw — simple, connected, order n−1. Then p(G) ≤ p(H): the edge
+  uw lies on exactly one path of any decomposition of H, and replacing that
+  edge by u–v–w reinserts v at **no cost in path count**. So Gallai(n−1) ⇒
+  p(G) ≤ B(n−1) ≤ B(n). Being size-preserving is exactly what even n needs.
+- **Honest scope: adjacent neighbours are genuinely different.** If uw ∈ E(G)
+  (v in a triangle) the same substitution *uncovers* uw. For odd n the two edges
+  at v are already a path u–v–w and p(G) ≤ p(H) + 1 = B(n) suffices. For even n
+  it suffices that some decomposition of G−v of size ≤ B(n) has u and w as ends
+  of two **distinct** paths — distinctness is essential, since appending v to
+  both ends of one u…w path closes a cycle. Parity does not give it (the odd
+  number of ends at u and at w may be the same path), so it is decided here by
+  exhaustive search: **all 7,328 arising instances at n ≤ 9 hold**, so the
+  degree-2 case is fully closed (constructively) in that range.
+- Verified n ≤ 9: **136,553** splice certificates (each size-preserving and
+  ≤ B(n)), **132,428** odd-n triangle certificates, zero failures.
+- **Reduction coverage.** Fraction of connected graphs killed outright by
+  "has a leaf, or a degree-2 vertex outside a triangle": 66.7% (n=4), 65.2%
+  (n=6), 64.1% (n=7), 58.3% (n=8), **49.4% (n=9)** — with 84,242 of the
+  remaining 132,088 at n = 9 having δ ≥ 3. The reductions shrink but stay
+  substantial; the residual class is δ ≥ 3 plus triangle-bound degree-2
+  vertices.
+
+**Net standing after turn 7.** Gallai for order n reduces to order n−1 for every
+connected graph with a leaf (Theorem D, modulo E on order n−1) or with a
+degree-2 vertex outside a triangle (Theorem F, unconditional) or any degree-2
+vertex when n is odd. What remains is δ ≥ 3 — where the conjecture is genuinely
+hard — plus the E hypothesis, now localized to tight graphs at even-degree
+vertices, and at odd order to near-complete graphs. Nothing here proves Gallai.
+
+### Negative result, on the record
+
+The natural strengthening that would make a Gallai+E induction self-contained is
+**false**. E₂(G, u, v) — one decomposition of size ≤ B(n) with *both* u and v as
+ends — **fails for 25 of 758** (tight graph, vertex pair) instances at n ≤ 6;
+the smallest witnesses are the 4-vertex tight graphs `CV` and `C^` at pairs of
+degree-2 vertices. 6 of the 25 failures have both vertices of degree ≥ 3, so
+this is not merely an artifact of degree-2 vertices that Theorem F removes. So a
+simultaneous induction on "Gallai ∧ E" cannot route through E₂ as stated;
+E₂ˢ (the distinct-paths variant needed by Theorem F's triangle case) is a weaker
+demand and did survive every instance tested. Dense tight graphs at n ≥ 7
+exhaust the 8M-node limit on E₂ instances; those are counted as undecided and
+excluded rather than silently dropped.
+
+### Loose ends
+
+- Prove E, or at least prove it for the odd-order density-forced family
+  K_m minus ≤ (m−2)/2 edges (Lemma G gives the K_m endpoint; the sparse
+  deletions are open). That would make Theorem D unconditional.
+- Prove the odd-order observation (tight ⇒ 2m > (n−1)²) — equivalently, that at
+  odd n a connected graph with 2m ≤ (n−1)² needs only ⌊n/2⌋ paths. Test the
+  census prediction **20 at n = 11**.
+- Prove E₂ˢ in general, closing the triangle case of Theorem F unconditionally.
+- n = 11 exhaustive Gallai (A001349(11) = 1,006,700,565) — ~86× the n = 10
+  stream, feasible only sharded and with the density filter doing most of the
+  work.
+- Check the literature: the splice and parity arguments are elementary and
+  likely folklore; the endpoint property E is the kind of thing an
+  equality-analysis of Lovász's path/cycle theorem may already give. No novelty
+  claimed offline.
