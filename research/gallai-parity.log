@@ -1,0 +1,10 @@
+Gallai via parity toggling — Lovász's all-odd class as the base
+
+P1. Lovász all-odd rigidity, decided exhaustively (n ≤ 8)
+  OK   240 connected all-odd graphs: p = n/2 exactly on 240 verified certificates, each satisfying "every vertex ends exactly one path"
+  ..   rigidity decided exhaustively for 165/240; 75 hit the 400,000-node limit (the lemma is proved analytically above — these are the cases where the machine confirmation was not affordable)
+
+P2. The toggle experiment — even n ≤ 10, every graph, every pairing
+  n=4: 6/6 graphs covered by parity toggling (2 already all-odd), pairings 6/6 worked, first pairing sufficed for 4, 0.0s
+  n=6: 112/112 graphs covered by parity toggling (13 already all-odd), pairings 299/299 worked, first pairing sufficed for 99, 0.0s
+  n=8: 11113/11117 graphs covered by parity toggling (224 already all-odd), pairings 76225/76327 worked (+102 undecided), first pairing sufficed for 10870, 4 graphs undecided, 46.3s

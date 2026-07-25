@@ -1,0 +1,19 @@
+Gallai via parity toggling — Lovász's all-odd class as the base
+
+
+P4. Adversarial family probes (all degrees even ⇒ maximal pairing count)
+  OK   K_8 − perfect matching (n=8, 24 edges, z=8): 52 of 53 pairings free-toggle and ZERO decided failures; 1 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+  OK   K_10 − perfect matching (n=10, 40 edges, z=10): 48 of 60 pairings free-toggle and ZERO decided failures; 12 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+  OK   K_12 − perfect matching (n=12, 60 edges, z=12): 12 of 60 pairings free-toggle and ZERO decided failures; 48 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+  OK   K_{4,6} (n=10, 24 edges, z=10): 32 of 60 pairings free-toggle and ZERO decided failures; 28 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+  OK   K_{6,6} (n=12, 36 edges, z=12): 15 of 60 pairings free-toggle and ZERO decided failures; 45 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+  OK   K_{4,8} (n=12, 32 edges, z=12): 4 of 60 pairings free-toggle and ZERO decided failures; 56 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+  OK   C_8 (n=8, 8 edges, z=8): 53 of 105 pairings (every 2th) free-toggle, every certificate verified
+  OK   C_8² (n=8, 16 edges, z=8): 53 of 105 pairings (every 2th) free-toggle, every certificate verified
+  OK   C_10 (n=10, 10 edges, z=10): 60 of 945 pairings (every 16th) free-toggle, every certificate verified
+  OK   C_10² (n=10, 20 edges, z=10): 60 of 945 pairings (every 16th) free-toggle, every certificate verified
+  OK   C_12 (n=12, 12 edges, z=12): 60 of 10395 pairings (every 174th) free-toggle, every certificate verified
+  OK   C_12² (n=12, 24 edges, z=12): 60 of 10395 pairings (every 174th) free-toggle, every certificate verified
+  OK   K_{4,4,4} (n=12, 48 edges, z=12): 13 of 60 pairings free-toggle and ZERO decided failures; 47 undecided at the 3,000,000-node limit (excluded, not counted against the conjecture)
+
+ALL CERTIFICATES VALID

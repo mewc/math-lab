@@ -538,6 +538,110 @@ Method note worth keeping: on the hardest instances the win came from a
 construction, not from more compute. Six orders of magnitude, from a 1892
 theorem.
 
+## Turn 10 — a different axis: parity toggling on Lovász's rigid class (2026-07-26)
+
+`research/gallai-parity.ts`, logs `research/gallai-parity-n8.log`,
+`research/gallai-parity-families.log`.
+
+Turns 1–9 all inducted on **n**: peel a vertex, lean on the verified smaller
+order, repeat. Every gap they hit was the same gap. This turn changes the axis
+to the **parity of the degrees**, and leans on a classical theorem the campaign
+had only ever mentioned in prose:
+
+> **LOVÁSZ (1968).** Every graph on n vertices decomposes into at most ⌊n/2⌋
+> paths *and cycles*.
+
+- **COROLLARY (all-odd rigidity).** If every degree of H is odd — so n is even —
+  then p(H) = n/2 exactly, and in EVERY decomposition of that size each vertex is
+  the end of exactly one path.
+  *Proof.* Lovász gives ≤ n/2 paths and cycles. A cycle meets each of its
+  vertices in 2 edges, and a path meets each of its vertices in 2 edges unless
+  that vertex is one of its ends, so every odd-degree vertex ends at least one
+  path. Counting ends, 2·#paths ≥ n, so #paths ≥ n/2; with #paths + #cycles ≤ n/2
+  this forces #paths = n/2 and #cycles = 0. Then Σ_v e_v = n with every e_v ≥ 1,
+  so e_v = 1 for all v. ∎
+  The path-ends therefore form a **perfect pairing of V(H)**. Nothing else in
+  this campaign has that much structure to work with.
+
+**THE TOGGLE.** For any G with z even-degree vertices (z ≡ n mod 2, so z is even
+when n is even), choose a perfect matching π on those even vertices and toggle
+each pair: delete it if it is an edge of G, add it if it is not. Every even
+vertex flips parity and every odd vertex is untouched, so the result H is
+all-odd and the corollary applies. Converting back to G is free when
+
+- an **added** pair (in H, not in G) is an **end-edge** of its path — deleting it
+  just shortens that path; and
+- a **deleted** pair (in G, not in H) can be **re-attached** — extend the path
+  ending at u by v (needs v ∉ that path), or symmetrically at v.
+
+If every toggle is free then p(G) ≤ n/2 = B(n). At **odd** n there is even slack:
+z is odd, one even vertex stays unpaired, H then has a single even vertex and the
+same count gives ≤ (n−1)/2 parts, all paths — a **spare path** below
+B(n) = (n+1)/2, so one toggle may fail and Gallai still follows. Even n is the
+hard case and is what was tested.
+
+**Honesty first, same as with E:** this is an exact reformulation, not a
+reduction to something easier. "uv is an end-edge in some optimal decomposition
+of H" unpacks back into Gallai for G. What it buys is a different *base*: a class
+where a classical theorem pins the answer completely, plus a sharp question.
+
+### The unexpected part
+
+The experiment asked only whether **some** pairing works — that is all Gallai
+needs. The answer came back much stronger:
+
+- **Exhaustive, even n ≤ 8: all 11,235 connected graphs covered, and ALL 76,632
+  pairings worked** — not one pairing failed anywhere, at any graph. Each success
+  carries a decomposition of G rebuilt from the all-odd case and verified
+  edge-by-edge. The first pairing tried sufficed for 10,893 of the 11,117 graphs
+  at n = 8, so the search over pairings is almost never needed.
+- **CONJECTURE (Free Toggle).** For every graph G on even n and *every* perfect
+  matching π on its even-degree vertices, the toggled all-odd graph has an
+  optimal decomposition in which every toggle is free.
+  This is strictly stronger than Gallai (which needs one good π), and strictly
+  more falsifiable: a single (G, π) with a *decided* failure kills it. None
+  exists below n = 9.
+- **P1, the base class:** all 240 connected all-odd graphs on n ≤ 8 certified
+  p = n/2 (verified decomposition + exhaustive refutation at n/2 − 1), every
+  certificate satisfying rigidity, and rigidity *decided exhaustively* — no
+  size-n/2 decomposition violates it — for 231 of them (9 hit the 20M-node
+  limit; the lemma is proved above, so those are unaffordable confirmations, not
+  doubts).
+
+### It reaches past Pyber
+
+The classical class here is Pyber's: Gallai holds when the even-degree vertices
+induce a **forest**. The toggle route covers **5,026 graphs on n ≤ 8 whose even
+vertices do not induce a forest** — so it is not a re-derivation of Pyber, it
+overlaps and extends it. (Pyber's theorem is a theorem; this is verified data on
+a range. No priority claimed either way.)
+
+### Adversarial probes past the exhaustive range
+
+Exhaustive enumeration stops at n = 8, so the strengthened claim was attacked
+where it should break first: graphs with **all degrees even**, which maximises
+both rigidity and the pairing count ((n−1)!! pairings). Thirteen families at
+n = 8, 10, 12 — K_n minus a perfect matching, K_{4,6}, K_{6,6}, K_{4,8},
+K_{4,4,4}, and the cycles C_8, C_10, C_12 with their squares:
+
+**Zero decided failures anywhere.** The dense families do produce many
+*undecided* pairings at the node limit (48 of 60 for K_12 − PM, 56 of 60 for
+K_{4,8}) — those are excluded from the counts and reported, never scored as
+successes. The sparse families (all the cycles and their squares) decided every
+sampled pairing outright.
+
+### What this is worth, plainly
+
+It does not prove Gallai and it is not claimed to. What it adds is a second
+axis of attack with a rigid, classically-settled base class; a strengthening
+that survived every one of 76,632 exhaustive tests plus thirteen adversarial
+families; and a much cheaper falsification target than the conjecture itself —
+one decided (G, π) failure ends it. The natural next step is to prove the Free
+Toggle conjecture for a single toggle (z = 2), which is exactly the classical
+cycle-absorption obstruction: when u and v are the two ends of the *same* path,
+re-attaching closes a cycle, and the fix needs a path ending on that cycle whose
+only shared vertex with it is that end.
+
 ### Loose ends
 
 - Prove E for the odd-order density-forced family K_m minus ≤ (m−2)/2 edges.
@@ -562,6 +666,12 @@ theorem.
   characterization the leafy case of Gallai closes at every odd order. The
   search found a labelling for every instance tried (worst case 181,410
   labellings), which is evidence, not proof.
+- Prove Free Toggle for z = 2 (a single toggle). This is the cycle-absorption
+  obstruction in miniature; a proof there would be the first genuinely new
+  theorem out of the parity axis, and would give a class incomparable to Pyber's.
+- Push the Free Toggle experiment past n = 10, and hunt specifically for a
+  DECIDED failure — the conjecture is worth more as a falsification target than
+  as another verified range.
 - Check the literature: the splice and parity arguments are elementary and
   likely folklore; the endpoint property E is the kind of thing an
   equality-analysis of Lovász's path/cycle theorem may already give. No novelty
