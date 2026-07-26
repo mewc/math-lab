@@ -193,11 +193,11 @@ function checkGraph(g6: string, st: Stats): void {
   const at = pathNumberAtMost(N, edgeMask, pairs, B);
   if (!at.ok || !verifyDecomposition(N, edgeMask, pairs, at.paths).ok) {
     st.bad++;
-    if (st.structural.length < 200) st.structural.push(`${g6} NO-B-CERT`);
+    if (st.structural.length < 100000) st.structural.push(`${g6} NO-B-CERT`);
     return;
   }
   st.structForced++;
-  if (st.structural.length < 200) st.structural.push(g6);
+  if (st.structural.length < 100000) st.structural.push(g6);
 }
 
 async function runWorker(): Promise<void> {

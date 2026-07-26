@@ -1,19 +1,19 @@
 Exact tight census at n = 10 (B = 5), 14 shards
 
-shard 13/14: checked=644130 lb=16813 splice=171153 greedy=456133 exh=3 STRUCT=26 undec=2 bad=0 5581/s
-shard 1/14: checked=701488 lb=18766 splice=181707 greedy=500877 exh=12 STRUCT=123 undec=3 bad=0 4596/s
-shard 11/14: checked=798064 lb=20774 splice=203242 greedy=574023 exh=1 STRUCT=22 undec=2 bad=0 4808/s
-shard 7/14: checked=929318 lb=23010 splice=305837 greedy=600264 exh=5 STRUCT=200 undec=2 bad=0 5575/s
-shard 0/14: checked=523268 lb=16818 splice=89261 greedy=417164 exh=9 STRUCT=15 undec=1 bad=0 3031/s
-shard 6/14: checked=604574 lb=19186 splice=116608 greedy=468616 exh=7 STRUCT=148 undec=9 bad=0 3442/s
-shard 9/14: checked=1008697 lb=24400 splice=340644 greedy=643404 exh=12 STRUCT=237 undec=0 bad=0 5696/s
-shard 4/14: checked=1245907 lb=27157 splice=429830 greedy=788792 exh=14 STRUCT=112 undec=2 bad=0 6911/s
-shard 12/14: checked=758584 lb=21237 splice=187971 greedy=549250 exh=12 STRUCT=107 undec=7 bad=0 4190/s
-shard 5/14: checked=920275 lb=22640 splice=266624 greedy=630852 exh=4 STRUCT=152 undec=3 bad=0 4974/s
-shard 2/14: checked=655976 lb=21023 splice=134635 greedy=500111 exh=6 STRUCT=193 undec=8 bad=0 3525/s
-shard 3/14: checked=765651 lb=22918 splice=137894 greedy=604816 exh=11 STRUCT=10 undec=2 bad=0 4106/s
-shard 8/14: checked=947407 lb=22855 splice=321590 greedy=602743 exh=47 STRUCT=170 undec=2 bad=0 4770/s
-shard 10/14: checked=1213232 lb=27988 splice=372164 greedy=812947 exh=4 STRUCT=121 undec=8 bad=0 5866/s
+shard 13/14: checked=644130 lb=16813 splice=171153 greedy=456133 exh=3 STRUCT=26 undec=2 bad=0 5654/s
+shard 1/14: checked=701488 lb=18766 splice=181707 greedy=500877 exh=12 STRUCT=123 undec=3 bad=0 4641/s
+shard 11/14: checked=798064 lb=20774 splice=203242 greedy=574023 exh=1 STRUCT=22 undec=2 bad=0 4841/s
+shard 7/14: checked=929318 lb=23010 splice=305837 greedy=600264 exh=5 STRUCT=200 undec=2 bad=0 5615/s
+shard 0/14: checked=523268 lb=16818 splice=89261 greedy=417164 exh=9 STRUCT=15 undec=1 bad=0 3038/s
+shard 6/14: checked=604574 lb=19186 splice=116608 greedy=468616 exh=7 STRUCT=148 undec=9 bad=0 3479/s
+shard 9/14: checked=1008697 lb=24400 splice=340644 greedy=643404 exh=12 STRUCT=237 undec=0 bad=0 5739/s
+shard 12/14: checked=758584 lb=21237 splice=187971 greedy=549250 exh=12 STRUCT=107 undec=7 bad=0 4264/s
+shard 4/14: checked=1245907 lb=27157 splice=429830 greedy=788792 exh=14 STRUCT=112 undec=2 bad=0 6978/s
+shard 5/14: checked=920275 lb=22640 splice=266624 greedy=630852 exh=4 STRUCT=152 undec=3 bad=0 5004/s
+shard 2/14: checked=655976 lb=21023 splice=134635 greedy=500111 exh=6 STRUCT=193 undec=8 bad=0 3558/s
+shard 3/14: checked=765651 lb=22918 splice=137894 greedy=604816 exh=11 STRUCT=10 undec=2 bad=0 4126/s
+shard 10/14: checked=1213232 lb=27988 splice=372164 greedy=812947 exh=4 STRUCT=121 undec=8 bad=0 5887/s
+shard 8/14: checked=947407 lb=22855 splice=321590 greedy=602743 exh=47 STRUCT=170 undec=2 bad=0 4314/s
 
   OK   coverage: 11,716,571 = A001349(10)
   ..   not tight: 11,409,299 (splice-free 3,259,160, greedy 8,149,992, exhaustive 147)
@@ -29,7 +29,7 @@ shard 10/14: checked=1213232 lb=27988 splice=372164 greedy=812947 exh=4 STRUCT=1
          ICQ`dmu~_
          ICQSjQvlw
          ICQSlhilw
-  ..   wall 3.4 min, 56643 graphs/s aggregate
+  ..   wall 3.7 min, 53349 graphs/s aggregate
 
   structure-forced sequence so far: n=6 → 3, n=8 → 51, n=10 → 1636 (+undecided)
 

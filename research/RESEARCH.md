@@ -808,6 +808,82 @@ of it and no OEIS entry for 3, 51, 1681, but "I could not find it" is not
 "nobody has it". Claimed as computed here, with the two prunes as the reusable
 contribution.
 
+## Turn 12 — the boundary bound: the "structure-forced" class dissolves (2026-07-27)
+
+`research/gallai-localbounds.ts`, log `research/gallai-localbounds.log`.
+
+Turn 11 left 1,681 graphs at n = 10 whose tightness no classical bound explains.
+The question this turn asks is whether they are genuinely unexplained or merely
+unexplained by GLOBAL bounds — all three classical bounds count over the whole
+graph.
+
+**Local counting bounds first, and they mostly fail.** Fix a decomposition into
+k paths and a set S; each path P meets S in c_P subpaths covering
+|V(P) ∩ S| − c_P edges inside S, so e(S) ≤ k|S| − Σc_P. Three valid bounds drop
+out: L1 density (a path is a forest, so this is Nash-Williams arboricity),
+L2 local parity (odd-degree vertices of G[S] must end subpaths), and L3 both at
+once. All were validated against exact path numbers — no local bound ever
+exceeds p(G) on 12,112 graphs — and they are genuinely sharper than the
+classical maximum on 204 of them. But they explain only **1 of 3** at n = 6,
+**8 of 51** at n = 8 and **43 of 1,681** at n = 10. Counting is not the answer.
+
+**What counting misses is a cut.** The two smallest unexplained graphs say it
+plainly: `ECYW` is a triangle joined by an edge to a vertex carrying two leaves,
+and `EQjO` is two triangles joined by a bridge. A triangle needs two paths by
+itself, and only so many paths can ENTER it across a small boundary.
+
+- **THEOREM L5 (boundary bound; proved, all n).** For every S ⊆ V, with b the
+  number of edges between S and V∖S and odd_X the vertices of X having odd
+  degree in G:
+
+      2·p(G) ≥ max(2·p(G[S]) − b, odd_S) + max(2·p(G[V∖S]) − b, odd_{V∖S}).
+
+  *Proof.* Fix a decomposition into k paths. The subpaths inside S form a path
+  decomposition of G[S], so there are at least p(G[S]) of them and hence at
+  least 2p(G[S]) subpath-ends. Each such end is either a genuine end of one of
+  the k paths lying in S, or a point where a path steps out of S along one of
+  the b boundary edges — and each boundary edge, used by exactly one path,
+  provides at most one exit. With E_S the number of path-ends inside S this is
+  2p(G[S]) ≤ E_S + b. Independently E_S ≥ odd_S by parity. The same holds for
+  V∖S with the same b, and 2k = E_S + E_{V∖S}. ∎
+
+  S = ∅ recovers the classical odd-vertex bound, so it is a generalisation, not
+  an unrelated inequality. It is the only bound here that sees a cut, and it is
+  **recursive** — it calls p on induced subgraphs.
+
+**Result: it explains all of them.** Structure-forced tight graphs certified by
+the boundary bound: **3/3 at n = 6, 51/51 at n = 8, 1,681/1,681 at n = 10 —
+residue zero.** (Three at n = 10 needed exact subset path numbers rather than
+the fallback lower bound; with a 600M-node budget they too are explained.) So
+"structure-forced" was never a property of the graphs, it was a gap in the
+toolkit: **with L5 added, every tight graph on n ≤ 10 has its tightness
+certified by a lower bound.**
+
+**The sharper question.** Is p(G) always EQUAL to the best of these bounds?
+On all **12,112 connected graphs with n ≤ 8, yes — no gaps.** If that identity
+held in general it would imply Gallai by induction: for a cut with b ≥ 1,
+2p(G[S]) + 2p(G[V∖S]) − 2b ≤ (|S|+1) + (|V∖S|+1) − 2b ≤ n, and the odd terms
+give odd_S + odd_{V∖S} = q ≤ n. So the identity is at least as strong as the
+conjecture — which is also why it will not be easy.
+
+**A consistency check that constrains the whole idea.** p(G) = 1 exactly when G
+has a Hamiltonian path, so computing p is NP-hard and no polynomial-time family
+of bounds can equal it unless P = NP. L5 escapes only because it is recursive.
+The recursion is essential, not an artifact — any exact min-max characterisation
+of the path number has to be of this shape.
+
+**Soundness discipline.** The bounds were validated BEFORE being used: for every
+connected graph on n ≤ 8, exact p(G) was computed and every bound checked
+against it, with a violation aborting the run. When a subset's exact path number
+could not be computed within budget, the code substitutes a valid LOWER bound
+for p(G[S]) — L5 is monotone in that term, so the result stays sound and merely
+gets weaker. Never a guess.
+
+**Novelty: offered, not claimed.** Searching did not turn up this bound or the
+equality question in print. That is weak evidence for a sixty-year-old problem,
+and the literature on the even-degree subgraph is deep. Treat L5 as a
+reconstruction until someone checks it properly.
+
 ### Loose ends
 
 - Prove E for the odd-order density-forced family K_m minus ≤ (m−2)/2 edges.
@@ -832,6 +908,10 @@ contribution.
   characterization the leafy case of Gallai closes at every odd order. The
   search found a labelling for every instance tried (worst case 181,410
   labellings), which is evidence, not proof.
+- Test "p(G) = the best bound" at n = 9 (261,080 graphs) and beyond; a single
+  gap kills it and would be the most informative possible outcome.
+- Try to prove the boundary bound is tight for a class — trees, cacti, or graphs
+  whose blocks are small — which would give an exact formula for p on that class.
 - Use the n = 10 tight census to attack Bonamy–Perrett at n = 11 properly: the
   leaf case needs "G − x is not tight", which is now a lookup rather than a
   search. Remaining obligation there is m ≤ 44 at budget 5.

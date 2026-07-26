@@ -637,6 +637,7 @@ export const PROBLEMS: Problem[] = [
       "Instrumented: exact bitset path-number engine with an exhaustive forced-endpoint solver, nauty-driven enumeration, and certificate verification on every claim. Two unconditional reduction theorems (leaf, degree-2 splice) plus the endpoint property that closes the leaf induction.",
     tags: ["path decomposition", "edges", "connected graphs"],
     stage: "started",
+    href: "/p/gallai-paths",
     notes: [
       {
         date: "2026-07-24",

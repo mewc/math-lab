@@ -1,0 +1,16 @@
+Local lower bounds for the path number
+
+V1. validation: every local bound ≤ p(G), all connected graphs n ≤ 8
+  OK   12,112 graphs: no local bound ever exceeds p(G) — the inequalities hold
+  ..   the local bounds beat the classical maximum on 204 of them
+  ..   p(G) equals the best bound on 12,112/12,112 graphs — NO GAPS: the bounds determine p exactly on this range
+
+V2. do local bounds reach B on the structure-forced tight graphs?
+  n=6 structure-forced: 3 graphs, B=3 — explained by a LOCAL bound: 3 (L1 density 1, L2 parity 0, L3 combined 1, L5 BOUNDARY 3); unexplained residue 0
+  n=8 structure-forced: 51 graphs, B=4 — explained by a LOCAL bound: 51 (L1 density 8, L2 parity 0, L3 combined 8, L5 BOUNDARY 51); unexplained residue 0
+  n=10 structure-forced (from struct10.txt): 1681 graphs, B=5 — explained by a LOCAL bound: 1678 (L1 density 43, L2 parity 0, L3 combined 43, L5 BOUNDARY 1678); unexplained residue 3
+  ..       residue: ICQbtmvlw
+  ..       residue: ICQdbyvlw
+  ..       residue: ICQr\mvlw
+
+ALL CHECKS PASSED
