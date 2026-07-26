@@ -860,7 +860,10 @@ toolkit: **with L5 added, every tight graph on n ≤ 10 has its tightness
 certified by a lower bound.**
 
 **The sharper question.** Is p(G) always EQUAL to the best of these bounds?
-On all **12,112 connected graphs with n ≤ 8, yes — no gaps.** If that identity
+On all **12,112 connected graphs with n ≤ 8, yes — no gaps**, and then on all
+**261,080 connected graphs at n = 9, also no gaps** (727 s). That is 273,192
+connected graphs with the identity holding exactly, and not a single graph whose
+path number exceeds every bound we can certify. If that identity
 held in general it would imply Gallai by induction: for a cut with b ≥ 1,
 2p(G[S]) + 2p(G[V∖S]) − 2b ≤ (|S|+1) + (|V∖S|+1) − 2b ≤ n, and the odd terms
 give odd_S + odd_{V∖S} = q ≤ n. So the identity is at least as strong as the
@@ -908,8 +911,10 @@ reconstruction until someone checks it properly.
   characterization the leafy case of Gallai closes at every odd order. The
   search found a labelling for every instance tried (worst case 181,410
   labellings), which is evidence, not proof.
-- Test "p(G) = the best bound" at n = 9 (261,080 graphs) and beyond; a single
-  gap kills it and would be the most informative possible outcome.
+- ~~Test "p(G) = the best bound" at n = 9~~ — **done**: 261,080/261,080, no
+  gaps. Next is n = 10 (11.7M graphs, each needing subset path numbers) — a
+  single gap kills the identity and would be the most informative outcome
+  available.
 - Try to prove the boundary bound is tight for a class — trees, cacti, or graphs
   whose blocks are small — which would give an exact formula for p on that class.
 - Use the n = 10 tight census to attack Bonamy–Perrett at n = 11 properly: the

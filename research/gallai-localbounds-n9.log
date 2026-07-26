@@ -10,3 +10,6 @@ V2. do local bounds reach B on the structure-forced tight graphs?
   n=8 structure-forced: 51 graphs, B=4 — explained by a LOCAL bound: 51 (L1 density 8, L2 parity 0, L3 combined 8, L5 BOUNDARY 51); unexplained residue 0
 
 V4. is p(G) = the best bound? all connected graphs on n = 9
+  OK   261,080/261,080 graphs: p(G) equals the best bound EXACTLY — no gaps at n = 9 (727s)
+
+ALL CHECKS PASSED

@@ -612,8 +612,9 @@ export default function Page() {
             </p>
             <p>
               That invites a much stronger question, and the answer on the range we can check is
-              striking: <strong>p(G) equals the best of these bounds for all 12,112 connected graphs
-              on at most 8 vertices</strong> — no gaps at all
+              striking: <strong>p(G) equals the best of these bounds for every one of the 273,192
+              connected graphs on at most 9 vertices</strong> — 12,112 up to 8 vertices and all
+              261,080 at 9 vertices, with no gaps at all
               <Note n={7}>
                 The bounds are proved ≤ p(G), so equality only needs the other direction: exhibit a
                 decomposition whose size equals the bound. That is one feasibility check per graph
