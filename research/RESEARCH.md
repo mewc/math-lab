@@ -215,6 +215,68 @@ results, logged as results:
 > maximum degree ≤ 5, planar graphs (Blanché–Bonamy–Bonichon), and other
 > classes.
 
+## LITERATURE CHECK — what was actually new (2026-07-26)
+
+Turns 1–10 all carried the caveat "the literature cannot be checked from this
+environment, no novelty claimed." That caveat was **wrong from turn 8 onward**:
+web search works from here. It was checked on 2026-07-26 and two headline claims
+in this log have to be corrected. Both corrections are demotions.
+
+**1. The n = 11 exhaustive verification is NOT a frontier extension — it was
+published in 2019.** Botler, Cunha and Sambinelli, *On Computing the Path Number
+of a Graph*, Electronic Notes in Theoretical Computer Science **346** (2019)
+185–197, give an ILP model for the path number and report Gallai verified for
+**all graphs on at most 11 vertices**, for bipartite graphs on at most 16, and
+for regular graphs on at most 14. Turn 8 called n = 11 "the frontier" and said
+"no priority is claimed" as a hedge; the correct statement is stronger and
+flatter: **it was already done, and turn 8 is an independent replication.**
+
+  What survives, and it is not nothing: the replication used a completely
+  different method — a proved degree-≤2 reduction plus certificate-verified
+  combinatorial search, 15.5 min on a laptop, with every one of 577,076,528
+  decompositions re-verified edge-by-edge. An ILP verification asks you to trust
+  a solver; this one emits checkable certificates. Independent replication of a
+  computational claim by an independent method is worth having. It is not a new
+  result.
+
+**2. The "new structural finding" about odd order is a named open problem.**
+Turn 7 observed that at odd n every tight graph appears to be density-forced,
+i.e. K_n minus at most (n−3)/2 edges, and turn 8 confirmed the census 1, 2, 4,
+9, 20. That class has a name — an **odd semi-clique** is a clique on 2k+1
+vertices minus at most k−1 edges — and the statement is exactly the **question
+of Bonamy and Perrett**: can every connected graph on n vertices be decomposed
+into at most ⌊n/2⌋ paths *unless* G is an odd semi-clique? At odd n,
+⌊n/2⌋ = B(n) − 1, so "not tight unless an odd semi-clique" IS that question.
+The "prediction of 20 at n = 11" was, unknowingly, just counting the odd
+semi-cliques on 11 vertices.
+
+  Known partial results on it: Botler, Jiménez, Sambinelli and Wakabayashi
+  settled it for treewidth ≤ 3 (only K_3 and K_5 − e are exceptions), and it is
+  known for planar graphs (only K_3 and K_5 − e are planar odd semi-cliques).
+  A 2025 *Discrete Mathematics* paper, *Gallai's conjecture and the path number
+  of odd semi-cliques*, works directly on the class.
+
+  What survives: turns 7–9 are **independent computational evidence for the
+  Bonamy–Perrett question** — exhaustive at odd n ≤ 9, and at n = 11 across the
+  entire band m ≥ 45, which is the hard region (at m = 50 a 5-path decomposition
+  must be five Hamiltonian paths exactly). That is a real if modest contribution
+  to a live question, and it is a much more accurate description than "new
+  structural finding."
+
+**3. Everything else is very likely folklore, and none of it is claimed.** The
+splitting lemma, the parity lemma, the orbit lemma, the endpoint property E, the
+degree-2 splice and the parity-toggle framing are all elementary. Searching did
+not turn up the toggle framing or the Free Toggle strengthening in print, but
+four web searches are weak evidence of novelty for an elementary idea in a
+sixty-year-old problem, and the even-degree subgraph G_E is *the* standard object
+in this literature (Pyber, Fan, Botler et al. all work on its structure). Treat
+all of it as reconstruction, not discovery.
+
+**Standing instruction for later turns: check the literature FIRST.** Turn 7
+spent its effort naming and localizing a property that turns out to be a known
+open question; had the search been run first, that effort could have gone at the
+question as stated, from the known partial results.
+
 Same ground rules: exact integer/bitset arithmetic, every upper-bound claim
 carries a machine-verified certificate (`verifyDecomposition`), dead ends and
 corrections stay on the record. Unlabeled enumeration is nauty `geng -c`;
@@ -318,7 +380,10 @@ reaches B, `struct` = tightness no bound explains):
 The `struct` column reproduces turn 6's independent count (3 at n = 6, 51 at
 n = 8) from a different engine — two methods, same answer.
 
-**Observation (verified n ≤ 9, unproved).** At *odd* n every tight graph is
+**Observation (verified n ≤ 9, unproved).** [SEE THE LITERATURE CHECK AT THE TOP
+OF THIS CAMPAIGN: this is the Bonamy–Perrett question, and these graphs are known
+as *odd semi-cliques*. What follows is independent verification of a named open
+problem, not a new observation.] At *odd* n every tight graph is
 density-forced: 2m > (n−1)². Both other classical bounds are structurally
 incapable of reaching B at odd n — the odd-vertex count is at most n−1 (an
 odd-order graph cannot have all degrees odd) and the max-degree bound is at
@@ -467,10 +532,12 @@ just run, and is not claimed. One free consequence of Theorem F in that
 direction: at odd n a tight graph can have no degree-2 vertex with non-adjacent
 neighbours, since Theorem F would give p(G) ≤ p(H) ≤ B(n−1) = B(n) − 1.
 
-Honesty note on novelty: exhaustive verification of Gallai at small n is a
-natural thing for others to have done, and the literature cannot be checked from
-this environment. No priority is claimed for the n = 11 computation; what is
-in-lab is the reduction that made it cheap and the certificate discipline.
+Honesty note on novelty — CORRECTED 2026-07-26: the literature CAN be checked
+from this environment, and was. Gallai was already verified for all graphs on at
+most 11 vertices by Botler, Cunha and Sambinelli (ENTCS 346, 2019) using an ILP
+model. This turn is therefore an **independent replication by a different
+method**, not a frontier extension. See the literature check at the top of this
+campaign.
 
 ## Turn 9 — Walecki rainbow: theory beats search on the dense band (2026-07-25)
 
@@ -522,7 +589,8 @@ Results at n = 11, all certificates verified edge-by-edge:
   220 (graph, vertex) pairs** with explicit size-6 certificates.
 
 So at n = 11 **the tight graphs among all graphs with m ≥ 45 are exactly the 20
-with m ≥ 51** — the odd-order characterization survives the entire zone where it
+with m ≥ 51** — i.e. exactly the odd semi-cliques on 11 vertices, which is the
+Bonamy–Perrett question confirmed on that band — the odd-order characterization survives the entire zone where it
 could plausibly have broken, and my prediction was not saved by luck in the
 easy region. Sparser bands (m ≤ 44) are not claimed: Gallai itself is verified
 there by turn 8, but their *tightness* is untested, and a structure-forced tight
