@@ -959,7 +959,43 @@ export function decompWithEndpointsExact(
 
     const seed = pickSeed();
     if (!seed) return false;
-    const cands = pathsThroughEdge(seed[0], seed[1]);
+    // CAPACITY PRUNE (exact). With r = budget − count paths left covering `rem`
+    // residual edges, and no path able to hold more than n−1 edges, EVERY path
+    // of any completing decomposition carries at least rem − (r−1)(n−1) edges —
+    // the others can absorb at most (r−1)(n−1) between them. Candidates shorter
+    // than that cannot appear in any solution, so dropping them is exact. This
+    // is what makes near-capacity instances (where the bound forces almost every
+    // path to be Hamiltonian) tractable at all.
+    const r = budget - count;
+    const minEdges = rem - (r - 1) * (n - 1);
+    if (minEdges > n - 1) return false;
+    // END-COUNT PRUNE (exact, and only valid when minEdges > 0 — that is exactly
+    // when r−1 paths provably cannot absorb the residual, so all r remaining
+    // paths must be used and they supply exactly 2r path-ends). Vertex v with
+    // residual degree d_v hosts f_v of those ends, where 2·(interior visits) +
+    // f_v = d_v and (d_v + f_v)/2 ≤ r, so f_v ≤ min(d_v, 2r − d_v). If the caps
+    // cannot sum to 2r, or some vertex is forced above its own cap, no
+    // completion exists.
+    if (minEdges > 0) {
+      let capSum = 0;
+      for (let u = 0; u < n; u++) {
+        const d = popcount32(bs[u]!);
+        if (d === 0) continue;
+        const cap = Math.min(d, 2 * r - d);
+        if (cap < 0) return false;
+        capSum += cap;
+      }
+      if (capSum < 2 * r) return false;
+      for (let u = 0; u < n; u++) {
+        const d = popcount32(bs[u]!);
+        if (d === 0) continue;
+        const cap = Math.min(d, 2 * r - d);
+        if (2 * r - (capSum - cap) > cap) return false;
+      }
+    }
+    const cands = pathsThroughEdge(seed[0], seed[1]).filter(
+      (P) => P.length - 1 >= minEdges,
+    );
     // Heuristic ordering only (does not affect completeness): paths that
     // satisfy a pending required vertex first, then longest first.
     const helps = (P: number[]): number => {

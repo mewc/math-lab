@@ -35,7 +35,10 @@ maximal-element extension over order ideals.
 - Minimum balance is exactly 1/3 at every size; number of extremal posets:
   1, 2, 3, 5, 8, 12, 18 for n = 3…9. (Could not check this census sequence
   against OEIS — network policy blocks oeis.org from this environment. Open
-  loose end.)
+  loose end.) **CLOSED 2026-07-27:** oeis.org IS reachable from here; the
+  caveat was stale. The census 1, 2, 3, 5, 8, 12, 18, 27, 40, 59 is
+  **A077868**, the expansion of 1/((1−x)(1−x−x³)) — exactly the partial-sum
+  shape implied by iteration 8's law census(n) = #compositions(n; {1,3}) − 1.
 - Runner-up balance (smallest value > 1/3) decreases: 1/2 (n=3), 2/5, 4/11,
   5/14, 5/14, 16/45, 6/17 (n=9) ≈ 0.353. Empirical suggestion: balance values
   accumulate at 1/3 from above. Not proved, rate unknown.
@@ -201,9 +204,14 @@ results, logged as results:
 - The accumulation question stands: explain the runner-up braid at n = 10
   (37/106), find the family it belongs to, and compute its limit. The
   gap sequence 1/15, 1/33, 1/42, 1/45, 1/51, 5/318 wants a law.
-- Cross-check the {1,3}-composition sequence (1,1,2,3,4,6,9,13,19,28,…,
-  a.k.a. Narayana's cows / A000930 shape) against OEIS from an unrestricted
-  environment; identification is currently from the verified recurrence only.
+- ~~Cross-check the {1,3}-composition sequence against OEIS~~ — **done
+  2026-07-27**. oeis.org is reachable from this environment (the "network
+  policy blocks OEIS" note was stale, and the same was true of the wider
+  literature — see the Gallai literature check). The difference sequence
+  1, 1, 2, 3, 4, 6, 9, 13, 19, 28, 41 is confirmed as **A000930**, Narayana's
+  cows, a(n) = a(n−1) + a(n−3) — the recurrence iteration 7 derived from the
+  machine census. The extremal census itself is **A077868**. Both
+  identifications now rest on OEIS, not on a guess from a fitted recurrence.
 
 ---
 
@@ -738,6 +746,68 @@ cycle-absorption obstruction: when u and v are the two ends of the *same* path,
 re-attaching closes a cycle, and the fix needs a path ending on that cycle whose
 only shared vertex with it is that end.
 
+## Turn 11 — the exact tight census at n = 10, and two exact prunes (2026-07-27)
+
+`research/gallai-tight10.ts`, `research/gallai-tight10-resolve.ts`, log
+`research/gallai-tight10.log`.
+
+Following the standing instruction, the target came from the literature check:
+the Bonamy–Perrett question needs to know exactly which graphs are tight, and
+the campaign had never computed that at n = 10. Turn 6's stream counted only the
+**lower-bound-forced** tight graphs (305,585) because deciding the rest means
+refuting a decomposition into B − 1 = 4 paths, which is harder than the Gallai
+check itself. So the in-house structure-forced sequence stood at
+n = 6 → 3, n = 8 → 51, n = 10 → unknown.
+
+**Result: at n = 10 there are exactly 307,266 tight graphs — 305,585
+lower-bound-forced and 1,681 STRUCTURE-forced.** The remaining 11,409,305 are
+certified into ≤ 4 paths. 11,409,305 + 307,266 = 11,716,571 = A001349(10), so
+the census is complete with nothing undecided. The sequence is now
+**3, 51, 1,681** for n = 6, 8, 10 — which OEIS does not contain.
+
+Three things made it affordable:
+
+- **Theorem F earns its keep.** If v has degree 2 with non-adjacent neighbours
+  then p(G) ≤ p(H) for H = (G − v) + uw on 9 vertices, and turn 7 decided that
+  at n = 9 tight ⟺ m ≥ 33. So m(G) ≤ 33 plus a spliceable degree-2 vertex ⇒
+  p(H) ≤ 4 ⇒ p(G) ≤ 4: **not tight, by an edge count, with no search at all.**
+  That disposed of 3,259,160 graphs (28%).
+- **CAPACITY PRUNE (exact, new).** With r paths left to cover `rem` residual
+  edges and no path able to hold more than n−1 edges, *every* path of any
+  completing decomposition carries at least rem − (r−1)(n−1) edges — the others
+  absorb at most (r−1)(n−1) between them. Shorter candidates cannot appear in
+  any solution, so discarding them is exact. At m = 36 this forces all four
+  paths to be Hamiltonian.
+- **END-COUNT PRUNE (exact, new).** When rem > (r−1)(n−1), all r remaining paths
+  must be used, so they supply exactly 2r path-ends. A vertex of residual degree
+  d hosts f ends with 2·(interior visits) + f = d and (d+f)/2 ≤ r, hence
+  f ≤ min(d, 2r−d). If those caps cannot sum to 2r, or some vertex is forced
+  above its own cap, the branch is dead.
+
+The effect is not marginal. Thirteen graphs at m = 34–36 had each survived
+**400,000,000 search nodes** without a verdict; with the end-count prune they
+were all refuted **at the root node, in 0 nodes.** That is the difference between
+an exact census and a census with an asterisk.
+
+Both prunes were regression-tested against every prior exhaustive-negative claim
+before being trusted: the tree closed form p(T) = q/2 in *both* directions on all
+200 trees n ≤ 10, p(K_n) = ⌈n/2⌉, the n = 8 census (still 51), the n = 9 census
+band, and the Walecki W2/W3 results — all unchanged.
+
+**Two independent pipelines agree.** A three-stage run (3M-node sweep, then a
+400M resolve, then a second resolve) and a single-pass run with both prunes plus
+one resolve arrive at structure-forced = 1,681 by different routes and different
+node limits; the second run's 51 undecided split 45 tight / 6 not tight exactly
+as the reconciliation required. And the lower-bound-forced count 305,585
+independently reproduces turn 6's stream, from a different engine.
+
+**Novelty, stated honestly.** Botler, Cunha and Sambinelli computed the path
+number of every graph on ≤ 11 vertices in 2019, so this census is in principle a
+by-product of a computation that already exists. I found no published tabulation
+of it and no OEIS entry for 3, 51, 1681, but "I could not find it" is not
+"nobody has it". Claimed as computed here, with the two prunes as the reusable
+contribution.
+
 ### Loose ends
 
 - Prove E for the odd-order density-forced family K_m minus ≤ (m−2)/2 edges.
@@ -762,6 +832,9 @@ only shared vertex with it is that end.
   characterization the leafy case of Gallai closes at every odd order. The
   search found a labelling for every instance tried (worst case 181,410
   labellings), which is evidence, not proof.
+- Use the n = 10 tight census to attack Bonamy–Perrett at n = 11 properly: the
+  leaf case needs "G − x is not tight", which is now a lookup rather than a
+  search. Remaining obligation there is m ≤ 44 at budget 5.
 - Prove Free Toggle for z = 2 (a single toggle). This is the cycle-absorption
   obstruction in miniature; a proof there would be the first genuinely new
   theorem out of the parity axis, and would give a class incomparable to Pyber's.
