@@ -947,6 +947,79 @@ that the campaign's own reductions now compose into a clean statement about
 where a counterexample could live, with the interface (the cost profile
 c_H(v, t)) made explicit and machine-checked.
 
+## Direction — where this goes from here (written 2026-07-27)
+
+State of play after thirteen turns, stated flatly: **no new theorems about
+Gallai's conjecture.** The conjecture is exactly as open as it was at turn 1.
+What exists is verified territory, a working toolkit, and two conjectures worth
+attacking. Anyone picking this up should read the literature check at the top of
+this campaign before doing anything else.
+
+### What is actually banked
+
+- **Infrastructure.** `gallai-lib.ts` has an exhaustive forced-endpoint solver
+  whose `null` is a proof, with two exact prunes (capacity, end-count) that turn
+  400M-node non-terminations into root-node refutations. Everything downstream is
+  cheap because of it.
+- **Data.** Gallai verified to n = 11 (replicating Botler–Cunha–Sambinelli 2019).
+  Exact tight census at n = 10: 307,266 tight, 1,681 structure-forced, with the
+  full catalog on disk. Odd-order tight counts 1, 2, 4, 9, 20 — the Bonamy–Perrett
+  class confirmed on a range.
+- **Reductions, proved.** Degree-2 splice (unconditional, size-preserving) and
+  the cut-vertex formula (non-circular). Together: **a minimal counterexample is
+  2-connected with δ ≥ 3**, modulo the endpoint property E on pieces.
+- **Two conjectures, both strictly stronger than Gallai, both heavily tested.**
+  The boundary-bound identity `p(G) = best bound` (273,192 graphs, no gaps) and
+  Free Toggle (76,632 pairings plus adversarial families, no decided failures).
+
+### The three directions worth taking, ranked by expected yield
+
+**1. Falsify something.** Cheapest, most informative, and the only one with a
+near-certain outcome. Both standing conjectures are *strictly stronger* than
+Gallai, so a counterexample costs nothing in credibility and kills a line
+immediately. Concrete targets: run the identity check at n = 10 (11.7M graphs,
+each needing subset path numbers — expensive but the prunes make it plausible),
+and hunt Free Toggle failures in graphs whose even-degree subgraph is dense and
+2-connected, which is where the toggle has least freedom. A single decided
+failure in either is a real result and takes one run.
+
+**2. Prove the identity on a class.** The identity implies Gallai by induction,
+so proving it anywhere gives Gallai there as a corollary. The class must have
+controlled cuts and must not already be covered — treewidth ≤ 3 and ≤ 4, planar,
+2-degenerate, block graphs, Δ ≤ 5 are all taken. Plausible gaps: graphs whose
+even-degree subgraph has bounded block size, or graphs of bounded "cut width" in
+the sense the boundary bound cares about. Realistic odds of a small theorem in a
+session: maybe 10–20%. This is the only route here that could produce a
+publishable statement.
+
+**3. Attack Bonamy–Perrett directly on a class.** It is a named open question
+with known partial results, so any new class is a genuine contribution. Start
+from the known proofs (treewidth ≤ 3, planar) and ask what they actually use;
+our odd-order data says the exceptions are always the odd semi-cliques, and the
+cut-vertex formula plus the tight censuses give the structural facts those proofs
+need. Harder than (2), better prize.
+
+### What NOT to do
+
+Do not generate more verification data. n = 12 is 164 billion graphs, the
+even-order case has no degree-≤2 shortcut, and it would replicate nothing anyone
+disputes. The marginal value of another verified order is close to zero; the
+marginal value of one theorem is everything. Turns 8–12 produced a lot of
+correct, carefully-checked numbers and zero theorems, and that ratio is a
+property of the approach, not bad luck.
+
+### The honest strategic read
+
+A sixty-year-old structural conjecture with a deep literature is a poor target
+for this kind of campaign: the elementary observations are all taken, and the
+remaining difficulty is exactly the part that computation cannot touch. Problems
+where the frontier is *computational* — the superpermutation gap at n = 6,
+no-three-in-line, van der Waerden lower bounds — are far better matched, because
+there a new datum IS the contribution rather than evidence for someone else's
+conjecture. If the goal is a genuine new result rather than a well-kept ledger,
+that is where to go, and this campaign's solver and certificate discipline
+transfer directly.
+
 ### Loose ends
 
 - Prove E for the odd-order density-forced family K_m minus ≤ (m−2)/2 edges.
