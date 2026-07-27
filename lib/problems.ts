@@ -19,9 +19,24 @@ export type Category =
   | "Graph Decompositions"
   | "Algorithms & Simulation";
 
+/**
+ * An illustrative image shown in the dossier — a diagram, screenshot, or figure.
+ * `src` is a path under /public. Keep `alt` descriptive and `credit` honest.
+ */
+export interface Figure {
+  src: string;
+  alt: string;
+  /** Shown beneath the image in small print. */
+  caption?: string;
+  /** Attribution/source line, e.g. "In-lab render" or a share link label. */
+  credit?: string;
+}
+
 export interface ProblemNote {
   date: string; // ISO date of the note
   body: string;
+  /** Optional figure illustrating this note (diagram, screenshot). */
+  figure?: Figure;
 }
 
 /** An external reference or source. Rendered as a link when `url` is present. */
@@ -45,6 +60,8 @@ export interface ProblemSolution {
   approach: string;
   /** Where it's written up / verified — external or in-lab links. */
   links?: ProblemRef[];
+  /** Optional figure — a screenshot of the solve, a certificate render, etc. */
+  figure?: Figure;
 }
 
 export interface Problem {
@@ -201,6 +218,13 @@ export const PROBLEMS: Problem[] = [
         },
         { label: "In-lab verifier — research/dgg-counterexample.ts" },
       ],
+      figure: {
+        src: "/figures/dgg-counterexample-chat.png",
+        alt: "Deep-reasoning chat: after being pushed for a complete unconditional counterexample, the model returns a finite exhaustive certificate for Goemans' cost conjecture.",
+        caption:
+          "The turn that landed it: pressed to stop at partial results and produce a complete unconditional counterexample, the campaign returned a finite, integer-checkable certificate (Conjecture 1.3 as stated in the uploaded paper).",
+        credit: "ChatGPT deep-reasoning share, 2026-07-23",
+      },
     },
     notes: [
       {
@@ -210,6 +234,13 @@ export const PROBLEMS: Problem[] = [
       {
         date: "2026-07-23",
         body: "Iteration 4 — complete counterexample. V={s,u,v,w,t₁,t₂,t₃}; demands d=(15,10,15), D=15. Each terminal has a cheap direct path Eᵢ (unit cost, total 30) and a zero-cost detour Zᵢ through the shared spine s→u→v→w. Any two detours overload a spine arc (Z₂+Z₃: v→w carries 25>24; Z₁+Z₃: u→v 30>29; Z₁+Z₂: s→u 40>39), so every congestion-good routing uses ≤1 detour ⇒ ≥2 direct paths ⇒ cost ≥ 60 > 58 = cᵀx. The three Zᵢ are the stable-set system of a triangle with Pr = 1/3+2/5+1/3 = 16/15 > 1: the fractional point violates the triangle inequality z₁+z₂+z₃≤1 that every good routing satisfies, and the E-costs are the nonnegative complementary separator.",
+        figure: {
+          src: "/figures/dgg-counterexample-instance.png",
+          alt: "The counterexample instance: single source s routing to terminals t₁, t₂, t₃ through spine nodes u, v, w, with per-arc flow, cost, and demand labels.",
+          caption:
+            "The fractional flow x on the 7-vertex instance (source s; terminals t₁,t₂,t₃ with demands 15,10,15; spine s→u→v→w). Blue = flow, red = arc cost, yellow = terminal demand. Every congestion-good unsplittable routing of this x costs ≥ 60 > 58 = cᵀx.",
+          credit: "In-lab render of research/dgg-counterexample.ts",
+        },
       },
       {
         date: "2026-07-23",
@@ -227,6 +258,69 @@ export const PROBLEMS: Problem[] = [
       {
         label:
           "Y. Dinitz, N. Garg, M. X. Goemans — On the single-source unsplittable flow problem, Combinatorica 19 (1999), 17–41 (the proven congestion theorem)",
+      },
+    ],
+  },
+  {
+    slug: "graffiti-284",
+    title: "Graffiti conjecture 284",
+    aka: ["dual degree versus least distance eigenvalue"],
+    category: "Graph Theory",
+    statement:
+      "For every connected graph G of girth at least 5, must the minimum dual degree — the least, over vertices v, of the average degree of v's neighbors — be at most the negative of the least eigenvalue of the distance matrix D(G)?",
+    status:
+      "Disproved by the Hoffman–Singleton graph. It is 7-regular with girth 5, so every vertex has dual degree 7. Its distance matrix has least eigenvalue −4, making the proposed inequality read 7 ≤ 4. The short spectral calculation is independently checked in the dossier; the attribution of this as Graffiti conjecture 284 is currently based on the July 2026 report and should be matched to the original Graffiti record before formal citation.",
+    attack:
+      "The counterexample is a one-line spectral reduction once the graph's standard parameters are in hand: for a diameter-2 graph, D = 2(J − I) − A. Combine the Hoffman–Singleton adjacency spectrum 7¹, 2²⁸, (−3)²¹ with the all-ones / orthogonal decomposition to get distance spectrum 91¹, 1²¹, (−4)²⁸ exactly.",
+    tags: [
+      "graffiti",
+      "distance matrix",
+      "distance spectrum",
+      "dual degree",
+      "hoffman-singleton graph",
+      "counterexample",
+      "spectral graph theory",
+    ],
+    stage: "solved",
+    href: "/p/graffiti-284",
+    solution: {
+      by: "Reported by Capy (Grok 4.5 Medium), independently checked in-lab",
+      when: "2026-07-23",
+      approach:
+        "The known Hoffman–Singleton graph is 7-regular of girth 5. Its diameter-2 distance matrix is 2(J − I) − A; its standard adjacency spectrum immediately gives least distance eigenvalue −4. Thus its dual degree is 7 while the conjectured upper bound is 4.",
+      links: [
+        {
+          label: "Report on X (Justin Sun, 2026-07-23)",
+          url: "https://x.com/justinsunyt/status/2080116559352316409",
+        },
+        {
+          label: "Hoffman–Singleton graph data — DistanceRegular.org",
+          url: "https://www.math.mun.ca/distanceregular/graphs/hoffmansingleton.html",
+        },
+      ],
+    },
+    notes: [
+      {
+        date: "2026-07-23",
+        body: "Independent spectral check. The Hoffman–Singleton graph has 50 vertices, degree 7, diameter 2, girth 5, and adjacency spectrum 7¹, 2²⁸, (−3)²¹. Since all off-diagonal distances are 1 on edges and 2 otherwise, D=2(J−I)−A. On the all-ones line this gives 91; on its orthogonal complement it sends an A-eigenvalue θ to −2−θ, giving distance spectrum 91¹, 1²¹, (−4)²⁸. Hence −λmin(D)=4, whereas 7-regularity makes every dual degree exactly 7. This is a direct counterexample (7≤4 is false).",
+      },
+    ],
+    refs: [
+      {
+        label: "Report on X (Justin Sun, 2026-07-23)",
+        url: "https://x.com/justinsunyt/status/2080116559352316409",
+      },
+      {
+        label: "Hoffman–Singleton graph — DistanceRegular.org (50 vertices, diameter 2, spectrum 7¹ 2²⁸ (−3)²¹)",
+        url: "https://www.math.mun.ca/distanceregular/graphs/hoffmansingleton.html",
+      },
+      {
+        label: "Rowlinson & Sciriha (2007), Some properties of the Hoffman-Singleton graph (adjacency spectrum)",
+        url: "https://www.um.edu.mt/library/oar/handle/123456789/28286",
+      },
+      {
+        label: "Ichiro Shimada, The graphs of Hoffman–Singleton, Higman–Sims (standard strongly-regular parameters (50,7,0,1))",
+        url: "https://home.hiroshima-u.ac.jp/ichiro-shimada/slides/2014JuneTohoku/proceedings.pdf",
       },
     ],
   },

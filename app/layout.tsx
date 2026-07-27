@@ -25,6 +25,20 @@ const fraunces = Fraunces({
 const DESCRIPTION =
   "One searchable index of open, computationally approachable math problems — each with a precise statement, honest status, and an attack plan. Tackled problems grow into live dossiers, starting with Collatz.";
 
+// Which public/ favicon set this build serves. Production ships the plain
+// abacus at the root; preview and local dev get a colour-badged copy under
+// public/<env>/ so their browser tabs stand apart. VERCEL_ENV is set per
+// deployment (production | preview); it's absent locally, where NODE_ENV is
+// "development".
+const ICON_BASE =
+  process.env.VERCEL_ENV === "production"
+    ? ""
+    : process.env.VERCEL_ENV === "preview"
+      ? "/preview"
+      : process.env.NODE_ENV === "production"
+        ? "" // non-Vercel production build → plain icons
+        : "/dev";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -51,17 +65,23 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
   },
   manifest: "/manifest.json",
-  // Favicon stack (abacus, theme-aware) generated with favicontools.com
+  // Favicon stack (abacus, theme-aware) generated with favicontools.com.
+  // The tab icon is badged per environment so prod / preview / local dev tabs
+  // are distinguishable at a glance: production is the plain abacus, preview
+  // gets an amber corner dot, local `next dev` an emerald one. The badged sets
+  // live in public/<env>/ (regenerate with scripts/gen-env-favicons.py). Each
+  // Vercel environment builds separately, so resolving VERCEL_ENV at build time
+  // bakes the right set into that deployment.
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-16x16-light.png", type: "image/png", sizes: "16x16", media: "(prefers-color-scheme: light)" },
-      { url: "/favicon-16x16-dark.png", type: "image/png", sizes: "16x16", media: "(prefers-color-scheme: dark)" },
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
-      { url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+      { url: `${ICON_BASE}/favicon.ico`, sizes: "any" },
+      { url: `${ICON_BASE}/favicon-16x16-light.png`, type: "image/png", sizes: "16x16", media: "(prefers-color-scheme: light)" },
+      { url: `${ICON_BASE}/favicon-16x16-dark.png`, type: "image/png", sizes: "16x16", media: "(prefers-color-scheme: dark)" },
+      { url: `${ICON_BASE}/favicon-32x32.png`, type: "image/png", sizes: "32x32" },
+      { url: `${ICON_BASE}/favicon-48x48.png`, type: "image/png", sizes: "48x48" },
+      { url: `${ICON_BASE}/favicon-96x96.png`, type: "image/png", sizes: "96x96" },
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    apple: [{ url: `${ICON_BASE}/apple-touch-icon.png`, sizes: "180x180" }],
   },
 };
 

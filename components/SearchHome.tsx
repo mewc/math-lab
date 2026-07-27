@@ -90,10 +90,10 @@ export default function SearchHome({ feed }: { feed?: ReactNode }) {
     <>
       <div className="search-hero">
         <div className="kicker" style={{ fontFamily: "var(--mono)", fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-faint)" }}>
-          Open problems · computationally approachable · honestly labeled
+          Open problems · honestly labeled
         </div>
         <h1>
-          Every problem worth <em>throwing tokens at</em>
+          Worth <em>throwing tokens at</em>
         </h1>
       </div>
 

@@ -22,6 +22,13 @@ function xml(s: string): string {
     .replace(/'/g, "&apos;");
 }
 
+// Content is emitted inside a CDATA block, so XML entities stay literal; the only
+// thing that must not appear raw is the CDATA terminator `]]>`. Our strings use
+// single quotes (no `"`), so HTML attributes inside the block stay well-formed.
+function cdata(s: string): string {
+  return s.replace(/]]>/g, "]]&gt;");
+}
+
 /** Absolute URL for an item: its dossier on this site, else its external link. */
 function absoluteLink(item: FeedItem): string {
   const href = feedItemHref(item);
@@ -43,6 +50,12 @@ export function GET() {
     .map((item) => {
       const link = absoluteLink(item);
       const date = pubDate(item.date);
+      const imgUrl = item.image ? SITE_URL + item.image : null;
+      // HTML description (CDATA) so readers render the image inline; the raw
+      // summary stays intact. <enclosure> covers readers that use media attachments.
+      const descHtml =
+        (imgUrl ? `<p><img src="${imgUrl}" alt="${cdata(item.imageAlt ?? item.title)}" /></p>` : "") +
+        `<p>${cdata(item.summary)}</p>`;
       return [
         "    <item>",
         `      <title>${xml(item.title)}</title>`,
@@ -50,7 +63,8 @@ export function GET() {
         `      <guid isPermaLink="false">math-lab:${xml(item.id)}</guid>`,
         `      <category>${xml(FEED_KIND_LABEL[item.kind])}</category>`,
         date ? `      <pubDate>${date}</pubDate>` : null,
-        `      <description>${xml(item.summary)}</description>`,
+        imgUrl ? `      <enclosure url="${xml(imgUrl)}" length="0" type="image/png" />` : null,
+        `      <description><![CDATA[${descHtml}]]></description>`,
         "    </item>",
       ]
         .filter(Boolean)

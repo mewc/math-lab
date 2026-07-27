@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProblem, problemHref, PROBLEMS, STAGE_LABEL } from "@/lib/problems";
+import {
+  getProblem,
+  problemHref,
+  PROBLEMS,
+  STAGE_LABEL,
+  type Figure,
+} from "@/lib/problems";
 import JsonLd from "@/components/JsonLd";
 import {
   breadcrumbLd,
@@ -47,12 +53,34 @@ export async function generateMetadata({
   };
 }
 
+// Figure rendered inside a dossier chapter — a diagram or screenshot with an
+// optional caption/credit. Plain <img>: the repo ships no next/image and these
+// are static, hand-placed assets under /public/figures.
+function DossierFigure({ figure }: { figure: Figure }) {
+  return (
+    <figure className="dossier-figure">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={figure.src} alt={figure.alt} loading="lazy" />
+      {(figure.caption || figure.credit) && (
+        <figcaption>
+          {figure.caption}
+          {figure.credit && <span className="fig-credit">{figure.credit}</span>}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 export default async function ProblemPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = getProblem(slug);
   if (!p) notFound();
 
   const related = relatedProblems(p);
+  // Running section counter so numbers stay correct as optional chapters
+  // (Solution, References, Related) appear or drop out.
+  let sec = 0;
+  const num = () => `§${++sec}`;
   const breadcrumb = breadcrumbLd([
     { name: "Math Lab", path: "/" },
     { name: p.category, path: `/problems/${categorySlug(p.category)}` },
@@ -85,7 +113,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
 
           <section className="chapter">
             <div className="chapter-head">
-              <span className="num">§1</span>
+              <span className="num">{num()}</span>
               <h2>Status</h2>
             </div>
             <p>{p.status}</p>
@@ -99,7 +127,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
 
           <section className="chapter">
             <div className="chapter-head">
-              <span className="num">§2</span>
+              <span className="num">{num()}</span>
               <h2>The Angle of Attack</h2>
             </div>
             <p>{p.attack}</p>
@@ -110,7 +138,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
 
           <section className="chapter">
             <div className="chapter-head">
-              <span className="num">§3</span>
+              <span className="num">{num()}</span>
               <h2>The Lab</h2>
             </div>
             {p.stage === "untouched" ? (
@@ -127,7 +155,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
 
           <section className="chapter">
             <div className="chapter-head">
-              <span className="num">§4</span>
+              <span className="num">{num()}</span>
               <h2>The Log</h2>
             </div>
             {p.notes && p.notes.length > 0 ? (
@@ -135,6 +163,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
                 <div className="note-entry" key={i}>
                   <div className="note-date">{note.date}</div>
                   <p>{note.body}</p>
+                  {note.figure && <DossierFigure figure={note.figure} />}
                 </div>
               ))
             ) : (
@@ -149,10 +178,40 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
             </div>
           </section>
 
+          {p.stage === "solved" && p.solution && (
+            <section className="chapter">
+              <div className="chapter-head">
+                <span className="num">{num()}</span>
+                <h2>The Solution</h2>
+              </div>
+              <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>
+                Solved by <strong style={{ color: "var(--ink)" }}>{p.solution.by}</strong>
+                {p.solution.when ? ` · ${p.solution.when}` : ""}
+              </p>
+              <p>{p.solution.approach}</p>
+              {p.solution.figure && <DossierFigure figure={p.solution.figure} />}
+              {p.solution.links && p.solution.links.length > 0 && (
+                <ul className="ref-list">
+                  {p.solution.links.map((l, i) => (
+                    <li key={i}>
+                      {l.url ? (
+                        <a href={l.url} target="_blank" rel="noreferrer noopener">
+                          {l.label}
+                        </a>
+                      ) : (
+                        l.label
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
           {p.refs && p.refs.length > 0 && (
             <section className="chapter">
               <div className="chapter-head">
-                <span className="num">§5</span>
+                <span className="num">{num()}</span>
                 <h2>References</h2>
               </div>
               <ul className="ref-list">
@@ -174,7 +233,7 @@ export default async function ProblemPage({ params }: { params: Promise<{ slug: 
           {related.length > 0 && (
             <section className="chapter">
               <div className="chapter-head">
-                <span className="num">§{p.refs && p.refs.length > 0 ? 6 : 5}</span>
+                <span className="num">{num()}</span>
                 <h2>Related Problems</h2>
               </div>
               <p style={{ fontSize: 14, color: "var(--ink-faint)" }}>

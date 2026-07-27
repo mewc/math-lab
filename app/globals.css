@@ -383,6 +383,34 @@ section.chapter {
   max-width: 64ch;
 }
 
+/* ---------- dossier figure (diagram / screenshot) ---------- */
+.dossier-figure {
+  margin: 20px 0 8px;
+  max-width: 640px;
+}
+.dossier-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-inset);
+}
+.dossier-figure figcaption {
+  margin-top: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  max-width: 64ch;
+}
+.dossier-figure .fig-credit {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+
 h3.sub {
   font-family: var(--serif);
   font-weight: 500;
