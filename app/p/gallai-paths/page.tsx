@@ -378,6 +378,44 @@ export default function Page() {
               </p>
             </Result>
 
+            <Result tag="C" name="the cut-vertex formula" status="proved">
+              <p>
+                Write c<sub>H</sub>(v, t) for the fewest paths in a decomposition of H having at
+                least t paths <em>ending</em> at v, so c<sub>H</sub>(v, 0) = p(H). If v is a cut
+                vertex splitting G into G₁ and G₂, sharing only v, then
+              </p>
+              <div className="mathbox">
+                p(G) = min<sub>t ≥ 0</sub> [ c<sub>G₁</sub>(v, t) + c<sub>G₂</sub>(v, t) − t ]
+                <span className="caption">
+                  The path number of a graph is determined by its pieces, with the cost profile
+                  c<sub>H</sub>(v, ·) as the interface.
+                </span>
+              </div>
+              <p>
+                <em>Proof.</em> (≤) Take decompositions attaining each cost, pick t paths ending at
+                v on either side, pair them and concatenate at v — the sides share only v, so each
+                concatenation is a path, and the result covers E(G) with |D₁| + |D₂| − t parts. (≥)
+                In any decomposition of G, let s count the paths using edges of both sides. Such a
+                path passes through v, and being a path it visits v exactly once, so it splits into
+                exactly two pieces, each ending at v; every other path lies wholly on one side. So
+                |D| = |D₁| + |D₂| − s with at least s paths ending at v on each side. ∎
+              </p>
+              <p>
+                <strong>Corollary.</strong> If the endpoint property holds on both pieces then
+                t = 1 gives p(G) ≤ ⌈n₁/2⌉ + ⌈n₂/2⌉ − 1 ≤ ⌈n/2⌉. So with the degree-2 splice, a
+                minimal counterexample to Gallai must be <strong>2-connected with minimum degree
+                3</strong> — unless E fails on one of its pieces. Verified exhaustively: the formula
+                is exact on all 71,464 connected graphs with a cut vertex on ≤ 9 vertices, and in
+                every one of them E held on both pieces, with the glued decomposition constructed
+                and verified edge by edge.
+              </p>
+              <p>
+                Unlike the leaf reduction this is <em>not</em> circular — G₁ and G₂ are strictly
+                smaller — though &ldquo;a minimal counterexample is 2-connected&rdquo; is
+                standard-issue reasoning in this area and is not claimed as new.
+              </p>
+            </Result>
+
             <Result tag="prunes" name="two exact search prunes" status="proved">
               <p>
                 Deciding <em>impossibility</em> is what costs, so two exact prunes carry the

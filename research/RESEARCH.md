@@ -887,6 +887,66 @@ equality question in print. That is weak evidence for a sixty-year-old problem,
 and the literature on the even-degree subgraph is deep. Treat L5 as a
 reconstruction until someone checks it properly.
 
+## Turn 13 — the cut-vertex formula (2026-07-27)
+
+`research/gallai-cutvertex.ts`, log `research/gallai-cutvertex.log`.
+
+Every earlier reduction was either unconditional but narrow (the degree-2
+splice) or an exact reformulation that provably could not be easier than what it
+reformulated (the leaf reduction, parity toggling). This one is neither: it
+computes p(G) from strictly smaller graphs, so induction on n is legitimate.
+
+For a graph H, a vertex v and an integer t ≥ 0 write **c_H(v, t)** for the fewest
+paths in a decomposition of H having at least t paths ENDING at v; so
+c_H(v, 0) = p(H).
+
+- **THEOREM (cut-vertex formula; proved, all n).** Let v be a cut vertex of G and
+  let G₁, G₂ be edge-disjoint connected subgraphs with G₁ ∪ G₂ = G and
+  V(G₁) ∩ V(G₂) = {v}. Then
+
+      p(G) = min over t ≥ 0 of [ c_{G₁}(v, t) + c_{G₂}(v, t) − t ].
+
+  *Proof.* (≤) Take decompositions attaining c_{G₁}(v,t) and c_{G₂}(v,t), pick t
+  paths ending at v on each side, pair them and concatenate at v. The two sides
+  share only v, so each concatenation is a path; the result covers E(G) with
+  |D₁| + |D₂| − t parts. (≥) In any decomposition D of G let s count the paths
+  using edges of both sides. Such a path passes through v and, being a path,
+  visits v exactly once, so it splits into exactly two pieces, each ending at v;
+  every other path lies wholly on one side. The pieces give decompositions of G₁
+  and G₂ with |D| = |D₁| + |D₂| − s, and each has at least s paths ending at v,
+  so |D| ≥ c_{G₁}(v,s) + c_{G₂}(v,s) − s. ∎
+
+- **COROLLARY (no minimal counterexample has a cut vertex, modulo E).** If the
+  endpoint property holds on both sides — c_{Gᵢ}(v,1) ≤ ⌈nᵢ/2⌉ — then taking
+  t = 1 gives p(G) ≤ ⌈n₁/2⌉ + ⌈n₂/2⌉ − 1 ≤ ⌈n/2⌉ where n = n₁ + n₂ − 1. The last
+  inequality is equality whenever n₁ or n₂ is odd, and has slack 1 when both are
+  even, so the single merge is exactly what pays for the glue. Combined with the
+  degree-2 splice of turn 7, **a minimal counterexample to Gallai is 2-connected
+  with δ ≥ 3** — unless E fails on one of its pieces, and E can only fail on a
+  tight graph at an even-degree vertex, which is now a fully censused class.
+
+**Verified exhaustively for every connected graph with a cut vertex, n ≤ 9:**
+the formula is exact on all **71,464** of them, both sides computed with the
+complete solver so a mismatch would be real and not a search artifact. In every
+one of those 71,464 cases E held on both pieces, and the corollary's glued
+decomposition was constructed explicitly and verified edge by edge against
+⌈n/2⌉ — zero cases where the corollary's hypothesis failed.
+
+A bug worth recording: the first run reported 456 failures, all of the form
+"glued certificate repeats a vertex". The formula checks had passed; the fault
+was in the gluing code, which oriented BOTH pieces' paths to end at v so the
+shared vertex appeared twice in the concatenation. The second piece has to start
+at v. The theorem was fine; the scaffolding was not — which is exactly why every
+constructed certificate goes through `verifyDecomposition` rather than being
+trusted.
+
+**Novelty: not claimed, and probably none.** "A minimal counterexample is
+2-connected" is standard-issue reasoning in this area and most papers simply
+assume 2-connectivity. The explicit formula is elementary. What it adds here is
+that the campaign's own reductions now compose into a clean statement about
+where a counterexample could live, with the interface (the cost profile
+c_H(v, t)) made explicit and machine-checked.
+
 ### Loose ends
 
 - Prove E for the odd-order density-forced family K_m minus ≤ (m−2)/2 edges.
@@ -915,6 +975,9 @@ reconstruction until someone checks it properly.
   gaps. Next is n = 10 (11.7M graphs, each needing subset path numbers) — a
   single gap kills the identity and would be the most informative outcome
   available.
+- Push the cut-vertex formula further: it makes p(G) a function of the blocks
+  via the block-cut tree, so the natural next step is a full block-tree
+  algorithm and the question of which cost profiles c_H(v, ·) are realisable.
 - Try to prove the boundary bound is tight for a class — trees, cacti, or graphs
   whose blocks are small — which would give an exact formula for p on that class.
 - Use the n = 10 tight census to attack Bonamy–Perrett at n = 11 properly: the

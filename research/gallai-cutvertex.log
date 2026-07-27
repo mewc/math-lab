@@ -1,0 +1,15 @@
+The cut-vertex formula for the path number (n ≤ 9)
+
+  OK   C1: ceil(n₁/2) + ceil(n₂/2) − 1 ≤ ceil((n₁+n₂−1)/2) for all tested n₁, n₂ — the corollary's arithmetic never fails (equality in 57,961 of the cases, so the single merge is exactly what pays for the glue)
+  n=3: 1 graphs with a cut vertex processed so far
+  n=4: 4 graphs with a cut vertex processed so far
+  n=5: 15 graphs with a cut vertex processed so far
+  n=6: 71 graphs with a cut vertex processed so far
+  n=7: 456 graphs with a cut vertex processed so far
+  n=8: 4450 graphs with a cut vertex processed so far
+  n=9: 71464 graphs with a cut vertex processed so far
+
+  OK   C2: the cut-vertex formula is EXACT on all 71,464 connected graphs with a cut vertex, n ≤ 9 — p(G) = min_t [c₁(v,t) + c₂(v,t) − t] every time
+  OK   C3: 71,464 graphs where E holds on both pieces got an explicitly glued, verified decomposition of size ≤ ceil(n/2)
+
+ALL CHECKS PASSED
